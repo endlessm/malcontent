@@ -9,9 +9,11 @@ project('eos-parental-controls', 'c',
   ]
 )
 
+i18n = import('i18n')
 pkgconfig = import('pkgconfig')
 
 meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlink.sh')
+po_dir = join_paths(meson.source_root(), 'po')
 
 prefix = get_option('prefix')
 datadir = join_paths(prefix, get_option('datadir'))
