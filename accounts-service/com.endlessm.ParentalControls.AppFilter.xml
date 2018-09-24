@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.endlessm.ParentalControls.AppFilter">
+
+    <annotation name="org.freedesktop.Accounts.VendorExtension" value="true"/>
+
+    <annotation name="org.freedesktop.Accounts.Authentication.ChangeOwn"
+      value="com.endlessm.ParentalControls.AppFilter.ChangeOwn"/>
+    <annotation name="org.freedesktop.Accounts.Authentication.ReadOwn"
+      value="com.endlessm.ParentalControls.AppFilter.ReadOwn"/>
+    <annotation name="org.freedesktop.Accounts.Authentication.ChangeAny"
+      value="com.endlessm.ParentalControls.AppFilter.ChangeAny"/>
+    <annotation name="org.freedesktop.Accounts.Authentication.ReadAny"
+      value="com.endlessm.ParentalControls.AppFilter.ReadAny"/>
+
+    <!--
+      app-filter:
+
+      A filter for which applications and binaries the user can run. This is
+      intended to be set by administrators and read by users, rather than being
+      editable by the user themselves.
+
+      The string list contains flatpak application IDs (containing at least one
+      dot and no leading slash) and absolute binary paths (containing a leading
+      slash). The boolean value indicates whether this is a whitelist (true) or
+      blacklist (false).
+    -->
+    <property name="app-filter" type="(bas)" access="readwrite">
+      <annotation name="org.freedesktop.Accounts.DefaultValue"
+        value="(false, [])"/>
+    </property>
+  </interface>
+</node>
