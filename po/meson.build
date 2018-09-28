@@ -1,0 +1,1 @@
+i18n.gettext('eos-parental-controls', preset: 'glib')
