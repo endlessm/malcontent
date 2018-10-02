@@ -19,6 +19,7 @@ prefix = get_option('prefix')
 datadir = join_paths(prefix, get_option('datadir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
+# See https://gitlab.freedesktop.org/accountsservice/accountsservice/merge_requests/16
 accountsserviceinterfacesdir = join_paths(datadir, 'accountsservice', 'interfaces')
 
 dbus = dependency('dbus-1')
