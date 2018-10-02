@@ -43,3 +43,14 @@ pkgconfig.generate(
   description: 'Library providing access to parental control settings.',
   requires: libeos_parental_controls_public_deps,
 )
+
+gnome.generate_gir(libeos_parental_controls,
+  sources: libeos_parental_controls_sources + libeos_parental_controls_headers,
+  nsversion: libeos_parental_controls_api_version,
+  namespace: 'EosParentalControls',
+  symbol_prefix: 'epc_',
+  identifier_prefix: 'Epc',
+  export_packages: 'libeos-parental-controls',
+  includes: ['GObject-2.0', 'Gio-2.0'],
+  install: true,
+)
