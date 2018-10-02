@@ -17,6 +17,7 @@ meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlin
 po_dir = join_paths(meson.source_root(), 'po')
 
 prefix = get_option('prefix')
+bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
@@ -103,4 +104,5 @@ cc = meson.get_compiler('c')
 add_project_arguments(cc.get_supported_arguments(test_c_args), language: 'c')
 
 subdir('accounts-service')
+subdir('eos-parental-controls-client')
 subdir('libeos-parental-controls')
