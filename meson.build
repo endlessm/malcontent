@@ -9,6 +9,7 @@ project('eos-parental-controls', 'c',
   ]
 )
 
+gnome = import('gnome')
 i18n = import('i18n')
 pkgconfig = import('pkgconfig')
 
@@ -16,9 +17,11 @@ meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlin
 po_dir = join_paths(meson.source_root(), 'po')
 
 prefix = get_option('prefix')
+bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
+# See https://gitlab.freedesktop.org/accountsservice/accountsservice/merge_requests/16
 accountsserviceinterfacesdir = join_paths(datadir, 'accountsservice', 'interfaces')
 
 dbus = dependency('dbus-1')
@@ -29,4 +32,77 @@ polkit_gobject = dependency('polkit-gobject-1')
 polkitpolicydir = polkit_gobject.get_pkgconfig_variable('policydir',
   define_variable: ['prefix', prefix])
 
+config_h = configuration_data()
+config_h.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+configure_file(
+  output: 'config.h',
+  configuration: config_h,
+)
+root_inc = include_directories('.')
+
+# Enable warning flags
+test_c_args = [
+  '-fno-strict-aliasing',
+  '-fstack-protector-strong',
+  '-Waggregate-return',
+  '-Wall',
+  '-Wunused',
+  '-Warray-bounds',
+  '-Wcast-align',
+  '-Wclobbered',
+  '-Wno-declaration-after-statement',
+  '-Wduplicated-branches',
+  '-Wduplicated-cond',
+  '-Wempty-body',
+  '-Wformat=2',
+  '-Wformat-nonliteral',
+  '-Wformat-security',
+  '-Wformat-signedness',
+  '-Wignored-qualifiers',
+  '-Wimplicit-function-declaration',
+  '-Wincompatible-pointer-types',
+  '-Wincompatible-pointer-types-discards-qualifiers',
+  '-Winit-self',
+  '-Wint-conversion',
+  '-Wlogical-op',
+  '-Wmisleading-indentation',
+  '-Wmissing-declarations',
+  '-Wmissing-format-attribute',
+  '-Wmissing-include-dirs',
+  '-Wmissing-noreturn',
+  '-Wmissing-parameter-type',
+  '-Wmissing-prototypes',
+  '-Wnested-externs',
+  '-Wno-error=cpp',
+  '-Wno-discarded-qualifiers',
+  '-Wno-missing-field-initializers',
+  '-Wno-suggest-attribute=format',
+  '-Wno-unused-parameter',
+  '-Wnull-dereference',
+  '-Wold-style-definition',
+  '-Woverflow',
+  '-Woverride-init',
+  '-Wparentheses',
+  '-Wpointer-arith',
+  '-Wredundant-decls',
+  '-Wreturn-type',
+  '-Wshadow',
+  '-Wsign-compare',
+  '-Wstrict-aliasing=2',
+  '-Wstrict-prototypes',
+  '-Wswitch-default',
+  '-Wswitch-enum',
+  '-Wtype-limits',
+  '-Wundef',
+  '-Wuninitialized',
+  '-Wunused-but-set-variable',
+  '-Wunused-result',
+  '-Wunused-variable',
+  '-Wwrite-strings'
+]
+cc = meson.get_compiler('c')
+add_project_arguments(cc.get_supported_arguments(test_c_args), language: 'c')
+
 subdir('accounts-service')
+subdir('eos-parental-controls-client')
+subdir('libeos-parental-controls')
