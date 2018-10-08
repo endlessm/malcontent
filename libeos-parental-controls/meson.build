@@ -54,3 +54,5 @@ gnome.generate_gir(libeos_parental_controls,
   includes: ['GObject-2.0', 'Gio-2.0'],
   install: true,
 )
+
+subdir('tests')

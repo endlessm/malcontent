@@ -19,6 +19,7 @@ po_dir = join_paths(meson.source_root(), 'po')
 prefix = get_option('prefix')
 bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
+libexecdir = join_paths(prefix, get_option('libexecdir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
 # See https://gitlab.freedesktop.org/accountsservice/accountsservice/merge_requests/16
@@ -102,6 +103,14 @@ test_c_args = [
 ]
 cc = meson.get_compiler('c')
 add_project_arguments(cc.get_supported_arguments(test_c_args), language: 'c')
+
+enable_installed_tests = get_option('installed_tests')
+test_template = files('template.test.in')
+test_env = [
+  'G_DEBUG=gc-friendly,fatal-warnings',
+  'MALLOC_CHECK_=2',
+  'LC_ALL=C.UTF-8',
+]
 
 subdir('accounts-service')
 subdir('eos-parental-controls-client')
