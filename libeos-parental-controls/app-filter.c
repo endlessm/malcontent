@@ -56,6 +56,8 @@ struct _EpcAppFilter
 
   gchar **app_list;  /* (owned) (array zero-terminated=1) */
   EpcAppFilterListType app_list_type;
+
+  GVariant *oars_ratings;  /* (type a{ss}) (owned) */
 };
 
 G_DEFINE_BOXED_TYPE (EpcAppFilter, epc_app_filter,
@@ -101,6 +103,7 @@ epc_app_filter_unref (EpcAppFilter *filter)
   if (filter->ref_count <= 0)
     {
       g_strfreev (filter->app_list);
+      g_variant_unref (filter->oars_ratings);
       g_free (filter);
     }
 }
@@ -159,7 +162,50 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
     }
 }
 
-/* Check if @error is a D-Bus remote error mataching @expected_error_name. */
+/**
+ * epc_app_filter_get_oars_value:
+ * @filter: an #EpcAppFilter
+ * @oars_section: name of the OARS section to get the value from
+ *
+ * Get the value assigned to the given @oars_section in the OARS filter stored
+ * within @filter. If that section has no value explicitly defined,
+ * %EPC_APP_FILTER_OARS_VALUE_UNKNOWN is returned.
+ *
+ * This value is the most intense value allowed for apps to have in this
+ * section, inclusive. Any app with a more intense value for this section must
+ * be hidden from the user whose @filter this is.
+ *
+ * Returns: an #EpcAppFilterOarsValue
+ * Since: 0.1.0
+ */
+EpcAppFilterOarsValue
+epc_app_filter_get_oars_value (EpcAppFilter *filter,
+                               const gchar  *oars_section)
+{
+  const gchar *value_str;
+
+  g_return_val_if_fail (filter != NULL, EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_return_val_if_fail (filter->ref_count >= 1,
+                        EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_return_val_if_fail (oars_section != NULL && *oars_section != '\0',
+                        EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+
+  if (!g_variant_lookup (filter->oars_ratings, oars_section, "&s", &value_str))
+    return EPC_APP_FILTER_OARS_VALUE_UNKNOWN;
+
+  if (g_str_equal (value_str, "none"))
+    return EPC_APP_FILTER_OARS_VALUE_NONE;
+  else if (g_str_equal (value_str, "mild"))
+    return EPC_APP_FILTER_OARS_VALUE_MILD;
+  else if (g_str_equal (value_str, "moderate"))
+    return EPC_APP_FILTER_OARS_VALUE_MODERATE;
+  else if (g_str_equal (value_str, "intense"))
+    return EPC_APP_FILTER_OARS_VALUE_INTENSE;
+  else
+    return EPC_APP_FILTER_OARS_VALUE_UNKNOWN;
+}
+
+/* Check if @error is a D-Bus remote error matching @expected_error_name. */
 static gboolean
 bus_remote_error_matches (const GError *error,
                           const gchar  *expected_error_name)
@@ -325,6 +371,9 @@ get_app_filter_cb (GObject      *obj,
   g_autoptr(EpcAppFilter) app_filter = NULL;
   gboolean is_whitelist;
   g_auto(GStrv) app_list = NULL;
+  const gchar *content_rating_kind;
+  g_autoptr(GVariant) oars_variant = NULL;
+  g_autoptr(GHashTable) oars_map = NULL;
 
   GetAppFilterData *data = g_task_get_task_data (task);
   result_variant = g_dbus_connection_call_finish (connection, result, &local_error);
@@ -350,6 +399,25 @@ get_app_filter_cb (GObject      *obj,
       return;
     }
 
+  if (!g_variant_lookup (properties, "oars-filter", "(&s@a{ss})",
+                         &content_rating_kind, &oars_variant))
+    {
+      /* Default value. */
+      content_rating_kind = "oars-1.0";
+      oars_variant = g_variant_new ("@a{ss} {}");
+    }
+
+  /* Check that the OARS filter is in a format we support. Currently, that’s
+   * only oars-1.0. */
+  if (!g_str_equal (content_rating_kind, "oars-1.0"))
+    {
+      g_task_return_new_error (task, EPC_APP_FILTER_ERROR,
+                               EPC_APP_FILTER_ERROR_INVALID_DATA,
+                               _("OARS filter for user %u has an unrecognized kind ‘%s’"),
+                               data->user_id, content_rating_kind);
+      return;
+    }
+
   /* Success. Create an #EpcAppFilter object to contain the results. */
   app_filter = g_new0 (EpcAppFilter, 1);
   app_filter->ref_count = 1;
@@ -357,6 +425,7 @@ get_app_filter_cb (GObject      *obj,
   app_filter->app_list = g_steal_pointer (&app_list);
   app_filter->app_list_type =
     is_whitelist ? EPC_APP_FILTER_LIST_WHITELIST : EPC_APP_FILTER_LIST_BLACKLIST;
+  app_filter->oars_ratings = g_steal_pointer (&oars_variant);
 
   g_task_return_pointer (task, g_steal_pointer (&app_filter),
                          (GDestroyNotify) epc_app_filter_unref);

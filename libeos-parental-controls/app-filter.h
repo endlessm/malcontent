@@ -33,6 +33,8 @@ G_BEGIN_DECLS
  * @EPC_APP_FILTER_ERROR_INVALID_USER: Given user ID doesn’t exist
  * @EPC_APP_FILTER_ERROR_PERMISSION_DENIED: Not authorized to query the app
  *    filter for the given user
+ * @EPC_APP_FILTER_ERROR_INVALID_DATA: The data stored in the app filter for
+ *    a user is inconsistent or invalid
  *
  * Errors which can be returned by epc_get_app_filter_async().
  *
@@ -42,10 +44,37 @@ typedef enum
 {
   EPC_APP_FILTER_ERROR_INVALID_USER,
   EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
+  EPC_APP_FILTER_ERROR_INVALID_DATA,
 } EpcAppFilterError;
 
 GQuark epc_app_filter_error_quark (void);
 #define EPC_APP_FILTER_ERROR epc_app_filter_error_quark ()
+
+/**
+ * EpcAppFilterOarsValue:
+ * @EPC_APP_FILTER_OARS_VALUE_UNKNOWN: Unknown value for the given
+ *    section.
+ * @EPC_APP_FILTER_OARS_VALUE_NONE: No rating for the given section.
+ * @EPC_APP_FILTER_OARS_VALUE_MILD: Mild rating for the given section.
+ * @EPC_APP_FILTER_OARS_VALUE_MODERATE: Moderate rating for the given
+ *    section.
+ * @EPC_APP_FILTER_OARS_VALUE_INTENSE: Intense rating for the given
+ *    section.
+ *
+ * Rating values of the intensity of a given section in an app or game.
+ * These are directly equivalent to the values in the #AsContentRatingValue
+ * enumeration in libappstream.
+ *
+ * Since: 0.1.0
+ */
+typedef enum
+{
+  EPC_APP_FILTER_OARS_VALUE_UNKNOWN,
+  EPC_APP_FILTER_OARS_VALUE_NONE,
+  EPC_APP_FILTER_OARS_VALUE_MILD,
+  EPC_APP_FILTER_OARS_VALUE_MODERATE,
+  EPC_APP_FILTER_OARS_VALUE_INTENSE,
+} EpcAppFilterOarsValue;
 
 /**
  * EpcAppFilter:
@@ -71,6 +100,9 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilter, epc_app_filter_unref)
 uid_t    epc_app_filter_get_user_id     (EpcAppFilter *filter);
 gboolean epc_app_filter_is_path_allowed (EpcAppFilter *filter,
                                          const gchar  *path);
+
+EpcAppFilterOarsValue epc_app_filter_get_oars_value (EpcAppFilter *filter,
+                                                     const gchar  *oars_section);
 
 void          epc_get_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
