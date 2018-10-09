@@ -95,6 +95,23 @@ def __lookup_user_id_or_error(user):
         raise SystemExit(EXIT_INVALID_OPTION)
 
 
+def __oars_value_to_string(value):
+    """Convert an EosParentalControls.AppFilterOarsValue to a human-readable
+    string."""
+    mapping = {
+        EosParentalControls.AppFilterOarsValue.UNKNOWN: "unknown",
+        EosParentalControls.AppFilterOarsValue.NONE: "none",
+        EosParentalControls.AppFilterOarsValue.MILD: "mild",
+        EosParentalControls.AppFilterOarsValue.MODERATE: "moderate",
+        EosParentalControls.AppFilterOarsValue.INTENSE: "intense",
+    }
+
+    try:
+        return mapping[value]
+    except KeyError:
+        return "invalid (OARS value {})".format(value)
+
+
 def command_get(user, quiet=False, interactive=True):
     """Get the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
@@ -119,6 +136,17 @@ def command_check(user, path, quiet=False, interactive=True):
         print('Path {} is not allowed by app filter for user {}'.format(
             path, user_id))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
+
+
+def command_oars_section(user, section, quiet=False, interactive=True):
+    """Get the value of the given OARS section for the given user, according
+    to their OARS filter."""
+    user_id = __lookup_user_id_or_error(user)
+    app_filter = __get_app_filter_or_error(user_id, interactive)
+
+    value = app_filter.get_oars_value(section)
+    print('OARS section ‘{}’ for user {} has value ‘{}’'.format(
+        section, user_id, __oars_value_to_string(value)))
 
 
 def main():
@@ -163,6 +191,18 @@ def main():
                                    'for (default: current user)')
     parser_check.add_argument('path',
                               help='path to a program to check')
+
+    # ‘oars-section’ command
+    parser_oars_section = subparsers.add_parser('oars-section',
+                                                parents=[common_parser],
+                                                help='get the value of a '
+                                                     'given OARS section')
+    parser_oars_section.set_defaults(function=command_oars_section)
+    parser_oars_section.add_argument('user', default='', nargs='?',
+                                     help='user ID or username to get the '
+                                          'OARS filter for (default: current '
+                                          'user)')
+    parser_oars_section.add_argument('section', help='OARS section to get')
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()
