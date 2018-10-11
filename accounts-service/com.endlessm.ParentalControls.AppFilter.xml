@@ -41,7 +41,7 @@
 
       It’s a two-tuple of the rating type, and a dictionary of rating sections
       and values. The type gives the rating scheme in use — currently only
-      `oars-1.0` is supported.
+      `oars-1.0` and `oars-1.1` are supported.
 
       Each dictionary entry is a mapping from an OARS section to the
       most severe value for it which the user is allowed to see (inclusive). Any
@@ -57,7 +57,7 @@
     -->
     <property name="oars-filter" type="(sa{ss})" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue"
-        value="('oars-1.0', @a{ss} {})"/>
+        value="('oars-1.1', @a{ss} {})"/>
     </property>
   </interface>
 </node>
