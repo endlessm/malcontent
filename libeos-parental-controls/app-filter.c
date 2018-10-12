@@ -129,7 +129,7 @@ epc_app_filter_get_user_id (EpcAppFilter *filter)
 /**
  * epc_app_filter_is_path_allowed:
  * @filter: an #EpcAppFilter
- * @path: absolute path of a program to check
+ * @path: (type filename): absolute path of a program to check
  *
  * Check whether the program at @path is allowed to be run according to this
  * app filter. @path will be canonicalised without doing any I/O.
