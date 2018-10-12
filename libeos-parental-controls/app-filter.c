@@ -403,13 +403,14 @@ get_app_filter_cb (GObject      *obj,
                          &content_rating_kind, &oars_variant))
     {
       /* Default value. */
-      content_rating_kind = "oars-1.0";
+      content_rating_kind = "oars-1.1";
       oars_variant = g_variant_new ("@a{ss} {}");
     }
 
   /* Check that the OARS filter is in a format we support. Currently, that’s
-   * only oars-1.0. */
-  if (!g_str_equal (content_rating_kind, "oars-1.0"))
+   * only oars-1.0 and oars-1.1. */
+  if (!g_str_equal (content_rating_kind, "oars-1.0") &&
+      !g_str_equal (content_rating_kind, "oars-1.1"))
     {
       g_task_return_new_error (task, EPC_APP_FILTER_ERROR,
                                EPC_APP_FILTER_ERROR_INVALID_DATA,
