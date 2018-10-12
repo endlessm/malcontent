@@ -57,7 +57,7 @@ struct _EpcAppFilter
   gchar **app_list;  /* (owned) (array zero-terminated=1) */
   EpcAppFilterListType app_list_type;
 
-  GVariant *oars_ratings;  /* (type a{ss}) (owned) */
+  GVariant *oars_ratings;  /* (type a{ss}) (owned non-floating) */
 };
 
 G_DEFINE_BOXED_TYPE (EpcAppFilter, epc_app_filter,
