@@ -113,4 +113,72 @@ void          epc_get_app_filter_async  (GDBusConnection      *connection,
 EpcAppFilter *epc_get_app_filter_finish (GAsyncResult         *result,
                                          GError              **error);
 
+void          epc_set_app_filter_async  (GDBusConnection      *connection,
+                                         uid_t                 user_id,
+                                         EpcAppFilter         *app_filter,
+                                         gboolean              allow_interactive_authorization,
+                                         GCancellable         *cancellable,
+                                         GAsyncReadyCallback   callback,
+                                         gpointer              user_data);
+gboolean      epc_set_app_filter_finish (GAsyncResult         *result,
+                                         GError              **error);
+
+/**
+ * EpcAppFilterBuilder:
+ *
+ * #EpcAppFilterBuilder is a stack-allocated mutable structure used to build an
+ * #EpcAppFilter instance. Use epc_app_filter_builder_init(), various method
+ * calls to set properties of the app filter, and then
+ * epc_app_filter_builder_end(), to construct an #EpcAppFilter.
+ *
+ * Since: 0.1.0
+ */
+typedef struct
+{
+  /*< private >*/
+  gpointer p0;
+  gpointer p1;
+} EpcAppFilterBuilder;
+
+GType epc_app_filter_builder_get_type (void);
+
+/**
+ * EPC_APP_FILTER_BUILDER_INIT:
+ *
+ * Initialise a stack-allocated #EpcAppFilterBuilder instance at declaration
+ * time.
+ *
+ * This is typically used with g_auto():
+ * |[
+ * g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
+ * ]|
+ *
+ * Since: 0.1.0
+ */
+#define EPC_APP_FILTER_BUILDER_INIT() \
+  { \
+    g_ptr_array_new_with_free_func (g_free), \
+    g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL) \
+  }
+
+void epc_app_filter_builder_init  (EpcAppFilterBuilder *builder);
+void epc_app_filter_builder_clear (EpcAppFilterBuilder *builder);
+
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (EpcAppFilterBuilder,
+                                  epc_app_filter_builder_clear)
+
+EpcAppFilterBuilder *epc_app_filter_builder_new  (void);
+EpcAppFilterBuilder *epc_app_filter_builder_copy (EpcAppFilterBuilder *builder);
+void                 epc_app_filter_builder_free (EpcAppFilterBuilder *builder);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilterBuilder, epc_app_filter_builder_free)
+
+EpcAppFilter *epc_app_filter_builder_end (EpcAppFilterBuilder *builder);
+
+void epc_app_filter_builder_blacklist_path (EpcAppFilterBuilder   *builder,
+                                            const gchar           *path);
+void epc_app_filter_builder_set_oars_value (EpcAppFilterBuilder   *builder,
+                                            const gchar           *oars_section,
+                                            EpcAppFilterOarsValue  value);
+
 G_END_DECLS
