@@ -72,46 +72,6 @@ def __get_app_filter_or_error(user_id, interactive):
         raise SystemExit(EXIT_PERMISSION_DENIED)
 
 
-def __set_app_filter(user_id, app_filter, interactive):
-    """Set the app filter for `user_id` off the bus.
-
-    If `interactive` is `True`, interactive polkit authorisation dialogues will
-    be allowed. An exception will be raised on failure."""
-    finished = False
-    exception = None
-
-    def __set_cb(obj, result, user_data):
-        nonlocal finished, exception
-        try:
-            EosParentalControls.set_app_filter_finish(result)
-            finished = True
-        except Exception as e:
-            exception = e
-
-    EosParentalControls.set_app_filter_async(
-        connection=None, user_id=user_id, app_filter=app_filter,
-        allow_interactive_authorization=interactive, cancellable=None,
-        callback=__set_cb, user_data=None)
-
-    context = GLib.MainContext.default()
-    while not finished and not exception:
-        context.iteration(True)
-
-    if exception:
-        raise exception
-
-
-def __set_app_filter_or_error(user_id, app_filter, interactive):
-    """Wrapper around __set_app_filter() which prints an error and raises
-    SystemExit, rather than an internal exception."""
-    try:
-        __set_app_filter(user_id, app_filter, interactive)
-    except GLib.Error as e:
-        print('Error setting app filter for user {}: {}'.format(
-            user_id, e.message), file=sys.stderr)
-        raise SystemExit(EXIT_PERMISSION_DENIED)
-
-
 def __lookup_user_id(user):
     """Convert a command-line specified username or ID into a user ID. If
     `user` is empty, use the current user ID.
@@ -135,31 +95,21 @@ def __lookup_user_id_or_error(user):
         raise SystemExit(EXIT_INVALID_OPTION)
 
 
-oars_value_mapping = {
-    EosParentalControls.AppFilterOarsValue.UNKNOWN: "unknown",
-    EosParentalControls.AppFilterOarsValue.NONE: "none",
-    EosParentalControls.AppFilterOarsValue.MILD: "mild",
-    EosParentalControls.AppFilterOarsValue.MODERATE: "moderate",
-    EosParentalControls.AppFilterOarsValue.INTENSE: "intense",
-}
-
-
 def __oars_value_to_string(value):
     """Convert an EosParentalControls.AppFilterOarsValue to a human-readable
     string."""
+    mapping = {
+        EosParentalControls.AppFilterOarsValue.UNKNOWN: "unknown",
+        EosParentalControls.AppFilterOarsValue.NONE: "none",
+        EosParentalControls.AppFilterOarsValue.MILD: "mild",
+        EosParentalControls.AppFilterOarsValue.MODERATE: "moderate",
+        EosParentalControls.AppFilterOarsValue.INTENSE: "intense",
+    }
+
     try:
-        return oars_value_mapping[value]
+        return mapping[value]
     except KeyError:
         return "invalid (OARS value {})".format(value)
-
-
-def __oars_value_from_string(value_str):
-    """Convert a human-readable string to an
-    EosParentalControls.AppFilterOarsValue."""
-    for k, v in oars_value_mapping.items():
-        if v == value_str:
-            return k
-    raise KeyError('Unknown OARS value ‘{}’'.format(value_str))
 
 
 def command_get(user, quiet=False, interactive=True):
@@ -197,30 +147,6 @@ def command_oars_section(user, section, quiet=False, interactive=True):
     value = app_filter.get_oars_value(section)
     print('OARS section ‘{}’ for user {} has value ‘{}’'.format(
         section, user_id, __oars_value_to_string(value)))
-
-
-def command_set(user, app_filter_args=None, quiet=False, interactive=True):
-    """Set the app filter for the given user."""
-    user_id = __lookup_user_id_or_error(user)
-    builder = EosParentalControls.AppFilterBuilder.new()
-
-    for arg in app_filter_args:
-        if '=' in arg:
-            [section, value_str] = arg.split('=', 2)
-            try:
-                value = __oars_value_from_string(value_str)
-            except KeyError:
-                print('Unknown OARS value ‘{}’'.format(value_str),
-                      file=sys.stderr)
-                raise SystemExit(EXIT_INVALID_OPTION)
-            builder.set_oars_value(section, value)
-        else:
-            builder.blacklist_path(arg)
-    app_filter = builder.end()
-
-    __set_app_filter_or_error(user_id, app_filter, interactive)
-
-    print('App filter for user {} set'.format(user_id))
 
 
 def main():
@@ -277,18 +203,6 @@ def main():
                                           'OARS filter for (default: current '
                                           'user)')
     parser_oars_section.add_argument('section', help='OARS section to get')
-
-    # ‘set’ command
-    parser_set = subparsers.add_parser('set', parents=[common_parser],
-                                       help='set current parental controls '
-                                            'settings')
-    parser_set.set_defaults(function=command_set)
-    parser_set.add_argument('user', default='', nargs='?',
-                            help='user ID or username to get the app filter '
-                                 'for (default: current user)')
-    parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths to blacklist and OARS section=value '
-                                 'pairs to store')
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()
