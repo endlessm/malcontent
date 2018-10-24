@@ -237,14 +237,14 @@ bus_error_to_app_filter_error (const GError *bus_error,
     return g_error_copy (bus_error);
 }
 
-static void get_bus_cb        (GObject         *obj,
-                               GAsyncResult    *result,
-                               gpointer         user_data);
-static void get_app_filter    (GDBusConnection *connection,
-                               GTask           *task);
-static void get_app_filter_cb (GObject         *obj,
-                               GAsyncResult    *result,
-                               gpointer         user_data);
+static void get_app_filter_get_bus_cb (GObject         *obj,
+                                       GAsyncResult    *result,
+                                       gpointer         user_data);
+static void get_app_filter            (GDBusConnection *connection,
+                                       GTask           *task);
+static void get_app_filter_cb         (GObject         *obj,
+                                       GAsyncResult    *result,
+                                       gpointer         user_data);
 
 typedef struct
 {
@@ -309,15 +309,15 @@ epc_get_app_filter_async  (GDBusConnection     *connection,
 
   if (connection == NULL)
     g_bus_get (G_BUS_TYPE_SYSTEM, cancellable,
-               get_bus_cb, g_steal_pointer (&task));
+               get_app_filter_get_bus_cb, g_steal_pointer (&task));
   else
     get_app_filter (connection, g_steal_pointer (&task));
 }
 
 static void
-get_bus_cb (GObject      *obj,
-            GAsyncResult *result,
-            gpointer      user_data)
+get_app_filter_get_bus_cb (GObject      *obj,
+                           GAsyncResult *result,
+                           gpointer      user_data)
 {
   g_autoptr(GTask) task = G_TASK (user_data);
   g_autoptr(GDBusConnection) connection = NULL;
