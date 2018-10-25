@@ -171,20 +171,28 @@ def command_get(user, quiet=False, interactive=True):
 
 
 def command_check(user, path, quiet=False, interactive=True):
-    """Check the given path is runnable by the given user, according to their
-    app filter."""
+    """Check the given path or flatpak ref is runnable by the given user,
+    according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    path = os.path.abspath(path)
+    if path.startswith('app/') or path.startswith('runtime/'):
+        # Flatpak ref
+        is_allowed = app_filter.is_flatpak_ref_allowed(path)
+        noun = 'Flatpak ref'
+    else:
+        # File system path
+        path = os.path.abspath(path)
+        is_allowed = app_filter.is_path_allowed(path)
+        noun = 'Path'
 
-    if app_filter.is_path_allowed(path):
-        print('Path {} is allowed by app filter for user {}'.format(
-            path, user_id))
+    if is_allowed:
+        print('{} {} is allowed by app filter for user {}'.format(
+            noun, path, user_id))
         return
     else:
-        print('Path {} is not allowed by app filter for user {}'.format(
-            path, user_id))
+        print('{} {} is not allowed by app filter for user {}'.format(
+            noun, path, user_id))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
@@ -214,6 +222,8 @@ def command_set(user, app_filter_args=None, quiet=False, interactive=True):
                       file=sys.stderr)
                 raise SystemExit(EXIT_INVALID_OPTION)
             builder.set_oars_value(section, value)
+        elif arg.startswith('app/') or arg.startswith('runtime/'):
+            builder.blacklist_flatpak_ref(arg)
         else:
             builder.blacklist_path(arg)
     app_filter = builder.end()

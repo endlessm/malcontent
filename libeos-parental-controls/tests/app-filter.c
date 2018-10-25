@@ -102,6 +102,9 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   epc_app_filter_builder_blacklist_path (fixture->builder, "/bin/true");
   epc_app_filter_builder_blacklist_path (fixture->builder, "/usr/bin/gnome-software");
 
+  epc_app_filter_builder_blacklist_flatpak_ref (fixture->builder,
+                                                "app/org.doom.Doom/x86_64/master");
+
   epc_app_filter_builder_set_oars_value (fixture->builder, "drugs-alcohol",
                                          EPC_APP_FILTER_OARS_VALUE_MILD);
   epc_app_filter_builder_set_oars_value (fixture->builder, "language-humor",
@@ -112,6 +115,11 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (epc_app_filter_is_path_allowed (filter,
                                                   "/usr/bin/gnome-software"));
+
+  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+                                                        "app/org.gnome.Ponies/x86_64/master"));
+  g_assert_false (epc_app_filter_is_flatpak_ref_allowed (filter,
+                                                         "app/org.doom.Doom/x86_64/master"));
 
   g_assert_cmpint (epc_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
                    EPC_APP_FILTER_OARS_VALUE_MILD);
@@ -133,6 +141,11 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
   g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_true (epc_app_filter_is_path_allowed (filter,
                                                  "/usr/bin/gnome-software"));
+
+  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+                                                        "app/org.gnome.Ponies/x86_64/master"));
+  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+                                                        "app/org.doom.Doom/x86_64/master"));
 
   g_assert_cmpint (epc_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
                    EPC_APP_FILTER_OARS_VALUE_UNKNOWN);

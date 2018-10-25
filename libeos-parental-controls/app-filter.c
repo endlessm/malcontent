@@ -163,6 +163,40 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
 }
 
 /**
+ * epc_app_filter_is_flatpak_ref_allowed:
+ * @filter: an #EpcAppFilter
+ * @app_ref: flatpak ref for the app
+ *
+ * Check whether the flatpak app with the given @app_ref is allowed to be run
+ * according to this app filter.
+ *
+ * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
+ *    flatpak called @app_ref according to the @filter policy; %FALSE otherwise
+ * Since: 0.1.0
+ */
+gboolean
+epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
+                                       const gchar  *app_ref)
+{
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+  g_return_val_if_fail (app_ref != NULL, FALSE);
+
+  gboolean ref_in_list = g_strv_contains ((const gchar * const *) filter->app_list,
+                                          app_ref);
+
+  switch (filter->app_list_type)
+    {
+    case EPC_APP_FILTER_LIST_BLACKLIST:
+      return !ref_in_list;
+    case EPC_APP_FILTER_LIST_WHITELIST:
+      return ref_in_list;
+    default:
+      g_assert_not_reached ();
+    }
+}
+
+/**
  * epc_app_filter_get_oars_value:
  * @filter: an #EpcAppFilter
  * @oars_section: name of the OARS section to get the value from
@@ -975,6 +1009,32 @@ epc_app_filter_builder_blacklist_path (EpcAppFilterBuilder *builder,
   if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
                                          canonical_path, g_str_equal, NULL))
     g_ptr_array_add (_builder->paths_blacklist, g_steal_pointer (&canonical_path));
+}
+
+/**
+ * epc_app_filter_builder_blacklist_flatpak_ref:
+ * @builder: an initialised #EpcAppFilterBuilder
+ * @app_ref: a flatpak app ref to blacklist
+ *
+ * Add @app_ref to the blacklist of flatpak refs in the filter under
+ * construction. The @app_ref will not be added again if it’s already been
+ * added.
+ *
+ * Since: 0.1.0
+ */
+void
+epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
+                                              const gchar         *app_ref)
+{
+  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+  g_return_if_fail (_builder->paths_blacklist != NULL);
+  g_return_if_fail (app_ref != NULL);
+
+  if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
+                                         app_ref, g_str_equal, NULL))
+    g_ptr_array_add (_builder->paths_blacklist, g_strdup (app_ref));
 }
 
 /**

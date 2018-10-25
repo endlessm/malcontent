@@ -97,9 +97,11 @@ void          epc_app_filter_unref (EpcAppFilter *filter);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilter, epc_app_filter_unref)
 
-uid_t    epc_app_filter_get_user_id     (EpcAppFilter *filter);
-gboolean epc_app_filter_is_path_allowed (EpcAppFilter *filter,
-                                         const gchar  *path);
+uid_t    epc_app_filter_get_user_id            (EpcAppFilter *filter);
+gboolean epc_app_filter_is_path_allowed        (EpcAppFilter *filter,
+                                                const gchar  *path);
+gboolean epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
+                                                const gchar  *flatpak_ref);
 
 EpcAppFilterOarsValue epc_app_filter_get_oars_value (EpcAppFilter *filter,
                                                      const gchar  *oars_section);
@@ -177,10 +179,12 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilterBuilder, epc_app_filter_builder_free)
 
 EpcAppFilter *epc_app_filter_builder_end (EpcAppFilterBuilder *builder);
 
-void epc_app_filter_builder_blacklist_path (EpcAppFilterBuilder   *builder,
-                                            const gchar           *path);
-void epc_app_filter_builder_set_oars_value (EpcAppFilterBuilder   *builder,
-                                            const gchar           *oars_section,
-                                            EpcAppFilterOarsValue  value);
+void epc_app_filter_builder_blacklist_path        (EpcAppFilterBuilder   *builder,
+                                                   const gchar           *path);
+void epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
+                                                   const gchar         *app_ref);
+void epc_app_filter_builder_set_oars_value        (EpcAppFilterBuilder   *builder,
+                                                   const gchar           *oars_section,
+                                                   EpcAppFilterOarsValue  value);
 
 G_END_DECLS
