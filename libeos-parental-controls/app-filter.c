@@ -332,8 +332,8 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * @user_id: ID of the user to query, typically coming from getuid()
  * @allow_interactive_authorization: %TRUE to allow interactive polkit
  *    authorization dialogues to be displayed during the call; %FALSE otherwise
- * @callback: a #GAsyncReadyCallback
  * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: a #GAsyncReadyCallback
  * @user_data: user data to pass to @callback
  *
  * Asynchronously get a snapshot of the app filter settings for the given
@@ -561,8 +561,8 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  * @app_filter: (transfer none): the app filter to set for the user
  * @allow_interactive_authorization: %TRUE to allow interactive polkit
  *    authorization dialogues to be displayed during the call; %FALSE otherwise
- * @callback: a #GAsyncReadyCallback
  * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: a #GAsyncReadyCallback
  * @user_data: user data to pass to @callback
  *
  * Asynchronously set the app filter settings for the given @user_id to the
