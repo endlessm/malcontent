@@ -302,17 +302,124 @@ bus_error_to_app_filter_error (const GError *bus_error,
     return g_error_copy (bus_error);
 }
 
-static void get_app_filter_get_bus_cb (GObject         *obj,
-                                       GAsyncResult    *result,
-                                       gpointer         user_data);
-static void get_app_filter            (GDBusConnection *connection,
-                                       GTask           *task);
-static void get_app_filter_cb         (GObject         *obj,
-                                       GAsyncResult    *result,
-                                       gpointer         user_data);
+/**
+ * epc_get_app_filter:
+ * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
+ *    use the default
+ * @user_id: ID of the user to query, typically coming from getuid()
+ * @allow_interactive_authorization: %TRUE to allow interactive polkit
+ *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @error: return location for a #GError, or %NULL
+ *
+ * Synchronous version of epc_get_app_filter_async().
+ *
+ * Returns: (transfer full): app filter for the queried user
+ * Since: 0.1.0
+ */
+EpcAppFilter *
+epc_get_app_filter (GDBusConnection  *connection,
+                    uid_t             user_id,
+                    gboolean          allow_interactive_authorization,
+                    GCancellable     *cancellable,
+                    GError          **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) result_variant = NULL;
+  g_autoptr(GVariant) properties = NULL;
+  g_autoptr(GError) local_error = NULL;
+  g_autoptr(EpcAppFilter) app_filter = NULL;
+  gboolean is_whitelist;
+  g_auto(GStrv) app_list = NULL;
+  const gchar *content_rating_kind;
+  g_autoptr(GVariant) oars_variant = NULL;
+  g_autoptr(GHashTable) oars_map = NULL;
+
+  g_return_val_if_fail (connection == NULL || G_IS_DBUS_CONNECTION (connection), NULL);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  if (connection == NULL)
+    connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, cancellable, error);
+  if (connection == NULL)
+    return NULL;
+
+  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", user_id);
+  result_variant =
+      g_dbus_connection_call_sync (connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "GetAll",
+                                   g_variant_new ("(s)", "com.endlessm.ParentalControls.AppFilter"),
+                                   G_VARIANT_TYPE ("(a{sv})"),
+                                   allow_interactive_authorization
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
+                                                                          user_id);
+      g_propagate_error (error, g_steal_pointer (&app_filter_error));
+      return NULL;
+    }
+
+  /* Extract the properties we care about. They may be silently omitted from the
+   * results if we don’t have permission to access them. */
+  properties = g_variant_get_child_value (result_variant, 0);
+  if (!g_variant_lookup (properties, "app-filter", "(b^as)",
+                         &is_whitelist, &app_list))
+    {
+      g_set_error (error, EPC_APP_FILTER_ERROR,
+                   EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
+                   _("Not allowed to query app filter data for user %u"),
+                   user_id);
+      return NULL;
+    }
+
+  if (!g_variant_lookup (properties, "oars-filter", "(&s@a{ss})",
+                         &content_rating_kind, &oars_variant))
+    {
+      /* Default value. */
+      content_rating_kind = "oars-1.1";
+      oars_variant = g_variant_new ("@a{ss} {}");
+    }
+
+  /* Check that the OARS filter is in a format we support. Currently, that’s
+   * only oars-1.0 and oars-1.1. */
+  if (!g_str_equal (content_rating_kind, "oars-1.0") &&
+      !g_str_equal (content_rating_kind, "oars-1.1"))
+    {
+      g_set_error (error, EPC_APP_FILTER_ERROR,
+                   EPC_APP_FILTER_ERROR_INVALID_DATA,
+                   _("OARS filter for user %u has an unrecognized kind ‘%s’"),
+                   user_id, content_rating_kind);
+      return NULL;
+    }
+
+  /* Success. Create an #EpcAppFilter object to contain the results. */
+  app_filter = g_new0 (EpcAppFilter, 1);
+  app_filter->ref_count = 1;
+  app_filter->user_id = user_id;
+  app_filter->app_list = g_steal_pointer (&app_list);
+  app_filter->app_list_type =
+    is_whitelist ? EPC_APP_FILTER_LIST_WHITELIST : EPC_APP_FILTER_LIST_BLACKLIST;
+  app_filter->oars_ratings = g_steal_pointer (&oars_variant);
+
+  return g_steal_pointer (&app_filter);
+}
+
+static void get_app_filter_thread_cb (GTask        *task,
+                                      gpointer      source_object,
+                                      gpointer      task_data,
+                                      GCancellable *cancellable);
 
 typedef struct
 {
+  GDBusConnection *connection;  /* (nullable) (owned) */
   uid_t user_id;
   gboolean allow_interactive_authorization;
 } GetAppFilterData;
@@ -320,6 +427,7 @@ typedef struct
 static void
 get_app_filter_data_free (GetAppFilterData *data)
 {
+  g_clear_object (&data->connection);
   g_free (data);
 }
 
@@ -356,7 +464,6 @@ epc_get_app_filter_async  (GDBusConnection     *connection,
                            GAsyncReadyCallback  callback,
                            gpointer             user_data)
 {
-  g_autoptr(GDBusConnection) connection_owned = NULL;
   g_autoptr(GTask) task = NULL;
   g_autoptr(GetAppFilterData) data = NULL;
 
@@ -367,134 +474,34 @@ epc_get_app_filter_async  (GDBusConnection     *connection,
   g_task_set_source_tag (task, epc_get_app_filter_async);
 
   data = g_new0 (GetAppFilterData, 1);
+  data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
   data->allow_interactive_authorization = allow_interactive_authorization;
   g_task_set_task_data (task, g_steal_pointer (&data),
                         (GDestroyNotify) get_app_filter_data_free);
 
-  if (connection == NULL)
-    g_bus_get (G_BUS_TYPE_SYSTEM, cancellable,
-               get_app_filter_get_bus_cb, g_steal_pointer (&task));
-  else
-    get_app_filter (connection, g_steal_pointer (&task));
+  g_task_run_in_thread (task, get_app_filter_thread_cb);
 }
 
 static void
-get_app_filter_get_bus_cb (GObject      *obj,
-                           GAsyncResult *result,
-                           gpointer      user_data)
+get_app_filter_thread_cb (GTask        *task,
+                          gpointer      source_object,
+                          gpointer      task_data,
+                          GCancellable *cancellable)
 {
-  g_autoptr(GTask) task = G_TASK (user_data);
-  g_autoptr(GDBusConnection) connection = NULL;
+  g_autoptr(EpcAppFilter) filter = NULL;
+  GetAppFilterData *data = task_data;
   g_autoptr(GError) local_error = NULL;
 
-  connection = g_bus_get_finish (result, &local_error);
+  filter = epc_get_app_filter (data->connection, data->user_id,
+                               data->allow_interactive_authorization,
+                               cancellable, &local_error);
 
   if (local_error != NULL)
     g_task_return_error (task, g_steal_pointer (&local_error));
   else
-    get_app_filter (connection, g_steal_pointer (&task));
-}
-
-static void
-get_app_filter (GDBusConnection *connection,
-                GTask           *task)
-{
-  g_autofree gchar *object_path = NULL;
-  GCancellable *cancellable;
-
-  GetAppFilterData *data = g_task_get_task_data (task);
-  cancellable = g_task_get_cancellable (task);
-  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u",
-                                 data->user_id);
-  g_dbus_connection_call (connection,
-                          "org.freedesktop.Accounts",
-                          object_path,
-                          "org.freedesktop.DBus.Properties",
-                          "GetAll",
-                          g_variant_new ("(s)", "com.endlessm.ParentalControls.AppFilter"),
-                          G_VARIANT_TYPE ("(a{sv})"),
-                          data->allow_interactive_authorization
-                            ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                            : G_DBUS_CALL_FLAGS_NONE,
-                          -1,  /* timeout, ms */
-                          cancellable,
-                          get_app_filter_cb,
-                          g_steal_pointer (&task));
-}
-
-static void
-get_app_filter_cb (GObject      *obj,
-                   GAsyncResult *result,
-                   gpointer      user_data)
-{
-  GDBusConnection *connection = G_DBUS_CONNECTION (obj);
-  g_autoptr(GTask) task = G_TASK (user_data);
-  g_autoptr(GVariant) result_variant = NULL;
-  g_autoptr(GVariant) properties = NULL;
-  g_autoptr(GError) local_error = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
-  gboolean is_whitelist;
-  g_auto(GStrv) app_list = NULL;
-  const gchar *content_rating_kind;
-  g_autoptr(GVariant) oars_variant = NULL;
-  g_autoptr(GHashTable) oars_map = NULL;
-
-  GetAppFilterData *data = g_task_get_task_data (task);
-  result_variant = g_dbus_connection_call_finish (connection, result, &local_error);
-
-  if (local_error != NULL)
-    {
-      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                                          data->user_id);
-      g_task_return_error (task, g_steal_pointer (&app_filter_error));
-      return;
-    }
-
-  /* Extract the properties we care about. They may be silently omitted from the
-   * results if we don’t have permission to access them. */
-  properties = g_variant_get_child_value (result_variant, 0);
-  if (!g_variant_lookup (properties, "app-filter", "(b^as)",
-                         &is_whitelist, &app_list))
-    {
-      g_task_return_new_error (task, EPC_APP_FILTER_ERROR,
-                               EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
-                               _("Not allowed to query app filter data for user %u"),
-                               data->user_id);
-      return;
-    }
-
-  if (!g_variant_lookup (properties, "oars-filter", "(&s@a{ss})",
-                         &content_rating_kind, &oars_variant))
-    {
-      /* Default value. */
-      content_rating_kind = "oars-1.1";
-      oars_variant = g_variant_new ("@a{ss} {}");
-    }
-
-  /* Check that the OARS filter is in a format we support. Currently, that’s
-   * only oars-1.0 and oars-1.1. */
-  if (!g_str_equal (content_rating_kind, "oars-1.0") &&
-      !g_str_equal (content_rating_kind, "oars-1.1"))
-    {
-      g_task_return_new_error (task, EPC_APP_FILTER_ERROR,
-                               EPC_APP_FILTER_ERROR_INVALID_DATA,
-                               _("OARS filter for user %u has an unrecognized kind ‘%s’"),
-                               data->user_id, content_rating_kind);
-      return;
-    }
-
-  /* Success. Create an #EpcAppFilter object to contain the results. */
-  app_filter = g_new0 (EpcAppFilter, 1);
-  app_filter->ref_count = 1;
-  app_filter->user_id = data->user_id;
-  app_filter->app_list = g_steal_pointer (&app_list);
-  app_filter->app_list_type =
-    is_whitelist ? EPC_APP_FILTER_LIST_WHITELIST : EPC_APP_FILTER_LIST_BLACKLIST;
-  app_filter->oars_ratings = g_steal_pointer (&oars_variant);
-
-  g_task_return_pointer (task, g_steal_pointer (&app_filter),
-                         (GDestroyNotify) epc_app_filter_unref);
+    g_task_return_pointer (task, g_steal_pointer (&filter),
+                           (GDestroyNotify) epc_app_filter_unref);
 }
 
 /**
@@ -518,36 +525,121 @@ epc_get_app_filter_finish (GAsyncResult  *result,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
-static void set_app_filter_get_bus_cb (GObject         *obj,
-                                       GAsyncResult    *result,
-                                       gpointer         user_data);
-static void set_app_filter            (GDBusConnection *connection,
-                                       GTask           *task);
-static void set_app_filter_cb         (GObject         *obj,
-                                       GAsyncResult    *result,
-                                       gpointer         user_data);
-static void set_oars_filter_cb        (GObject         *obj,
-                                       GAsyncResult    *result,
-                                       gpointer         user_data);
-static void set_app_filter_complete   (GDBusConnection *connection,
-                                       GTask           *task);
+/**
+ * epc_set_app_filter:
+ * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
+ *    use the default
+ * @user_id: ID of the user to set the filter for, typically coming from getuid()
+ * @app_filter: (transfer none): the app filter to set for the user
+ * @allow_interactive_authorization: %TRUE to allow interactive polkit
+ *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @error: return location for a #GError, or %NULL
+ *
+ * Synchronous version of epc_set_app_filter_async().
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ * Since: 0.1.0
+ */
+gboolean
+epc_set_app_filter (GDBusConnection  *connection,
+                    uid_t             user_id,
+                    EpcAppFilter     *app_filter,
+                    gboolean          allow_interactive_authorization,
+                    GCancellable     *cancellable,
+                    GError          **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) app_filter_variant = NULL;
+  g_autoptr(GVariant) oars_filter_variant = NULL;
+  g_autoptr(GVariant) app_filter_result_variant = NULL;
+  g_autoptr(GVariant) oars_filter_result_variant = NULL;
+  g_autoptr(GError) local_error = NULL;
+
+  g_return_val_if_fail (connection == NULL || G_IS_DBUS_CONNECTION (connection), FALSE);
+  g_return_val_if_fail (app_filter != NULL, FALSE);
+  g_return_val_if_fail (app_filter->ref_count >= 1, FALSE);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  if (connection == NULL)
+    connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, cancellable, error);
+  if (connection == NULL)
+    return FALSE;
+
+  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", user_id);
+
+  app_filter_variant = _epc_app_filter_build_app_filter_variant (app_filter);
+  oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
+                                       app_filter->oars_ratings);
+
+  app_filter_result_variant =
+      g_dbus_connection_call_sync (connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "Set",
+                                   g_variant_new ("(ssv)",
+                                                  "com.endlessm.ParentalControls.AppFilter",
+                                                  "app-filter",
+                                                  g_steal_pointer (&app_filter_variant)),
+                                   G_VARIANT_TYPE ("()"),
+                                   allow_interactive_authorization
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      return FALSE;
+    }
+
+  oars_filter_result_variant =
+      g_dbus_connection_call_sync (connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "Set",
+                                   g_variant_new ("(ssv)",
+                                                  "com.endlessm.ParentalControls.AppFilter",
+                                                  "oars-filter",
+                                                  g_steal_pointer (&oars_filter_variant)),
+                                   G_VARIANT_TYPE ("()"),
+                                   allow_interactive_authorization
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+static void set_app_filter_thread_cb (GTask        *task,
+                                      gpointer      source_object,
+                                      gpointer      task_data,
+                                      GCancellable *cancellable);
 
 typedef struct
 {
+  GDBusConnection *connection;  /* (nullable) (owned) */
   uid_t user_id;
   EpcAppFilter *app_filter;  /* (owned) */
   gboolean allow_interactive_authorization;
-
-  GAsyncResult *set_app_filter_result;  /* (nullable) (owned) */
-  GAsyncResult *set_oars_filter_result;  /* (nullable) (owned) */
 } SetAppFilterData;
 
 static void
 set_app_filter_data_free (SetAppFilterData *data)
 {
+  g_clear_object (&data->connection);
   epc_app_filter_unref (data->app_filter);
-  g_clear_object (&data->set_app_filter_result);
-  g_clear_object (&data->set_oars_filter_result);
   g_free (data);
 }
 
@@ -586,7 +678,6 @@ epc_set_app_filter_async (GDBusConnection     *connection,
                           GAsyncReadyCallback  callback,
                           gpointer             user_data)
 {
-  g_autoptr(GDBusConnection) connection_owned = NULL;
   g_autoptr(GTask) task = NULL;
   g_autoptr(SetAppFilterData) data = NULL;
 
@@ -605,148 +696,28 @@ epc_set_app_filter_async (GDBusConnection     *connection,
   g_task_set_task_data (task, g_steal_pointer (&data),
                         (GDestroyNotify) set_app_filter_data_free);
 
-  if (connection == NULL)
-    g_bus_get (G_BUS_TYPE_SYSTEM, cancellable,
-               set_app_filter_get_bus_cb, g_steal_pointer (&task));
-  else
-    set_app_filter (connection, g_steal_pointer (&task));
+  g_task_run_in_thread (task, set_app_filter_thread_cb);
 }
 
 static void
-set_app_filter_get_bus_cb (GObject      *obj,
-                           GAsyncResult *result,
-                           gpointer      user_data)
+set_app_filter_thread_cb (GTask        *task,
+                          gpointer      source_object,
+                          gpointer      task_data,
+                          GCancellable *cancellable)
 {
-  g_autoptr(GTask) task = G_TASK (user_data);
-  g_autoptr(GDBusConnection) connection = NULL;
+  gboolean success;
+  SetAppFilterData *data = task_data;
   g_autoptr(GError) local_error = NULL;
 
-  connection = g_bus_get_finish (result, &local_error);
+  success = epc_set_app_filter (data->connection, data->user_id,
+                                data->app_filter,
+                                data->allow_interactive_authorization,
+                                cancellable, &local_error);
 
   if (local_error != NULL)
     g_task_return_error (task, g_steal_pointer (&local_error));
   else
-    set_app_filter (connection, g_steal_pointer (&task));
-}
-
-static void
-set_app_filter (GDBusConnection *connection,
-                GTask           *task)
-{
-  g_autofree gchar *object_path = NULL;
-  g_autoptr(GVariant) app_filter_variant = NULL;
-  g_autoptr(GVariant) oars_filter_variant = NULL;
-  GCancellable *cancellable;
-
-  SetAppFilterData *data = g_task_get_task_data (task);
-  cancellable = g_task_get_cancellable (task);
-  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u",
-                                 data->user_id);
-
-  app_filter_variant = _epc_app_filter_build_app_filter_variant (data->app_filter);
-  oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
-                                       data->app_filter->oars_ratings);
-
-  g_dbus_connection_call (connection,
-                          "org.freedesktop.Accounts",
-                          object_path,
-                          "org.freedesktop.DBus.Properties",
-                          "Set",
-                          g_variant_new ("(ssv)",
-                                         "com.endlessm.ParentalControls.AppFilter",
-                                         "app-filter",
-                                         g_steal_pointer (&app_filter_variant)),
-                          G_VARIANT_TYPE ("()"),
-                          data->allow_interactive_authorization
-                            ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                            : G_DBUS_CALL_FLAGS_NONE,
-                          -1,  /* timeout, ms */
-                          cancellable,
-                          set_app_filter_cb,
-                          g_object_ref (task));
-  g_dbus_connection_call (connection,
-                          "org.freedesktop.Accounts",
-                          object_path,
-                          "org.freedesktop.DBus.Properties",
-                          "Set",
-                          g_variant_new ("(ssv)",
-                                         "com.endlessm.ParentalControls.AppFilter",
-                                         "oars-filter",
-                                         g_steal_pointer (&oars_filter_variant)),
-                          G_VARIANT_TYPE ("()"),
-                          data->allow_interactive_authorization
-                            ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                            : G_DBUS_CALL_FLAGS_NONE,
-                          -1,  /* timeout, ms */
-                          cancellable,
-                          set_oars_filter_cb,
-                          g_object_ref (task));
-}
-
-static void
-set_app_filter_cb (GObject      *obj,
-                   GAsyncResult *result,
-                   gpointer      user_data)
-{
-  GDBusConnection *connection = G_DBUS_CONNECTION (obj);
-  g_autoptr(GTask) task = G_TASK (user_data);
-
-  SetAppFilterData *data = g_task_get_task_data (task);
-  g_assert (data->set_app_filter_result == NULL);
-  data->set_app_filter_result = g_object_ref (result);
-  set_app_filter_complete (connection, task);
-}
-
-static void
-set_oars_filter_cb (GObject      *obj,
-                    GAsyncResult *result,
-                    gpointer      user_data)
-{
-  GDBusConnection *connection = G_DBUS_CONNECTION (obj);
-  g_autoptr(GTask) task = G_TASK (user_data);
-
-  SetAppFilterData *data = g_task_get_task_data (task);
-  g_assert (data->set_oars_filter_result == NULL);
-  data->set_oars_filter_result = g_object_ref (result);
-  set_app_filter_complete (connection, task);
-}
-
-static void
-set_app_filter_complete (GDBusConnection *connection,
-                         GTask           *task)
-{
-  g_autoptr(GVariant) app_filter_result_variant = NULL;
-  g_autoptr(GVariant) oars_filter_result_variant = NULL;
-  g_autoptr(GError) app_filter_error = NULL;
-  g_autoptr(GError) oars_filter_error = NULL;
-
-  SetAppFilterData *data = g_task_get_task_data (task);
-
-  if (data->set_app_filter_result == NULL ||
-      data->set_oars_filter_result == NULL)
-    return;
-
-  app_filter_result_variant = g_dbus_connection_call_finish (connection,
-                                                             data->set_app_filter_result,
-                                                             &app_filter_error);
-  oars_filter_result_variant = g_dbus_connection_call_finish (connection,
-                                                              data->set_oars_filter_result,
-                                                              &oars_filter_error);
-
-  if (app_filter_error != NULL)
-    {
-      g_task_return_error (task, bus_error_to_app_filter_error (app_filter_error,
-                                                                data->user_id));
-      return;
-    }
-  if (oars_filter_error != NULL)
-    {
-      g_task_return_error (task, bus_error_to_app_filter_error (oars_filter_error,
-                                                                data->user_id));
-      return;
-    }
-
-  g_task_return_boolean (task, TRUE);
+    g_task_return_boolean (task, success);
 }
 
 /**

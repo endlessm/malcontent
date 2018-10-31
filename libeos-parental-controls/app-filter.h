@@ -106,6 +106,11 @@ gboolean epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
 EpcAppFilterOarsValue epc_app_filter_get_oars_value (EpcAppFilter *filter,
                                                      const gchar  *oars_section);
 
+EpcAppFilter *epc_get_app_filter        (GDBusConnection      *connection,
+                                         uid_t                 user_id,
+                                         gboolean              allow_interactive_authorization,
+                                         GCancellable         *cancellable,
+                                         GError              **error);
 void          epc_get_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          gboolean              allow_interactive_authorization,
@@ -115,6 +120,12 @@ void          epc_get_app_filter_async  (GDBusConnection      *connection,
 EpcAppFilter *epc_get_app_filter_finish (GAsyncResult         *result,
                                          GError              **error);
 
+gboolean      epc_set_app_filter        (GDBusConnection      *connection,
+                                         uid_t                 user_id,
+                                         EpcAppFilter         *app_filter,
+                                         gboolean              allow_interactive_authorization,
+                                         GCancellable         *cancellable,
+                                         GError              **error);
 void          epc_set_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          EpcAppFilter         *app_filter,
