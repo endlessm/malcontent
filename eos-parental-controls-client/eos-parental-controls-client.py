@@ -37,28 +37,9 @@ def __get_app_filter(user_id, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
-    app_filter = None
-    exception = None
-
-    def __get_cb(obj, result, user_data):
-        nonlocal app_filter, exception
-        try:
-            app_filter = EosParentalControls.get_app_filter_finish(result)
-        except Exception as e:
-            exception = e
-
-    EosParentalControls.get_app_filter_async(
+    return EosParentalControls.get_app_filter(
         connection=None, user_id=user_id,
-        allow_interactive_authorization=interactive, cancellable=None,
-        callback=__get_cb, user_data=None)
-
-    context = GLib.MainContext.default()
-    while not app_filter and not exception:
-        context.iteration(True)
-
-    if exception:
-        raise exception
-    return app_filter
+        allow_interactive_authorization=interactive, cancellable=None)
 
 
 def __get_app_filter_or_error(user_id, interactive):
@@ -77,28 +58,9 @@ def __set_app_filter(user_id, app_filter, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
-    finished = False
-    exception = None
-
-    def __set_cb(obj, result, user_data):
-        nonlocal finished, exception
-        try:
-            EosParentalControls.set_app_filter_finish(result)
-            finished = True
-        except Exception as e:
-            exception = e
-
-    EosParentalControls.set_app_filter_async(
+    EosParentalControls.set_app_filter(
         connection=None, user_id=user_id, app_filter=app_filter,
-        allow_interactive_authorization=interactive, cancellable=None,
-        callback=__set_cb, user_data=None)
-
-    context = GLib.MainContext.default()
-    while not finished and not exception:
-        context.iteration(True)
-
-    if exception:
-        raise exception
+        allow_interactive_authorization=interactive, cancellable=None)
 
 
 def __set_app_filter_or_error(user_id, app_filter, interactive):
