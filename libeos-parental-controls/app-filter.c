@@ -302,6 +302,47 @@ bus_error_to_app_filter_error (const GError *bus_error,
     return g_error_copy (bus_error);
 }
 
+/* Find the object path for the given @user_id on the accountsservice D-Bus
+ * interface, by calling its FindUserById() method. This is a synchronous,
+ * blocking function. */
+static gchar *
+accounts_find_user_by_id (GDBusConnection  *connection,
+                          uid_t             user_id,
+                          gboolean          allow_interactive_authorization,
+                          GCancellable     *cancellable,
+                          GError          **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) result_variant = NULL;
+  g_autoptr(GError) local_error = NULL;
+
+  result_variant =
+      g_dbus_connection_call_sync (connection,
+                                   "org.freedesktop.Accounts",
+                                   "/org/freedesktop/Accounts",
+                                   "org.freedesktop.Accounts",
+                                   "FindUserById",
+                                   g_variant_new ("(x)", user_id),
+                                   G_VARIANT_TYPE ("(o)"),
+                                   allow_interactive_authorization
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
+                                                                          user_id);
+      g_propagate_error (error, g_steal_pointer (&app_filter_error));
+      return NULL;
+    }
+
+  g_variant_get (result_variant, "(o)", &object_path);
+
+  return g_steal_pointer (&object_path);
+}
+
 /**
  * epc_get_app_filter:
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
@@ -344,7 +385,12 @@ epc_get_app_filter (GDBusConnection  *connection,
   if (connection == NULL)
     return NULL;
 
-  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", user_id);
+  object_path = accounts_find_user_by_id (connection, user_id,
+                                          allow_interactive_authorization,
+                                          cancellable, error);
+  if (object_path == NULL)
+    return NULL;
+
   result_variant =
       g_dbus_connection_call_sync (connection,
                                    "org.freedesktop.Accounts",
@@ -567,7 +613,11 @@ epc_set_app_filter (GDBusConnection  *connection,
   if (connection == NULL)
     return FALSE;
 
-  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", user_id);
+  object_path = accounts_find_user_by_id (connection, user_id,
+                                          allow_interactive_authorization,
+                                          cancellable, error);
+  if (object_path == NULL)
+    return FALSE;
 
   app_filter_variant = _epc_app_filter_build_app_filter_variant (app_filter);
   oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
