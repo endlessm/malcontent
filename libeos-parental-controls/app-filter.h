@@ -101,7 +101,7 @@ uid_t    epc_app_filter_get_user_id            (EpcAppFilter *filter);
 gboolean epc_app_filter_is_path_allowed        (EpcAppFilter *filter,
                                                 const gchar  *path);
 gboolean epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
-                                                const gchar  *flatpak_ref);
+                                                const gchar  *app_ref);
 
 const gchar           **epc_app_filter_get_oars_sections (EpcAppFilter *filter);
 EpcAppFilterOarsValue   epc_app_filter_get_oars_value    (EpcAppFilter *filter,
