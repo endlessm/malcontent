@@ -196,6 +196,51 @@ epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
     }
 }
 
+static gint
+strcmp_cb (gconstpointer a,
+           gconstpointer b)
+{
+  const gchar *str_a = *((const gchar * const *) a);
+  const gchar *str_b = *((const gchar * const *) b);
+
+  return g_strcmp0 (str_a, str_b);
+}
+
+/**
+ * epc_app_filter_get_oars_sections:
+ * @filter: an #EpcAppFilter
+ *
+ * List the OARS sections present in this app filter. The sections are returned
+ * in lexicographic order. A section will be listed even if its stored value is
+ * %EPC_APP_FILTER_OARS_VALUE_UNKNOWN. The returned list may be empty.
+ *
+ * Returns: (transfer container) (array zero-terminated=1): %NULL-terminated
+ *    array of OARS sections
+ * Since: 0.1.0
+ */
+const gchar **
+epc_app_filter_get_oars_sections (EpcAppFilter *filter)
+{
+  g_autoptr(GPtrArray) sections = g_ptr_array_new_with_free_func (NULL);
+  GVariantIter iter;
+  const gchar *oars_section;
+
+  g_return_val_if_fail (filter != NULL, NULL);
+  g_return_val_if_fail (filter->ref_count >= 1, NULL);
+
+  g_variant_iter_init (&iter, filter->oars_ratings);
+
+  while (g_variant_iter_loop (&iter, "{&s&s}", &oars_section, NULL))
+    g_ptr_array_add (sections, (gpointer) oars_section);
+
+  /* Sort alphabetically for easier comparisons later. */
+  g_ptr_array_sort (sections, strcmp_cb);
+
+  g_ptr_array_add (sections, NULL);  /* NULL terminator */
+
+  return (const gchar **) g_ptr_array_free (g_steal_pointer (&sections), FALSE);
+}
+
 /**
  * epc_app_filter_get_oars_value:
  * @filter: an #EpcAppFilter

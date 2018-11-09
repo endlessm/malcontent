@@ -29,6 +29,21 @@
 #include <string.h>
 
 
+/* Check two arrays contain exactly the same items in the same order. */
+static void
+assert_strv_equal (const gchar * const *strv_a,
+                   const gchar * const *strv_b)
+{
+  gsize i;
+
+  for (i = 0; strv_a[i] != NULL && strv_b[i] != NULL; i++)
+    g_assert_cmpstr (strv_a[i], ==, strv_b[i]);
+
+  g_assert_null (strv_a[i]);
+  g_assert_null (strv_b[i]);
+}
+
+
 /* A placeholder smoketest which checks that the error quark works. */
 static void
 test_app_filter_error_quark (void)
@@ -98,6 +113,7 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
                                    gconstpointer   test_data)
 {
   g_autoptr(EpcAppFilter) filter = NULL;
+  g_autofree const gchar **sections = NULL;
 
   epc_app_filter_builder_blacklist_path (fixture->builder, "/bin/true");
   epc_app_filter_builder_blacklist_path (fixture->builder, "/usr/bin/gnome-software");
@@ -127,6 +143,10 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
                    EPC_APP_FILTER_OARS_VALUE_MODERATE);
   g_assert_cmpint (epc_app_filter_get_oars_value (filter, "something-else"), ==,
                    EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+
+  sections = epc_app_filter_get_oars_sections (filter);
+  const gchar * const expected_sections[] = { "drugs-alcohol", "language-humor", NULL };
+  assert_strv_equal ((const gchar * const *) sections, expected_sections);
 }
 
 /* Test building an empty #EpcAppFilter using an #EpcAppFilterBuilder. */
@@ -135,6 +155,7 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
                                gconstpointer   test_data)
 {
   g_autoptr(EpcAppFilter) filter = NULL;
+  g_autofree const gchar **sections = NULL;
 
   filter = epc_app_filter_builder_end (fixture->builder);
 
@@ -153,6 +174,10 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
                    EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
   g_assert_cmpint (epc_app_filter_get_oars_value (filter, "something-else"), ==,
                    EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+
+  sections = epc_app_filter_get_oars_sections (filter);
+  const gchar * const expected_sections[] = { NULL };
+  assert_strv_equal ((const gchar * const *) sections, expected_sections);
 }
 
 /* Check that copying a cleared #EpcAppFilterBuilder works, and the copy can
