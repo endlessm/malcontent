@@ -59,5 +59,18 @@
       <annotation name="org.freedesktop.Accounts.DefaultValue"
         value="('oars-1.1', @a{ss} {})"/>
     </property>
+
+    <!--
+      allow-app-installation:
+
+      Whether app installation is allowed for the user at all. If this is true,
+      the polkit check for allowing app installation succeeds, and the
+      oars-filter does not restrict this app, app installation can proceed.
+
+      If this is false, the user is not allowed to install any apps.
+    -->
+    <property name="allow-app-installation" type="b" access="readwrite">
+      <annotation name="org.freedesktop.Accounts.DefaultValue" value="true"/>
+    </property>
   </interface>
 </node>

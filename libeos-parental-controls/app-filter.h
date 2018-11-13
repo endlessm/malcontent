@@ -107,6 +107,8 @@ const gchar           **epc_app_filter_get_oars_sections (EpcAppFilter *filter);
 EpcAppFilterOarsValue   epc_app_filter_get_oars_value    (EpcAppFilter *filter,
                                                           const gchar  *oars_section);
 
+gboolean                epc_app_filter_is_app_installation_allowed (EpcAppFilter *filter);
+
 EpcAppFilter *epc_get_app_filter        (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          gboolean              allow_interactive_authorization,
@@ -152,6 +154,7 @@ typedef struct
   /*< private >*/
   gpointer p0;
   gpointer p1;
+  gboolean b0;
   gpointer p2;
   gpointer p3;
 } EpcAppFilterBuilder;
@@ -174,7 +177,8 @@ GType epc_app_filter_builder_get_type (void);
 #define EPC_APP_FILTER_BUILDER_INIT() \
   { \
     g_ptr_array_new_with_free_func (g_free), \
-    g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL) \
+    g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL), \
+    TRUE, \
   }
 
 void epc_app_filter_builder_init  (EpcAppFilterBuilder *builder);
@@ -198,5 +202,8 @@ void epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
 void epc_app_filter_builder_set_oars_value        (EpcAppFilterBuilder   *builder,
                                                    const gchar           *oars_section,
                                                    EpcAppFilterOarsValue  value);
+
+void epc_app_filter_builder_set_allow_app_installation (EpcAppFilterBuilder *builder,
+                                                        gboolean             allow_app_installation);
 
 G_END_DECLS
