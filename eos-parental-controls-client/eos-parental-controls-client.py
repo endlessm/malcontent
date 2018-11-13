@@ -169,10 +169,12 @@ def command_oars_section(user, section, quiet=False, interactive=True):
         section, user_id, __oars_value_to_string(value)))
 
 
-def command_set(user, app_filter_args=None, quiet=False, interactive=True):
+def command_set(user, allow_app_installation=True, app_filter_args=None,
+                quiet=False, interactive=True):
     """Set the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
     builder = EosParentalControls.AppFilterBuilder.new()
+    builder.set_allow_app_installation(allow_app_installation)
 
     for arg in app_filter_args:
         if '=' in arg:
@@ -258,9 +260,17 @@ def main():
     parser_set.add_argument('user', default='', nargs='?',
                             help='user ID or username to get the app filter '
                                  'for (default: current user)')
+    parser_set.add_argument('--allow-app-installation',
+                            dest='allow_app_installation', action='store_true',
+                            help='allow app installation in general')
+    parser_set.add_argument('--disallow-app-installation',
+                            dest='allow_app_installation',
+                            action='store_false',
+                            help='unconditionally disallow app installation')
     parser_set.add_argument('app_filter_args', nargs='*',
                             help='paths to blacklist and OARS section=value '
                                  'pairs to store')
+    parser_set.set_defaults(allow_app_installation=True)
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()
