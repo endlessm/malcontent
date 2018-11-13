@@ -127,9 +127,21 @@ def __oars_value_from_string(value_str):
 def command_get(user, quiet=False, interactive=True):
     """Get the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
-    __get_app_filter_or_error(user_id, interactive)
+    app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    print('App filter for user {} retrieved'.format(user_id))
+    print('App filter for user {} retrieved:'.format(user_id))
+
+    sections = app_filter.get_oars_sections()
+    for section in sections:
+        value = app_filter.get_oars_value(section)
+        print('  {}: {}'.format(section, oars_value_mapping[value]))
+    if not sections:
+        print('  (No OARS values)')
+
+    if app_filter.is_app_installation_allowed():
+        print('App installation is allowed')
+    else:
+        print('App installation is disallowed')
 
 
 def command_check(user, path, quiet=False, interactive=True):
