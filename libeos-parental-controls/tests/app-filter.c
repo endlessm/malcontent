@@ -125,6 +125,7 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
                                          EPC_APP_FILTER_OARS_VALUE_MILD);
   epc_app_filter_builder_set_oars_value (fixture->builder, "language-humor",
                                          EPC_APP_FILTER_OARS_VALUE_MODERATE);
+  epc_app_filter_builder_set_allow_app_installation (fixture->builder, FALSE);
 
   filter = epc_app_filter_builder_end (fixture->builder);
 
@@ -147,6 +148,8 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   sections = epc_app_filter_get_oars_sections (filter);
   const gchar * const expected_sections[] = { "drugs-alcohol", "language-humor", NULL };
   assert_strv_equal ((const gchar * const *) sections, expected_sections);
+
+  g_assert_false (epc_app_filter_is_app_installation_allowed (filter));
 }
 
 /* Test building an empty #EpcAppFilter using an #EpcAppFilterBuilder. */
@@ -178,6 +181,8 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
   sections = epc_app_filter_get_oars_sections (filter);
   const gchar * const expected_sections[] = { NULL };
   assert_strv_equal ((const gchar * const *) sections, expected_sections);
+
+  g_assert_true (epc_app_filter_is_app_installation_allowed (filter));
 }
 
 /* Check that copying a cleared #EpcAppFilterBuilder works, and the copy can
@@ -198,6 +203,8 @@ test_app_filter_builder_copy_empty (void)
 
   g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (epc_app_filter_is_path_allowed (filter, "/bin/true"));
+
+  g_assert_true (epc_app_filter_is_app_installation_allowed (filter));
 }
 
 /* Check that copying a filled #EpcAppFilterBuilder works, and the copy can be
@@ -210,11 +217,13 @@ test_app_filter_builder_copy_full (void)
   g_autoptr(EpcAppFilter) filter = NULL;
 
   epc_app_filter_builder_blacklist_path (builder, "/bin/true");
+  epc_app_filter_builder_set_allow_app_installation (builder, FALSE);
   builder_copy = epc_app_filter_builder_copy (builder);
   filter = epc_app_filter_builder_end (builder_copy);
 
   g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (epc_app_filter_is_path_allowed (filter, "/bin/true"));
+  g_assert_false (epc_app_filter_is_app_installation_allowed (filter));
 }
 
 int
