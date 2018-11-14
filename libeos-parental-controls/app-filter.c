@@ -166,7 +166,7 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
 /**
  * epc_app_filter_is_flatpak_ref_allowed:
  * @filter: an #EpcAppFilter
- * @app_ref: flatpak ref for the app
+ * @app_ref: flatpak ref for the app, for example `app/org.gnome.Builder/x86_64/master`
  *
  * Check whether the flatpak app with the given @app_ref is allowed to be run
  * according to this app filter.
@@ -192,6 +192,57 @@ epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
       return !ref_in_list;
     case EPC_APP_FILTER_LIST_WHITELIST:
       return ref_in_list;
+    default:
+      g_assert_not_reached ();
+    }
+}
+
+/**
+ * epc_app_filter_is_flatpak_app_allowed:
+ * @filter: an #EpcAppFilter
+ * @app_id: flatpak ID for the app, for example `org.gnome.Builder`
+ *
+ * Check whether the flatpak app with the given @app_id is allowed to be run
+ * according to this app filter. This is a globbing match, matching @app_id
+ * against potentially multiple entries in the blacklist, as the blacklist
+ * contains flatpak refs (for example, `app/org.gnome.Builder/x86_64/master`)
+ * which contain architecture and branch information. App IDs (for example,
+ * `org.gnome.Builder`) do not contain architecture or branch information.
+ *
+ * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
+ *    flatpak called @app_id according to the @filter policy; %FALSE otherwise
+ * Since: 0.1.0
+ */
+gboolean
+epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
+                                       const gchar  *app_id)
+{
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+  g_return_val_if_fail (app_id != NULL, FALSE);
+
+  gsize app_id_len = strlen (app_id);
+
+  gboolean id_in_list = FALSE;
+  for (gsize i = 0; filter->app_list[i] != NULL; i++)
+    {
+      /* Avoid using flatpak_ref_parse() to avoid a dependency on libflatpak
+       * just for that one function. */
+      if (g_str_has_prefix (filter->app_list[i], "app/") &&
+          strncmp (filter->app_list[i] + strlen ("app/"), app_id, app_id_len) == 0 &&
+          filter->app_list[i][strlen ("app/") + app_id_len] == '/')
+        {
+          id_in_list = TRUE;
+          break;
+        }
+    }
+
+  switch (filter->app_list_type)
+    {
+    case EPC_APP_FILTER_LIST_BLACKLIST:
+      return !id_in_list;
+    case EPC_APP_FILTER_LIST_WHITELIST:
+      return id_in_list;
     default:
       g_assert_not_reached ();
     }
