@@ -150,7 +150,12 @@ def command_check(user, path, quiet=False, interactive=True):
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    if path.startswith('app/') or path.startswith('runtime/'):
+    if path.startswith('app/') and path.count('/') < 3:
+        # Flatpak app ID
+        path = path[4:]
+        is_allowed = app_filter.is_flatpak_app_allowed(path)
+        noun = 'Flatpak app ID'
+    elif path.startswith('app/') or path.startswith('runtime/'):
         # Flatpak ref
         is_allowed = app_filter.is_flatpak_ref_allowed(path)
         noun = 'Flatpak ref'
