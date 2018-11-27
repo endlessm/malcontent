@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gi18n-lib.h>
+#include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
 #include <libeos-parental-controls/app-filter.h>
 
@@ -246,6 +247,75 @@ epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
     default:
       g_assert_not_reached ();
     }
+}
+
+/**
+ * epc_app_filter_is_appinfo_allowed:
+ * @filter: an #EpcAppFilter
+ * @app_info: (transfer none): application information
+ *
+ * Check whether the app with the given @app_info is allowed to be run
+ * according to this app filter. This matches on multiple keys potentially
+ * present in the #GAppInfo, including the path of the executable.
+ *
+ * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
+ *    app represented by @app_info according to the @filter policy; %FALSE
+ *    otherwise
+ * Since: 0.1.0
+ */
+gboolean
+epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
+                                   GAppInfo     *app_info)
+{
+  g_autofree gchar *abs_path = NULL;
+
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+  g_return_val_if_fail (G_IS_APP_INFO (app_info), FALSE);
+
+  abs_path = g_find_program_in_path (g_app_info_get_executable (app_info));
+
+  if (abs_path != NULL &&
+      !epc_app_filter_is_path_allowed (filter, abs_path))
+    return FALSE;
+
+  if (G_IS_DESKTOP_APP_INFO (app_info))
+    {
+      g_autofree gchar *flatpak_app = NULL;
+      g_autofree gchar *old_flatpak_apps_str = NULL;
+
+      /* This gives `org.gnome.Builder`. */
+      flatpak_app = g_desktop_app_info_get_string (G_DESKTOP_APP_INFO (app_info), "X-Flatpak");
+      if (flatpak_app != NULL)
+        flatpak_app = g_strstrip (flatpak_app);
+
+      if (flatpak_app != NULL &&
+          !epc_app_filter_is_flatpak_app_allowed (filter, flatpak_app))
+        return FALSE;
+
+      /* FIXME: This could do with the g_desktop_app_info_get_string_list() API
+       * from GLib 2.60. Gives `gimp.desktop;org.gimp.Gimp.desktop;`. */
+      old_flatpak_apps_str = g_desktop_app_info_get_string (G_DESKTOP_APP_INFO (app_info), "X-Flatpak-RenamedFrom");
+      if (old_flatpak_apps_str != NULL)
+        {
+          g_auto(GStrv) old_flatpak_apps = g_strsplit (old_flatpak_apps_str, ";", -1);
+
+          for (gsize i = 0; old_flatpak_apps[i] != NULL; i++)
+            {
+              gchar *old_flatpak_app = g_strstrip (old_flatpak_app);
+
+              if (g_str_has_suffix (old_flatpak_app, ".desktop"))
+                old_flatpak_app[strlen (old_flatpak_app) - strlen (".desktop")] = '\0';
+              old_flatpak_app = g_strstrip (old_flatpak_app);
+
+              if (*old_flatpak_app != '\0' &&
+                  !epc_app_filter_is_flatpak_app_allowed (filter, old_flatpak_app))
+                return FALSE;
+            }
+        }
+    }
+
+  return TRUE;
 }
 
 static gint

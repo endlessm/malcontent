@@ -12,13 +12,16 @@ libeos_parental_controls_public_deps = [
   dependency('glib-2.0', version: '>= 2.54.2'),
   dependency('gobject-2.0', version: '>= 2.54'),
 ]
+libeos_parental_controls_private_deps = [
+  dependency('gio-unix-2.0', version: '>= 2.36'),
+]
 
 # FIXME: Would be good to use subdir here: https://github.com/mesonbuild/meson/issues/2969
 libeos_parental_controls_include_subdir = join_paths(libeos_parental_controls_api_name, 'libeos-parental-controls')
 
 libeos_parental_controls = library(libeos_parental_controls_api_name,
   libeos_parental_controls_sources + libeos_parental_controls_headers,
-  dependencies: libeos_parental_controls_public_deps,
+  dependencies: libeos_parental_controls_public_deps + libeos_parental_controls_private_deps,
   include_directories: root_inc,
   install: true,
   version: meson.project_version(),
@@ -42,6 +45,7 @@ pkgconfig.generate(
   filebase: libeos_parental_controls_api_name,
   description: 'Library providing access to parental control settings.',
   requires: libeos_parental_controls_public_deps,
+  requires_private: libeos_parental_controls_private_deps,
 )
 
 gnome.generate_gir(libeos_parental_controls,
