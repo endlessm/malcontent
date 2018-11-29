@@ -138,6 +138,11 @@ def command_get(user, quiet=False, interactive=True):
     if not sections:
         print('  (No OARS values)')
 
+    if app_filter.is_user_installation_allowed():
+        print('App installation is allowed to user repository')
+    else:
+        print('App installation is disallowed to user repository')
+
     if app_filter.is_system_installation_allowed():
         print('App installation is allowed to system repository')
     else:
@@ -186,11 +191,13 @@ def command_oars_section(user, section, quiet=False, interactive=True):
         section, user_id, __oars_value_to_string(value)))
 
 
-def command_set(user, allow_system_installation=False, app_filter_args=None,
+def command_set(user, allow_user_installation=True,
+                allow_system_installation=False, app_filter_args=None,
                 quiet=False, interactive=True):
     """Set the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
     builder = EosParentalControls.AppFilterBuilder.new()
+    builder.set_allow_user_installation(allow_user_installation)
     builder.set_allow_system_installation(allow_system_installation)
 
     for arg in app_filter_args:
@@ -277,6 +284,16 @@ def main():
     parser_set.add_argument('user', default='', nargs='?',
                             help='user ID or username to get the app filter '
                                  'for (default: current user)')
+    parser_set.add_argument('--allow-user-installation',
+                            dest='allow_user_installation',
+                            action='store_true',
+                            help='allow installation to the user flatpak '
+                                 'repo in general')
+    parser_set.add_argument('--disallow-user-installation',
+                            dest='allow_user_installation',
+                            action='store_false',
+                            help='unconditionally disallow installation to '
+                                 'the user flatpak repo')
     parser_set.add_argument('--allow-system-installation',
                             dest='allow_system_installation',
                             action='store_true',
@@ -290,7 +307,8 @@ def main():
     parser_set.add_argument('app_filter_args', nargs='*',
                             help='paths to blacklist and OARS section=value '
                                  'pairs to store')
-    parser_set.set_defaults(allow_system_installation=False)
+    parser_set.set_defaults(allow_user_installation=True,
+                            allow_system_installation=False)
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()

@@ -59,6 +59,7 @@ struct _EpcAppFilter
   EpcAppFilterListType app_list_type;
 
   GVariant *oars_ratings;  /* (type a{ss}) (owned non-floating) */
+  gboolean allow_user_installation;
   gboolean allow_system_installation;
 };
 
@@ -409,6 +410,28 @@ epc_app_filter_get_oars_value (EpcAppFilter *filter,
 }
 
 /**
+ * epc_app_filter_is_user_installation_allowed:
+ * @filter: an #EpcAppFilter
+ *
+ * Get whether the user is allowed to install to their flatpak user repository.
+ * This should be queried in addition to the OARS values
+ * (epc_app_filter_get_oars_value()) — if it returns %FALSE, the OARS values
+ * should be ignored and app installation should be unconditionally disallowed.
+ *
+ * Returns: %TRUE if app installation is allowed to the user repository for
+ *    this user; %FALSE if it is unconditionally disallowed for this user
+ * Since: 0.1.0
+ */
+gboolean
+epc_app_filter_is_user_installation_allowed (EpcAppFilter *filter)
+{
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+
+  return filter->allow_user_installation;
+}
+
+/**
  * epc_app_filter_is_system_installation_allowed:
  * @filter: an #EpcAppFilter
  *
@@ -566,6 +589,7 @@ epc_get_app_filter (GDBusConnection  *connection,
   const gchar *content_rating_kind;
   g_autoptr(GVariant) oars_variant = NULL;
   g_autoptr(GHashTable) oars_map = NULL;
+  gboolean allow_user_installation;
   gboolean allow_system_installation;
 
   g_return_val_if_fail (connection == NULL || G_IS_DBUS_CONNECTION (connection), NULL);
@@ -638,6 +662,13 @@ epc_get_app_filter (GDBusConnection  *connection,
       return NULL;
     }
 
+  if (!g_variant_lookup (properties, "allow-user-installation", "b",
+                         &allow_user_installation))
+    {
+      /* Default value. */
+      allow_user_installation = TRUE;
+    }
+
   if (!g_variant_lookup (properties, "allow-system-installation", "b",
                          &allow_system_installation))
     {
@@ -653,6 +684,7 @@ epc_get_app_filter (GDBusConnection  *connection,
   app_filter->app_list_type =
     is_whitelist ? EPC_APP_FILTER_LIST_WHITELIST : EPC_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
+  app_filter->allow_user_installation = allow_user_installation;
   app_filter->allow_system_installation = allow_system_installation;
 
   return g_steal_pointer (&app_filter);
@@ -798,9 +830,11 @@ epc_set_app_filter (GDBusConnection  *connection,
   g_autofree gchar *object_path = NULL;
   g_autoptr(GVariant) app_filter_variant = NULL;
   g_autoptr(GVariant) oars_filter_variant = NULL;
+  g_autoptr(GVariant) allow_user_installation_variant = NULL;
   g_autoptr(GVariant) allow_system_installation_variant = NULL;
   g_autoptr(GVariant) app_filter_result_variant = NULL;
   g_autoptr(GVariant) oars_filter_result_variant = NULL;
+  g_autoptr(GVariant) allow_user_installation_result_variant = NULL;
   g_autoptr(GVariant) allow_system_installation_result_variant = NULL;
   g_autoptr(GError) local_error = NULL;
 
@@ -824,6 +858,7 @@ epc_set_app_filter (GDBusConnection  *connection,
   app_filter_variant = _epc_app_filter_build_app_filter_variant (app_filter);
   oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
                                        app_filter->oars_ratings);
+  allow_user_installation_variant = g_variant_new_boolean (app_filter->allow_user_installation);
   allow_system_installation_variant = g_variant_new_boolean (app_filter->allow_system_installation);
 
   app_filter_result_variant =
@@ -859,6 +894,29 @@ epc_set_app_filter (GDBusConnection  *connection,
                                                   "com.endlessm.ParentalControls.AppFilter",
                                                   "oars-filter",
                                                   g_steal_pointer (&oars_filter_variant)),
+                                   G_VARIANT_TYPE ("()"),
+                                   allow_interactive_authorization
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      return FALSE;
+    }
+
+  allow_user_installation_result_variant =
+      g_dbus_connection_call_sync (connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "Set",
+                                   g_variant_new ("(ssv)",
+                                                  "com.endlessm.ParentalControls.AppFilter",
+                                                  "allow-user-installation",
+                                                  g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
@@ -1026,6 +1084,7 @@ typedef struct
 {
   GPtrArray *paths_blacklist;  /* (nullable) (owned) (element-type filename) */
   GHashTable *oars;  /* (nullable) (owned) (element-type utf8 EpcAppFilterOarsValue) */
+  gboolean allow_user_installation;
   gboolean allow_system_installation;
 
   /*< private >*/
@@ -1141,6 +1200,7 @@ epc_app_filter_builder_copy (EpcAppFilterBuilder *builder)
     _copy->paths_blacklist = g_ptr_array_ref (_builder->paths_blacklist);
   if (_builder->oars != NULL)
     _copy->oars = g_hash_table_ref (_builder->oars);
+  _copy->allow_user_installation = _builder->allow_user_installation;
   _copy->allow_system_installation = _builder->allow_system_installation;
 
   return g_steal_pointer (&copy);
@@ -1225,6 +1285,7 @@ epc_app_filter_builder_end (EpcAppFilterBuilder *builder)
   app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->paths_blacklist), FALSE);
   app_filter->app_list_type = EPC_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
+  app_filter->allow_user_installation = _builder->allow_user_installation;
   app_filter->allow_system_installation = _builder->allow_system_installation;
 
   epc_app_filter_builder_clear (builder);
@@ -1313,6 +1374,30 @@ epc_app_filter_builder_set_oars_value (EpcAppFilterBuilder   *builder,
 
   g_hash_table_insert (_builder->oars, g_strdup (oars_section),
                        GUINT_TO_POINTER (value));
+}
+
+/**
+ * epc_app_filter_builder_set_allow_user_installation:
+ * @builder: an initialised #EpcAppFilterBuilder
+ * @allow_user_installation: %TRUE to allow app installation; %FALSE to
+ *    unconditionally disallow it
+ *
+ * Set whether the user is allowed to install to their flatpak user repository.
+ * If this is %TRUE, app installation is still subject to the OARS values
+ * (epc_app_filter_builder_set_oars_value()). If it is %FALSE, app installation
+ * is unconditionally disallowed for this user.
+ *
+ * Since: 0.1.0
+ */
+void
+epc_app_filter_builder_set_allow_user_installation (EpcAppFilterBuilder *builder,
+                                                    gboolean             allow_user_installation)
+{
+  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+
+  _builder->allow_user_installation = allow_user_installation;
 }
 
 /**
