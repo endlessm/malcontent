@@ -61,16 +61,33 @@
     </property>
 
     <!--
-      allow-app-installation:
+      allow-user-installation:
 
-      Whether app installation is allowed for the user at all. If this is true,
-      the polkit check for allowing app installation succeeds, and the
-      oars-filter does not restrict this app, app installation can proceed.
+      Whether this user is allowed to install to their flatpak user repository.
+      If this is true, and if the polkit check for allowing app installation
+      succeeds, and if the oars-filter does not restrict this app, app
+      installation can proceed.
 
-      If this is false, the user is not allowed to install any apps.
+      If this is false, the user is not allowed to install any apps or runtimes
+      to their flatpak user repository.
     -->
-    <property name="allow-app-installation" type="b" access="readwrite">
+    <property name="allow-user-installation" type="b" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue" value="true"/>
+    </property>
+
+    <!--
+      allow-system-installation:
+
+      Whether this user is allowed to install to the flatpak system repository.
+      If this is true, and if the polkit check for allowing app installation
+      succeeds, and if the oars-filter does not restrict this app, app
+      installation can proceed.
+
+      If this is false, the user is not allowed to install any apps or runtimes
+      to the flatpak system repository.
+    -->
+    <property name="allow-system-installation" type="b" access="readwrite">
+      <annotation name="org.freedesktop.Accounts.DefaultValue" value="false"/>
     </property>
   </interface>
 </node>
