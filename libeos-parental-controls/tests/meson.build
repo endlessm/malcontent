@@ -1,8 +1,10 @@
 deps = [
   dependency('gio-2.0', version: '>= 2.44'),
+  dependency('gio-unix-2.0', version: '>= 2.44'),
   dependency('glib-2.0', version: '>= 2.54.2'),
   dependency('gobject-2.0', version: '>= 2.44'),
   libeos_parental_controls_dep,
+  libglib_testing_dep,
 ]
 
 envs = test_env + [
@@ -11,7 +13,7 @@ envs = test_env + [
 ]
 
 test_programs = [
-  ['app-filter', [], deps],
+  ['app-filter', ['accounts-service-iface.h'], deps],
 ]
 
 installed_tests_metadir = join_paths(datadir, 'installed-tests',
