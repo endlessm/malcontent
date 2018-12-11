@@ -509,7 +509,8 @@ bus_error_to_app_filter_error (const GError *bus_error,
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
                         user_id);
-  else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD))
+  else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
+           bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER,
                         _("User %u does not exist"), user_id);
   else
