@@ -648,7 +648,7 @@ epc_get_app_filter (GDBusConnection  *connection,
     {
       /* Default value. */
       content_rating_kind = "oars-1.1";
-      oars_variant = g_variant_new ("@a{ss} {}");
+      oars_variant = g_variant_new_parsed ("@a{ss} {}");
     }
 
   /* Check that the OARS filter is in a format we support. Currently, that’s
