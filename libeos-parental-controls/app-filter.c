@@ -1025,6 +1025,7 @@ epc_set_app_filter_async (GDBusConnection     *connection,
   g_task_set_source_tag (task, epc_set_app_filter_async);
 
   data = g_new0 (SetAppFilterData, 1);
+  data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
   data->app_filter = epc_app_filter_ref (app_filter);
   data->allow_interactive_authorization = allow_interactive_authorization;
