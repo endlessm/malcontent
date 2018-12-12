@@ -303,7 +303,7 @@ epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
 
           for (gsize i = 0; old_flatpak_apps[i] != NULL; i++)
             {
-              gchar *old_flatpak_app = g_strstrip (old_flatpak_app);
+              gchar *old_flatpak_app = g_strstrip (old_flatpak_apps[i]);
 
               if (g_str_has_suffix (old_flatpak_app, ".desktop"))
                 old_flatpak_app[strlen (old_flatpak_app) - strlen (".desktop")] = '\0';
