@@ -16,7 +16,7 @@
       value="com.endlessm.ParentalControls.AppFilter.ReadAny"/>
 
     <!--
-      app-filter:
+      AppFilter:
 
       A filter for which applications and binaries the user can run. This is
       intended to be set by administrators and read by users, rather than being
@@ -27,13 +27,13 @@
       slash). The boolean value indicates whether this is a whitelist (true) or
       blacklist (false).
     -->
-    <property name="app-filter" type="(bas)" access="readwrite">
+    <property name="AppFilter" type="(bas)" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue"
         value="(false, [])"/>
     </property>
 
     <!--
-      oars-filter:
+      OarsFilter:
 
       A filter for which applications the user can see in app lists and install.
       This is intended to be set by administrators and read by users, rather
@@ -55,38 +55,38 @@
       in AppStream data:
       https://www.freedesktop.org/software/appstream/docs/chap-Metadata.html#tag-content_rating.
     -->
-    <property name="oars-filter" type="(sa{ss})" access="readwrite">
+    <property name="OarsFilter" type="(sa{ss})" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue"
         value="('oars-1.1', @a{ss} {})"/>
     </property>
 
     <!--
-      allow-user-installation:
+      AllowUserInstallation:
 
       Whether this user is allowed to install to their flatpak user repository.
       If this is true, and if the polkit check for allowing app installation
-      succeeds, and if the oars-filter does not restrict this app, app
+      succeeds, and if the OarsFilter does not restrict this app, app
       installation can proceed.
 
       If this is false, the user is not allowed to install any apps or runtimes
       to their flatpak user repository.
     -->
-    <property name="allow-user-installation" type="b" access="readwrite">
+    <property name="AllowUserInstallation" type="b" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue" value="true"/>
     </property>
 
     <!--
-      allow-system-installation:
+      AllowSystemInstallation:
 
       Whether this user is allowed to install to the flatpak system repository.
       If this is true, and if the polkit check for allowing app installation
-      succeeds, and if the oars-filter does not restrict this app, app
+      succeeds, and if the OarsFilter does not restrict this app, app
       installation can proceed.
 
       If this is false, the user is not allowed to install any apps or runtimes
       to the flatpak system repository.
     -->
-    <property name="allow-system-installation" type="b" access="readwrite">
+    <property name="AllowSystemInstallation" type="b" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue" value="false"/>
     </property>
   </interface>

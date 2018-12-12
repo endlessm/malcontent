@@ -633,7 +633,7 @@ epc_get_app_filter (GDBusConnection  *connection,
   /* Extract the properties we care about. They may be silently omitted from the
    * results if we don’t have permission to access them. */
   properties = g_variant_get_child_value (result_variant, 0);
-  if (!g_variant_lookup (properties, "app-filter", "(b^as)",
+  if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
                          &is_whitelist, &app_list))
     {
       g_set_error (error, EPC_APP_FILTER_ERROR,
@@ -643,7 +643,7 @@ epc_get_app_filter (GDBusConnection  *connection,
       return NULL;
     }
 
-  if (!g_variant_lookup (properties, "oars-filter", "(&s@a{ss})",
+  if (!g_variant_lookup (properties, "OarsFilter", "(&s@a{ss})",
                          &content_rating_kind, &oars_variant))
     {
       /* Default value. */
@@ -663,14 +663,14 @@ epc_get_app_filter (GDBusConnection  *connection,
       return NULL;
     }
 
-  if (!g_variant_lookup (properties, "allow-user-installation", "b",
+  if (!g_variant_lookup (properties, "AllowUserInstallation", "b",
                          &allow_user_installation))
     {
       /* Default value. */
       allow_user_installation = TRUE;
     }
 
-  if (!g_variant_lookup (properties, "allow-system-installation", "b",
+  if (!g_variant_lookup (properties, "AllowSystemInstallation", "b",
                          &allow_system_installation))
     {
       /* Default value. */
@@ -870,7 +870,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "app-filter",
+                                                  "AppFilter",
                                                   g_steal_pointer (&app_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -893,7 +893,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "oars-filter",
+                                                  "OarsFilter",
                                                   g_steal_pointer (&oars_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -916,7 +916,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "allow-user-installation",
+                                                  "AllowUserInstallation",
                                                   g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -939,7 +939,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "allow-system-installation",
+                                                  "AllowSystemInstallation",
                                                   g_steal_pointer (&allow_system_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
