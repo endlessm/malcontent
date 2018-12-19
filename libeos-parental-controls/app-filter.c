@@ -508,11 +508,11 @@ bus_error_to_app_filter_error (const GError *bus_error,
       bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.PermissionDenied"))
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
-                        user_id);
+                        (guint) user_id);
   else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER,
-                        _("User %u does not exist"), user_id);
+                        _("User %u does not exist"), (guint) user_id);
   else
     return g_error_copy (bus_error);
 }
@@ -537,7 +537,7 @@ accounts_find_user_by_id (GDBusConnection  *connection,
                                    "/org/freedesktop/Accounts",
                                    "org.freedesktop.Accounts",
                                    "FindUserById",
-                                   g_variant_new ("(x)", user_id),
+                                   g_variant_new ("(x)", (gint64) user_id),
                                    G_VARIANT_TYPE ("(o)"),
                                    allow_interactive_authorization
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
@@ -639,7 +639,7 @@ epc_get_app_filter (GDBusConnection  *connection,
       g_set_error (error, EPC_APP_FILTER_ERROR,
                    EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
                    _("Not allowed to query app filter data for user %u"),
-                   user_id);
+                   (guint) user_id);
       return NULL;
     }
 
@@ -659,7 +659,7 @@ epc_get_app_filter (GDBusConnection  *connection,
       g_set_error (error, EPC_APP_FILTER_ERROR,
                    EPC_APP_FILTER_ERROR_INVALID_DATA,
                    _("OARS filter for user %u has an unrecognized kind ‘%s’"),
-                   user_id, content_rating_kind);
+                   (guint) user_id, content_rating_kind);
       return NULL;
     }
 
