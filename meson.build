@@ -33,6 +33,9 @@ polkit_gobject = dependency('polkit-gobject-1')
 polkitpolicydir = polkit_gobject.get_pkgconfig_variable('policydir',
   define_variable: ['prefix', prefix])
 
+libglib_testing = subproject('libglib-testing')
+libglib_testing_dep = libglib_testing.get_variable('libglib_testing_dep')
+
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 configure_file(
@@ -52,6 +55,7 @@ test_c_args = [
   '-Wcast-align',
   '-Wclobbered',
   '-Wno-declaration-after-statement',
+  '-Wdiscarded-qualifiers',
   '-Wduplicated-branches',
   '-Wduplicated-cond',
   '-Wempty-body',
@@ -75,7 +79,6 @@ test_c_args = [
   '-Wmissing-prototypes',
   '-Wnested-externs',
   '-Wno-error=cpp',
-  '-Wno-discarded-qualifiers',
   '-Wno-missing-field-initializers',
   '-Wno-suggest-attribute=format',
   '-Wno-unused-parameter',

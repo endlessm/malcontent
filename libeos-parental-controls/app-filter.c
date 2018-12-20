@@ -303,7 +303,7 @@ epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
 
           for (gsize i = 0; old_flatpak_apps[i] != NULL; i++)
             {
-              gchar *old_flatpak_app = g_strstrip (old_flatpak_app);
+              gchar *old_flatpak_app = g_strstrip (old_flatpak_apps[i]);
 
               if (g_str_has_suffix (old_flatpak_app, ".desktop"))
                 old_flatpak_app[strlen (old_flatpak_app) - strlen (".desktop")] = '\0';
@@ -509,7 +509,8 @@ bus_error_to_app_filter_error (const GError *bus_error,
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
                         user_id);
-  else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD))
+  else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
+           bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
     return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER,
                         _("User %u does not exist"), user_id);
   else
@@ -632,7 +633,7 @@ epc_get_app_filter (GDBusConnection  *connection,
   /* Extract the properties we care about. They may be silently omitted from the
    * results if we don’t have permission to access them. */
   properties = g_variant_get_child_value (result_variant, 0);
-  if (!g_variant_lookup (properties, "app-filter", "(b^as)",
+  if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
                          &is_whitelist, &app_list))
     {
       g_set_error (error, EPC_APP_FILTER_ERROR,
@@ -642,12 +643,12 @@ epc_get_app_filter (GDBusConnection  *connection,
       return NULL;
     }
 
-  if (!g_variant_lookup (properties, "oars-filter", "(&s@a{ss})",
+  if (!g_variant_lookup (properties, "OarsFilter", "(&s@a{ss})",
                          &content_rating_kind, &oars_variant))
     {
       /* Default value. */
       content_rating_kind = "oars-1.1";
-      oars_variant = g_variant_new ("@a{ss} {}");
+      oars_variant = g_variant_new ("a{ss}", NULL);
     }
 
   /* Check that the OARS filter is in a format we support. Currently, that’s
@@ -662,14 +663,14 @@ epc_get_app_filter (GDBusConnection  *connection,
       return NULL;
     }
 
-  if (!g_variant_lookup (properties, "allow-user-installation", "b",
+  if (!g_variant_lookup (properties, "AllowUserInstallation", "b",
                          &allow_user_installation))
     {
       /* Default value. */
       allow_user_installation = TRUE;
     }
 
-  if (!g_variant_lookup (properties, "allow-system-installation", "b",
+  if (!g_variant_lookup (properties, "AllowSystemInstallation", "b",
                          &allow_system_installation))
     {
       /* Default value. */
@@ -869,7 +870,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "app-filter",
+                                                  "AppFilter",
                                                   g_steal_pointer (&app_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -892,7 +893,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "oars-filter",
+                                                  "OarsFilter",
                                                   g_steal_pointer (&oars_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -915,7 +916,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "allow-user-installation",
+                                                  "AllowUserInstallation",
                                                   g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -938,7 +939,7 @@ epc_set_app_filter (GDBusConnection  *connection,
                                    "Set",
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.AppFilter",
-                                                  "allow-system-installation",
+                                                  "AllowSystemInstallation",
                                                   g_steal_pointer (&allow_system_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
                                    allow_interactive_authorization
@@ -1024,6 +1025,7 @@ epc_set_app_filter_async (GDBusConnection     *connection,
   g_task_set_source_tag (task, epc_set_app_filter_async);
 
   data = g_new0 (SetAppFilterData, 1);
+  data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
   data->app_filter = epc_app_filter_ref (app_filter);
   data->allow_interactive_authorization = allow_interactive_authorization;
