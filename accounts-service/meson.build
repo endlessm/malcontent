@@ -11,3 +11,6 @@ install_data('com.endlessm.ParentalControls.AppFilter.xml',
 meson.add_install_script(meson_make_symlink,
   join_paths(dbusinterfacesdir, 'com.endlessm.ParentalControls.AppFilter.xml'),
   join_paths(accountsserviceinterfacesdir, 'com.endlessm.ParentalControls.AppFilter.xml'))
+
+install_data('com.endlessm.ParentalControls.rules',
+  install_dir: join_paths(get_option('datadir'), 'polkit-1', 'rules.d'))
