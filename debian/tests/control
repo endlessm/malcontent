@@ -1,4 +1,0 @@
-Tests: gnome-desktop-testing
-Depends:
- gnome-desktop-testing,
- libeos-parental-controls-0-tests,
