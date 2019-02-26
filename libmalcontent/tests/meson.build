@@ -3,7 +3,7 @@ deps = [
   dependency('gio-unix-2.0', version: '>= 2.44'),
   dependency('glib-2.0', version: '>= 2.54.2'),
   dependency('gobject-2.0', version: '>= 2.44'),
-  libeos_parental_controls_dep,
+  libmalcontent_dep,
   libglib_testing_dep,
 ]
 
@@ -17,9 +17,9 @@ test_programs = [
 ]
 
 installed_tests_metadir = join_paths(datadir, 'installed-tests',
-                                     'libeos-parental-controls-' + libeos_parental_controls_api_version)
+                                     'libmalcontent-' + libmalcontent_api_version)
 installed_tests_execdir = join_paths(libexecdir, 'installed-tests',
-                                     'libeos-parental-controls-' + libeos_parental_controls_api_version)
+                                     'libmalcontent-' + libmalcontent_api_version)
 
 foreach program: test_programs
   test_conf = configuration_data()

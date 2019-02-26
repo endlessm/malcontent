@@ -27,56 +27,56 @@
 #include <glib/gi18n-lib.h>
 #include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
-#include <libeos-parental-controls/app-filter.h>
+#include <libmalcontent/app-filter.h>
 
 
-G_DEFINE_QUARK (EpcAppFilterError, epc_app_filter_error)
+G_DEFINE_QUARK (MctAppFilterError, mct_app_filter_error)
 
 /**
- * EpcAppFilterListType:
- * @EPC_APP_FILTER_LIST_BLACKLIST: Any program in the list is not allowed to
+ * MctAppFilterListType:
+ * @MCT_APP_FILTER_LIST_BLACKLIST: Any program in the list is not allowed to
  *    be run.
- * @EPC_APP_FILTER_LIST_WHITELIST: Any program not in the list is not allowed
+ * @MCT_APP_FILTER_LIST_WHITELIST: Any program not in the list is not allowed
  *    to be run.
  *
  * Different semantics for interpreting an application list.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 typedef enum
 {
-  EPC_APP_FILTER_LIST_BLACKLIST,
-  EPC_APP_FILTER_LIST_WHITELIST,
-} EpcAppFilterListType;
+  MCT_APP_FILTER_LIST_BLACKLIST,
+  MCT_APP_FILTER_LIST_WHITELIST,
+} MctAppFilterListType;
 
-struct _EpcAppFilter
+struct _MctAppFilter
 {
   gint ref_count;
 
   uid_t user_id;
 
   gchar **app_list;  /* (owned) (array zero-terminated=1) */
-  EpcAppFilterListType app_list_type;
+  MctAppFilterListType app_list_type;
 
   GVariant *oars_ratings;  /* (type a{ss}) (owned non-floating) */
   gboolean allow_user_installation;
   gboolean allow_system_installation;
 };
 
-G_DEFINE_BOXED_TYPE (EpcAppFilter, epc_app_filter,
-                     epc_app_filter_ref, epc_app_filter_unref)
+G_DEFINE_BOXED_TYPE (MctAppFilter, mct_app_filter,
+                     mct_app_filter_ref, mct_app_filter_unref)
 
 /**
- * epc_app_filter_ref:
- * @filter: (transfer none): an #EpcAppFilter
+ * mct_app_filter_ref:
+ * @filter: (transfer none): an #MctAppFilter
  *
  * Increment the reference count of @filter, and return the same pointer to it.
  *
  * Returns: (transfer full): the same pointer as @filter
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-EpcAppFilter *
-epc_app_filter_ref (EpcAppFilter *filter)
+MctAppFilter *
+mct_app_filter_ref (MctAppFilter *filter)
 {
   g_return_val_if_fail (filter != NULL, NULL);
   g_return_val_if_fail (filter->ref_count >= 1, NULL);
@@ -87,16 +87,16 @@ epc_app_filter_ref (EpcAppFilter *filter)
 }
 
 /**
- * epc_app_filter_unref:
- * @filter: (transfer full): an #EpcAppFilter
+ * mct_app_filter_unref:
+ * @filter: (transfer full): an #MctAppFilter
  *
  * Decrement the reference count of @filter. If the reference count reaches
  * zero, free the @filter and all its resources.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_unref (EpcAppFilter *filter)
+mct_app_filter_unref (MctAppFilter *filter)
 {
   g_return_if_fail (filter != NULL);
   g_return_if_fail (filter->ref_count >= 1);
@@ -112,16 +112,16 @@ epc_app_filter_unref (EpcAppFilter *filter)
 }
 
 /**
- * epc_app_filter_get_user_id:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_get_user_id:
+ * @filter: an #MctAppFilter
  *
- * Get the user ID of the user this #EpcAppFilter is for.
+ * Get the user ID of the user this #MctAppFilter is for.
  *
  * Returns: user ID of the relevant user
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 uid_t
-epc_app_filter_get_user_id (EpcAppFilter *filter)
+mct_app_filter_get_user_id (MctAppFilter *filter)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
@@ -130,8 +130,8 @@ epc_app_filter_get_user_id (EpcAppFilter *filter)
 }
 
 /**
- * epc_app_filter_is_path_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_path_allowed:
+ * @filter: an #MctAppFilter
  * @path: (type filename): absolute path of a program to check
  *
  * Check whether the program at @path is allowed to be run according to this
@@ -139,10 +139,10 @@ epc_app_filter_get_user_id (EpcAppFilter *filter)
  *
  * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
  *    program at @path according to the @filter policy; %FALSE otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_path_allowed (EpcAppFilter *filter,
+mct_app_filter_is_path_allowed (MctAppFilter *filter,
                                 const gchar  *path)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
@@ -156,9 +156,9 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case EPC_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLACKLIST:
       return !path_in_list;
-    case EPC_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_WHITELIST:
       return path_in_list;
     default:
       g_assert_not_reached ();
@@ -166,8 +166,8 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
 }
 
 /**
- * epc_app_filter_is_flatpak_ref_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_flatpak_ref_allowed:
+ * @filter: an #MctAppFilter
  * @app_ref: flatpak ref for the app, for example `app/org.gnome.Builder/x86_64/master`
  *
  * Check whether the flatpak app with the given @app_ref is allowed to be run
@@ -175,10 +175,10 @@ epc_app_filter_is_path_allowed (EpcAppFilter *filter,
  *
  * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
  *    flatpak called @app_ref according to the @filter policy; %FALSE otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
+mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
                                        const gchar  *app_ref)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
@@ -190,9 +190,9 @@ epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case EPC_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLACKLIST:
       return !ref_in_list;
-    case EPC_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_WHITELIST:
       return ref_in_list;
     default:
       g_assert_not_reached ();
@@ -200,8 +200,8 @@ epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
 }
 
 /**
- * epc_app_filter_is_flatpak_app_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_flatpak_app_allowed:
+ * @filter: an #MctAppFilter
  * @app_id: flatpak ID for the app, for example `org.gnome.Builder`
  *
  * Check whether the flatpak app with the given @app_id is allowed to be run
@@ -213,10 +213,10 @@ epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
  *
  * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
  *    flatpak called @app_id according to the @filter policy; %FALSE otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
+mct_app_filter_is_flatpak_app_allowed (MctAppFilter *filter,
                                        const gchar  *app_id)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
@@ -241,9 +241,9 @@ epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case EPC_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLACKLIST:
       return !id_in_list;
-    case EPC_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_WHITELIST:
       return id_in_list;
     default:
       g_assert_not_reached ();
@@ -251,8 +251,8 @@ epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
 }
 
 /**
- * epc_app_filter_is_appinfo_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_appinfo_allowed:
+ * @filter: an #MctAppFilter
  * @app_info: (transfer none): application information
  *
  * Check whether the app with the given @app_info is allowed to be run
@@ -262,10 +262,10 @@ epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
  * Returns: %TRUE if the user this @filter corresponds to is allowed to run the
  *    app represented by @app_info according to the @filter policy; %FALSE
  *    otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
+mct_app_filter_is_appinfo_allowed (MctAppFilter *filter,
                                    GAppInfo     *app_info)
 {
   g_autofree gchar *abs_path = NULL;
@@ -277,7 +277,7 @@ epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
   abs_path = g_find_program_in_path (g_app_info_get_executable (app_info));
 
   if (abs_path != NULL &&
-      !epc_app_filter_is_path_allowed (filter, abs_path))
+      !mct_app_filter_is_path_allowed (filter, abs_path))
     return FALSE;
 
   if (G_IS_DESKTOP_APP_INFO (app_info))
@@ -291,7 +291,7 @@ epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
         flatpak_app = g_strstrip (flatpak_app);
 
       if (flatpak_app != NULL &&
-          !epc_app_filter_is_flatpak_app_allowed (filter, flatpak_app))
+          !mct_app_filter_is_flatpak_app_allowed (filter, flatpak_app))
         return FALSE;
 
       /* FIXME: This could do with the g_desktop_app_info_get_string_list() API
@@ -310,7 +310,7 @@ epc_app_filter_is_appinfo_allowed (EpcAppFilter *filter,
               old_flatpak_app = g_strstrip (old_flatpak_app);
 
               if (*old_flatpak_app != '\0' &&
-                  !epc_app_filter_is_flatpak_app_allowed (filter, old_flatpak_app))
+                  !mct_app_filter_is_flatpak_app_allowed (filter, old_flatpak_app))
                 return FALSE;
             }
         }
@@ -330,19 +330,19 @@ strcmp_cb (gconstpointer a,
 }
 
 /**
- * epc_app_filter_get_oars_sections:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_get_oars_sections:
+ * @filter: an #MctAppFilter
  *
  * List the OARS sections present in this app filter. The sections are returned
  * in lexicographic order. A section will be listed even if its stored value is
- * %EPC_APP_FILTER_OARS_VALUE_UNKNOWN. The returned list may be empty.
+ * %MCT_APP_FILTER_OARS_VALUE_UNKNOWN. The returned list may be empty.
  *
  * Returns: (transfer container) (array zero-terminated=1): %NULL-terminated
  *    array of OARS sections
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 const gchar **
-epc_app_filter_get_oars_sections (EpcAppFilter *filter)
+mct_app_filter_get_oars_sections (MctAppFilter *filter)
 {
   g_autoptr(GPtrArray) sections = g_ptr_array_new_with_free_func (NULL);
   GVariantIter iter;
@@ -365,65 +365,65 @@ epc_app_filter_get_oars_sections (EpcAppFilter *filter)
 }
 
 /**
- * epc_app_filter_get_oars_value:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_get_oars_value:
+ * @filter: an #MctAppFilter
  * @oars_section: name of the OARS section to get the value from
  *
  * Get the value assigned to the given @oars_section in the OARS filter stored
  * within @filter. If that section has no value explicitly defined,
- * %EPC_APP_FILTER_OARS_VALUE_UNKNOWN is returned.
+ * %MCT_APP_FILTER_OARS_VALUE_UNKNOWN is returned.
  *
  * This value is the most intense value allowed for apps to have in this
  * section, inclusive. Any app with a more intense value for this section must
  * be hidden from the user whose @filter this is.
  *
- * This does not factor in epc_app_filter_is_system_installation_allowed().
+ * This does not factor in mct_app_filter_is_system_installation_allowed().
  *
- * Returns: an #EpcAppFilterOarsValue
- * Since: 0.1.0
+ * Returns: an #MctAppFilterOarsValue
+ * Since: 0.2.0
  */
-EpcAppFilterOarsValue
-epc_app_filter_get_oars_value (EpcAppFilter *filter,
+MctAppFilterOarsValue
+mct_app_filter_get_oars_value (MctAppFilter *filter,
                                const gchar  *oars_section)
 {
   const gchar *value_str;
 
-  g_return_val_if_fail (filter != NULL, EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_return_val_if_fail (filter != NULL, MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
   g_return_val_if_fail (filter->ref_count >= 1,
-                        EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+                        MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
   g_return_val_if_fail (oars_section != NULL && *oars_section != '\0',
-                        EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+                        MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
 
   if (!g_variant_lookup (filter->oars_ratings, oars_section, "&s", &value_str))
-    return EPC_APP_FILTER_OARS_VALUE_UNKNOWN;
+    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 
   if (g_str_equal (value_str, "none"))
-    return EPC_APP_FILTER_OARS_VALUE_NONE;
+    return MCT_APP_FILTER_OARS_VALUE_NONE;
   else if (g_str_equal (value_str, "mild"))
-    return EPC_APP_FILTER_OARS_VALUE_MILD;
+    return MCT_APP_FILTER_OARS_VALUE_MILD;
   else if (g_str_equal (value_str, "moderate"))
-    return EPC_APP_FILTER_OARS_VALUE_MODERATE;
+    return MCT_APP_FILTER_OARS_VALUE_MODERATE;
   else if (g_str_equal (value_str, "intense"))
-    return EPC_APP_FILTER_OARS_VALUE_INTENSE;
+    return MCT_APP_FILTER_OARS_VALUE_INTENSE;
   else
-    return EPC_APP_FILTER_OARS_VALUE_UNKNOWN;
+    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 }
 
 /**
- * epc_app_filter_is_user_installation_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_user_installation_allowed:
+ * @filter: an #MctAppFilter
  *
  * Get whether the user is allowed to install to their flatpak user repository.
  * This should be queried in addition to the OARS values
- * (epc_app_filter_get_oars_value()) — if it returns %FALSE, the OARS values
+ * (mct_app_filter_get_oars_value()) — if it returns %FALSE, the OARS values
  * should be ignored and app installation should be unconditionally disallowed.
  *
  * Returns: %TRUE if app installation is allowed to the user repository for
  *    this user; %FALSE if it is unconditionally disallowed for this user
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_user_installation_allowed (EpcAppFilter *filter)
+mct_app_filter_is_user_installation_allowed (MctAppFilter *filter)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
@@ -432,20 +432,20 @@ epc_app_filter_is_user_installation_allowed (EpcAppFilter *filter)
 }
 
 /**
- * epc_app_filter_is_system_installation_allowed:
- * @filter: an #EpcAppFilter
+ * mct_app_filter_is_system_installation_allowed:
+ * @filter: an #MctAppFilter
  *
  * Get whether the user is allowed to install to the flatpak system repository.
  * This should be queried in addition to the OARS values
- * (epc_app_filter_get_oars_value()) — if it returns %FALSE, the OARS values
+ * (mct_app_filter_get_oars_value()) — if it returns %FALSE, the OARS values
  * should be ignored and app installation should be unconditionally disallowed.
  *
  * Returns: %TRUE if app installation is allowed to the system repository for
  *    this user; %FALSE if it is unconditionally disallowed for this user
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_app_filter_is_system_installation_allowed (EpcAppFilter *filter)
+mct_app_filter_is_system_installation_allowed (MctAppFilter *filter)
 {
   g_return_val_if_fail (filter != NULL, FALSE);
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
@@ -454,18 +454,18 @@ epc_app_filter_is_system_installation_allowed (EpcAppFilter *filter)
 }
 
 /**
- * _epc_app_filter_build_app_filter_variant:
- * @filter: an #EpcAppFilter
+ * _mct_app_filter_build_app_filter_variant:
+ * @filter: an #MctAppFilter
  *
  * Build a #GVariant which contains the app filter from @filter, in the format
  * used for storing it in AccountsService.
  *
  * Returns: (transfer floating): a new, floating #GVariant containing the app
  *    filter
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 static GVariant *
-_epc_app_filter_build_app_filter_variant (EpcAppFilter *filter)
+_mct_app_filter_build_app_filter_variant (MctAppFilter *filter)
 {
   g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("(bas)"));
 
@@ -473,7 +473,7 @@ _epc_app_filter_build_app_filter_variant (EpcAppFilter *filter)
   g_return_val_if_fail (filter->ref_count >= 1, NULL);
 
   g_variant_builder_add (&builder, "b",
-                         (filter->app_list_type == EPC_APP_FILTER_LIST_WHITELIST));
+                         (filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST));
   g_variant_builder_open (&builder, G_VARIANT_TYPE ("as"));
 
   for (gsize i = 0; filter->app_list[i] != NULL; i++)
@@ -499,19 +499,19 @@ bus_remote_error_matches (const GError *error,
   return g_str_equal (error_name, expected_error_name);
 }
 
-/* Convert a #GDBusError into a #EpcAppFilter error. */
+/* Convert a #GDBusError into a #MctAppFilter error. */
 static GError *
 bus_error_to_app_filter_error (const GError *bus_error,
                                uid_t         user_id)
 {
   if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_ACCESS_DENIED) ||
       bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.PermissionDenied"))
-    return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
+    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
                         (guint) user_id);
   else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
-    return g_error_new (EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER,
+    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER,
                         _("User %u does not exist"), (guint) user_id);
   else
     return g_error_copy (bus_error);
@@ -559,7 +559,7 @@ accounts_find_user_by_id (GDBusConnection  *connection,
 }
 
 /**
- * epc_get_app_filter:
+ * mct_get_app_filter:
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to query, typically coming from getuid()
@@ -568,13 +568,13 @@ accounts_find_user_by_id (GDBusConnection  *connection,
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @error: return location for a #GError, or %NULL
  *
- * Synchronous version of epc_get_app_filter_async().
+ * Synchronous version of mct_get_app_filter_async().
  *
  * Returns: (transfer full): app filter for the queried user
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-EpcAppFilter *
-epc_get_app_filter (GDBusConnection  *connection,
+MctAppFilter *
+mct_get_app_filter (GDBusConnection  *connection,
                     uid_t             user_id,
                     gboolean          allow_interactive_authorization,
                     GCancellable     *cancellable,
@@ -584,7 +584,7 @@ epc_get_app_filter (GDBusConnection  *connection,
   g_autoptr(GVariant) result_variant = NULL;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GError) local_error = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   gboolean is_whitelist;
   g_auto(GStrv) app_list = NULL;
   const gchar *content_rating_kind;
@@ -636,8 +636,8 @@ epc_get_app_filter (GDBusConnection  *connection,
   if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
                          &is_whitelist, &app_list))
     {
-      g_set_error (error, EPC_APP_FILTER_ERROR,
-                   EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
+      g_set_error (error, MCT_APP_FILTER_ERROR,
+                   MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
                    _("Not allowed to query app filter data for user %u"),
                    (guint) user_id);
       return NULL;
@@ -656,8 +656,8 @@ epc_get_app_filter (GDBusConnection  *connection,
   if (!g_str_equal (content_rating_kind, "oars-1.0") &&
       !g_str_equal (content_rating_kind, "oars-1.1"))
     {
-      g_set_error (error, EPC_APP_FILTER_ERROR,
-                   EPC_APP_FILTER_ERROR_INVALID_DATA,
+      g_set_error (error, MCT_APP_FILTER_ERROR,
+                   MCT_APP_FILTER_ERROR_INVALID_DATA,
                    _("OARS filter for user %u has an unrecognized kind ‘%s’"),
                    (guint) user_id, content_rating_kind);
       return NULL;
@@ -677,13 +677,13 @@ epc_get_app_filter (GDBusConnection  *connection,
       allow_system_installation = FALSE;
     }
 
-  /* Success. Create an #EpcAppFilter object to contain the results. */
-  app_filter = g_new0 (EpcAppFilter, 1);
+  /* Success. Create an #MctAppFilter object to contain the results. */
+  app_filter = g_new0 (MctAppFilter, 1);
   app_filter->ref_count = 1;
   app_filter->user_id = user_id;
   app_filter->app_list = g_steal_pointer (&app_list);
   app_filter->app_list_type =
-    is_whitelist ? EPC_APP_FILTER_LIST_WHITELIST : EPC_APP_FILTER_LIST_BLACKLIST;
+    is_whitelist ? MCT_APP_FILTER_LIST_WHITELIST : MCT_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = allow_user_installation;
   app_filter->allow_system_installation = allow_system_installation;
@@ -713,7 +713,7 @@ get_app_filter_data_free (GetAppFilterData *data)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
 
 /**
- * epc_get_app_filter_async:
+ * mct_get_app_filter_async:
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to query, typically coming from getuid()
@@ -730,13 +730,13 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * runs. It’s provided mostly for testing purposes, or to allow an existing
  * connection to be re-used. Pass %NULL to use the default connection.
  *
- * On failure, an #EpcAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
  * returned.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_get_app_filter_async  (GDBusConnection     *connection,
+mct_get_app_filter_async  (GDBusConnection     *connection,
                            uid_t                user_id,
                            gboolean             allow_interactive_authorization,
                            GCancellable        *cancellable,
@@ -750,7 +750,7 @@ epc_get_app_filter_async  (GDBusConnection     *connection,
   g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (NULL, cancellable, callback, user_data);
-  g_task_set_source_tag (task, epc_get_app_filter_async);
+  g_task_set_source_tag (task, mct_get_app_filter_async);
 
   data = g_new0 (GetAppFilterData, 1);
   data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
@@ -768,11 +768,11 @@ get_app_filter_thread_cb (GTask        *task,
                           gpointer      task_data,
                           GCancellable *cancellable)
 {
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_autoptr(MctAppFilter) filter = NULL;
   GetAppFilterData *data = task_data;
   g_autoptr(GError) local_error = NULL;
 
-  filter = epc_get_app_filter (data->connection, data->user_id,
+  filter = mct_get_app_filter (data->connection, data->user_id,
                                data->allow_interactive_authorization,
                                cancellable, &local_error);
 
@@ -780,22 +780,22 @@ get_app_filter_thread_cb (GTask        *task,
     g_task_return_error (task, g_steal_pointer (&local_error));
   else
     g_task_return_pointer (task, g_steal_pointer (&filter),
-                           (GDestroyNotify) epc_app_filter_unref);
+                           (GDestroyNotify) mct_app_filter_unref);
 }
 
 /**
- * epc_get_app_filter_finish:
+ * mct_get_app_filter_finish:
  * @result: a #GAsyncResult
  * @error: return location for a #GError, or %NULL
  *
  * Finish an asynchronous operation to get the app filter for a user, started
- * with epc_get_app_filter_async().
+ * with mct_get_app_filter_async().
  *
  * Returns: (transfer full): app filter for the queried user
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-EpcAppFilter *
-epc_get_app_filter_finish (GAsyncResult  *result,
+MctAppFilter *
+mct_get_app_filter_finish (GAsyncResult  *result,
                            GError       **error)
 {
   g_return_val_if_fail (g_task_is_valid (result, NULL), NULL);
@@ -805,7 +805,7 @@ epc_get_app_filter_finish (GAsyncResult  *result,
 }
 
 /**
- * epc_set_app_filter:
+ * mct_set_app_filter:
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to set the filter for, typically coming from getuid()
@@ -815,15 +815,15 @@ epc_get_app_filter_finish (GAsyncResult  *result,
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @error: return location for a #GError, or %NULL
  *
- * Synchronous version of epc_set_app_filter_async().
+ * Synchronous version of mct_set_app_filter_async().
  *
  * Returns: %TRUE on success, %FALSE otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_set_app_filter (GDBusConnection  *connection,
+mct_set_app_filter (GDBusConnection  *connection,
                     uid_t             user_id,
-                    EpcAppFilter     *app_filter,
+                    MctAppFilter     *app_filter,
                     gboolean          allow_interactive_authorization,
                     GCancellable     *cancellable,
                     GError          **error)
@@ -856,7 +856,7 @@ epc_set_app_filter (GDBusConnection  *connection,
   if (object_path == NULL)
     return FALSE;
 
-  app_filter_variant = _epc_app_filter_build_app_filter_variant (app_filter);
+  app_filter_variant = _mct_app_filter_build_app_filter_variant (app_filter);
   oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
                                        app_filter->oars_ratings);
   allow_user_installation_variant = g_variant_new_boolean (app_filter->allow_user_installation);
@@ -966,7 +966,7 @@ typedef struct
 {
   GDBusConnection *connection;  /* (nullable) (owned) */
   uid_t user_id;
-  EpcAppFilter *app_filter;  /* (owned) */
+  MctAppFilter *app_filter;  /* (owned) */
   gboolean allow_interactive_authorization;
 } SetAppFilterData;
 
@@ -974,14 +974,14 @@ static void
 set_app_filter_data_free (SetAppFilterData *data)
 {
   g_clear_object (&data->connection);
-  epc_app_filter_unref (data->app_filter);
+  mct_app_filter_unref (data->app_filter);
   g_free (data);
 }
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
 
 /**
- * epc_set_app_filter_async:
+ * mct_set_app_filter_async:
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to set the filter for, typically coming from getuid()
@@ -999,15 +999,15 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  * runs. It’s provided mostly for testing purposes, or to allow an existing
  * connection to be re-used. Pass %NULL to use the default connection.
  *
- * On failure, an #EpcAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
  * returned. The user’s app filter settings will be left in an undefined state.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_set_app_filter_async (GDBusConnection     *connection,
+mct_set_app_filter_async (GDBusConnection     *connection,
                           uid_t                user_id,
-                          EpcAppFilter        *app_filter,
+                          MctAppFilter        *app_filter,
                           gboolean             allow_interactive_authorization,
                           GCancellable        *cancellable,
                           GAsyncReadyCallback  callback,
@@ -1022,12 +1022,12 @@ epc_set_app_filter_async (GDBusConnection     *connection,
   g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (NULL, cancellable, callback, user_data);
-  g_task_set_source_tag (task, epc_set_app_filter_async);
+  g_task_set_source_tag (task, mct_set_app_filter_async);
 
   data = g_new0 (SetAppFilterData, 1);
   data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
-  data->app_filter = epc_app_filter_ref (app_filter);
+  data->app_filter = mct_app_filter_ref (app_filter);
   data->allow_interactive_authorization = allow_interactive_authorization;
   g_task_set_task_data (task, g_steal_pointer (&data),
                         (GDestroyNotify) set_app_filter_data_free);
@@ -1045,7 +1045,7 @@ set_app_filter_thread_cb (GTask        *task,
   SetAppFilterData *data = task_data;
   g_autoptr(GError) local_error = NULL;
 
-  success = epc_set_app_filter (data->connection, data->user_id,
+  success = mct_set_app_filter (data->connection, data->user_id,
                                 data->app_filter,
                                 data->allow_interactive_authorization,
                                 cancellable, &local_error);
@@ -1057,18 +1057,18 @@ set_app_filter_thread_cb (GTask        *task,
 }
 
 /**
- * epc_set_app_filter_finish:
+ * mct_set_app_filter_finish:
  * @result: a #GAsyncResult
  * @error: return location for a #GError, or %NULL
  *
  * Finish an asynchronous operation to set the app filter for a user, started
- * with epc_set_app_filter_async().
+ * with mct_set_app_filter_async().
  *
  * Returns: %TRUE on success, %FALSE otherwise
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 gboolean
-epc_set_app_filter_finish (GAsyncResult  *result,
+mct_set_app_filter_finish (GAsyncResult  *result,
                            GError       **error)
 {
   g_return_val_if_fail (g_task_is_valid (result, NULL), FALSE);
@@ -1078,48 +1078,48 @@ epc_set_app_filter_finish (GAsyncResult  *result,
 }
 
 /*
- * Actual implementation of #EpcAppFilterBuilder.
+ * Actual implementation of #MctAppFilterBuilder.
  *
  * All members are %NULL if un-initialised, cleared, or ended.
  */
 typedef struct
 {
   GPtrArray *paths_blacklist;  /* (nullable) (owned) (element-type filename) */
-  GHashTable *oars;  /* (nullable) (owned) (element-type utf8 EpcAppFilterOarsValue) */
+  GHashTable *oars;  /* (nullable) (owned) (element-type utf8 MctAppFilterOarsValue) */
   gboolean allow_user_installation;
   gboolean allow_system_installation;
 
   /*< private >*/
   gpointer padding[2];
-} EpcAppFilterBuilderReal;
+} MctAppFilterBuilderReal;
 
-G_STATIC_ASSERT (sizeof (EpcAppFilterBuilderReal) ==
-                 sizeof (EpcAppFilterBuilder));
-G_STATIC_ASSERT (__alignof__ (EpcAppFilterBuilderReal) ==
-                 __alignof__ (EpcAppFilterBuilder));
+G_STATIC_ASSERT (sizeof (MctAppFilterBuilderReal) ==
+                 sizeof (MctAppFilterBuilder));
+G_STATIC_ASSERT (__alignof__ (MctAppFilterBuilderReal) ==
+                 __alignof__ (MctAppFilterBuilder));
 
-G_DEFINE_BOXED_TYPE (EpcAppFilterBuilder, epc_app_filter_builder,
-                     epc_app_filter_builder_copy, epc_app_filter_builder_free)
+G_DEFINE_BOXED_TYPE (MctAppFilterBuilder, mct_app_filter_builder,
+                     mct_app_filter_builder_copy, mct_app_filter_builder_free)
 
 /**
- * epc_app_filter_builder_init:
- * @builder: an uninitialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_init:
+ * @builder: an uninitialised #MctAppFilterBuilder
  *
  * Initialise the given @builder so it can be used to construct a new
- * #EpcAppFilter. @builder must have been allocated on the stack, and must not
+ * #MctAppFilter. @builder must have been allocated on the stack, and must not
  * already be initialised.
  *
- * Construct the #EpcAppFilter by calling methods on @builder, followed by
- * epc_app_filter_builder_end(). To abort construction, use
- * epc_app_filter_builder_clear().
+ * Construct the #MctAppFilter by calling methods on @builder, followed by
+ * mct_app_filter_builder_end(). To abort construction, use
+ * mct_app_filter_builder_clear().
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_init (EpcAppFilterBuilder *builder)
+mct_app_filter_builder_init (MctAppFilterBuilder *builder)
 {
-  EpcAppFilterBuilder local_builder = EPC_APP_FILTER_BUILDER_INIT ();
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilder local_builder = MCT_APP_FILTER_BUILDER_INIT ();
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
   g_return_if_fail (_builder->paths_blacklist == NULL);
@@ -1129,22 +1129,22 @@ epc_app_filter_builder_init (EpcAppFilterBuilder *builder)
 }
 
 /**
- * epc_app_filter_builder_clear:
- * @builder: an #EpcAppFilterBuilder
+ * mct_app_filter_builder_clear:
+ * @builder: an #MctAppFilterBuilder
  *
  * Clear @builder, freeing any internal state in it. This will not free the
  * top-level storage for @builder itself, which is assumed to be allocated on
  * the stack.
  *
- * If called on an already-cleared #EpcAppFilterBuilder, this function is
+ * If called on an already-cleared #MctAppFilterBuilder, this function is
  * idempotent.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_clear (EpcAppFilterBuilder *builder)
+mct_app_filter_builder_clear (MctAppFilterBuilder *builder)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
 
@@ -1153,51 +1153,51 @@ epc_app_filter_builder_clear (EpcAppFilterBuilder *builder)
 }
 
 /**
- * epc_app_filter_builder_new:
+ * mct_app_filter_builder_new:
  *
- * Construct a new #EpcAppFilterBuilder on the heap. This is intended for
+ * Construct a new #MctAppFilterBuilder on the heap. This is intended for
  * language bindings. The returned builder must eventually be freed with
- * epc_app_filter_builder_free(), but can be cleared zero or more times with
- * epc_app_filter_builder_clear() first.
+ * mct_app_filter_builder_free(), but can be cleared zero or more times with
+ * mct_app_filter_builder_clear() first.
  *
- * Returns: (transfer full): a new heap-allocated #EpcAppFilterBuilder
- * Since: 0.1.0
+ * Returns: (transfer full): a new heap-allocated #MctAppFilterBuilder
+ * Since: 0.2.0
  */
-EpcAppFilterBuilder *
-epc_app_filter_builder_new (void)
+MctAppFilterBuilder *
+mct_app_filter_builder_new (void)
 {
-  g_autoptr(EpcAppFilterBuilder) builder = NULL;
+  g_autoptr(MctAppFilterBuilder) builder = NULL;
 
-  builder = g_new0 (EpcAppFilterBuilder, 1);
-  epc_app_filter_builder_init (builder);
+  builder = g_new0 (MctAppFilterBuilder, 1);
+  mct_app_filter_builder_init (builder);
 
   return g_steal_pointer (&builder);
 }
 
 /**
- * epc_app_filter_builder_copy:
- * @builder: an #EpcAppFilterBuilder
+ * mct_app_filter_builder_copy:
+ * @builder: an #MctAppFilterBuilder
  *
- * Copy the given @builder to a newly-allocated #EpcAppFilterBuilder on the
+ * Copy the given @builder to a newly-allocated #MctAppFilterBuilder on the
  * heap. This is safe to use with cleared, stack-allocated
- * #EpcAppFilterBuilders.
+ * #MctAppFilterBuilders.
  *
  * Returns: (transfer full): a copy of @builder
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-EpcAppFilterBuilder *
-epc_app_filter_builder_copy (EpcAppFilterBuilder *builder)
+MctAppFilterBuilder *
+mct_app_filter_builder_copy (MctAppFilterBuilder *builder)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
-  g_autoptr(EpcAppFilterBuilder) copy = NULL;
-  EpcAppFilterBuilderReal *_copy;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
+  g_autoptr(MctAppFilterBuilder) copy = NULL;
+  MctAppFilterBuilderReal *_copy;
 
   g_return_val_if_fail (builder != NULL, NULL);
 
-  copy = epc_app_filter_builder_new ();
-  _copy = (EpcAppFilterBuilderReal *) copy;
+  copy = mct_app_filter_builder_new ();
+  _copy = (MctAppFilterBuilderReal *) copy;
 
-  epc_app_filter_builder_clear (copy);
+  mct_app_filter_builder_clear (copy);
   if (_builder->paths_blacklist != NULL)
     _copy->paths_blacklist = g_ptr_array_ref (_builder->paths_blacklist);
   if (_builder->oars != NULL)
@@ -1209,40 +1209,40 @@ epc_app_filter_builder_copy (EpcAppFilterBuilder *builder)
 }
 
 /**
- * epc_app_filter_builder_free:
- * @builder: a heap-allocated #EpcAppFilterBuilder
+ * mct_app_filter_builder_free:
+ * @builder: a heap-allocated #MctAppFilterBuilder
  *
- * Free an #EpcAppFilterBuilder originally allocated using
- * epc_app_filter_builder_new(). This must not be called on stack-allocated
- * builders initialised using epc_app_filter_builder_init().
+ * Free an #MctAppFilterBuilder originally allocated using
+ * mct_app_filter_builder_new(). This must not be called on stack-allocated
+ * builders initialised using mct_app_filter_builder_init().
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_free (EpcAppFilterBuilder *builder)
+mct_app_filter_builder_free (MctAppFilterBuilder *builder)
 {
   g_return_if_fail (builder != NULL);
 
-  epc_app_filter_builder_clear (builder);
+  mct_app_filter_builder_clear (builder);
   g_free (builder);
 }
 
 /**
- * epc_app_filter_builder_end:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_end:
+ * @builder: an initialised #MctAppFilterBuilder
  *
- * Finish constructing an #EpcAppFilter with the given @builder, and return it.
- * The #EpcAppFilterBuilder will be cleared as if epc_app_filter_builder_clear()
+ * Finish constructing an #MctAppFilter with the given @builder, and return it.
+ * The #MctAppFilterBuilder will be cleared as if mct_app_filter_builder_clear()
  * had been called.
  *
- * Returns: (transfer full): a newly constructed #EpcAppFilter
- * Since: 0.1.0
+ * Returns: (transfer full): a newly constructed #MctAppFilter
+ * Since: 0.2.0
  */
-EpcAppFilter *
-epc_app_filter_builder_end (EpcAppFilterBuilder *builder)
+MctAppFilter *
+mct_app_filter_builder_end (MctAppFilterBuilder *builder)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_auto(GVariantBuilder) oars_builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("a{ss}"));
   GHashTableIter iter;
   gpointer key, value;
@@ -1260,10 +1260,10 @@ epc_app_filter_builder_end (EpcAppFilterBuilder *builder)
   while (g_hash_table_iter_next (&iter, &key, &value))
     {
       const gchar *oars_section = key;
-      EpcAppFilterOarsValue oars_value = GPOINTER_TO_INT (value);
+      MctAppFilterOarsValue oars_value = GPOINTER_TO_INT (value);
       const gchar *oars_value_strs[] =
         {
-          NULL,  /* EPC_APP_FILTER_OARS_VALUE_UNKNOWN */
+          NULL,  /* MCT_APP_FILTER_OARS_VALUE_UNKNOWN */
           "none",
           "mild",
           "moderate",
@@ -1280,37 +1280,37 @@ epc_app_filter_builder_end (EpcAppFilterBuilder *builder)
 
   oars_variant = g_variant_ref_sink (g_variant_builder_end (&oars_builder));
 
-  /* Build the #EpcAppFilter. */
-  app_filter = g_new0 (EpcAppFilter, 1);
+  /* Build the #MctAppFilter. */
+  app_filter = g_new0 (MctAppFilter, 1);
   app_filter->ref_count = 1;
   app_filter->user_id = -1;
   app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->paths_blacklist), FALSE);
-  app_filter->app_list_type = EPC_APP_FILTER_LIST_BLACKLIST;
+  app_filter->app_list_type = MCT_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = _builder->allow_user_installation;
   app_filter->allow_system_installation = _builder->allow_system_installation;
 
-  epc_app_filter_builder_clear (builder);
+  mct_app_filter_builder_clear (builder);
 
   return g_steal_pointer (&app_filter);
 }
 
 /**
- * epc_app_filter_builder_blacklist_path:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_blacklist_path:
+ * @builder: an initialised #MctAppFilterBuilder
  * @path: (type filename): an absolute path to blacklist
  *
  * Add @path to the blacklist of app paths in the filter under construction. It
  * will be canonicalised (without doing any I/O) before being added.
  * The canonicalised @path will not be added again if it’s already been added.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_blacklist_path (EpcAppFilterBuilder *builder,
+mct_app_filter_builder_blacklist_path (MctAppFilterBuilder *builder,
                                        const gchar         *path)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
   g_return_if_fail (_builder->paths_blacklist != NULL);
@@ -1325,21 +1325,21 @@ epc_app_filter_builder_blacklist_path (EpcAppFilterBuilder *builder,
 }
 
 /**
- * epc_app_filter_builder_blacklist_flatpak_ref:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_blacklist_flatpak_ref:
+ * @builder: an initialised #MctAppFilterBuilder
  * @app_ref: a flatpak app ref to blacklist
  *
  * Add @app_ref to the blacklist of flatpak refs in the filter under
  * construction. The @app_ref will not be added again if it’s already been
  * added.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
+mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
                                               const gchar         *app_ref)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
   g_return_if_fail (_builder->paths_blacklist != NULL);
@@ -1351,8 +1351,8 @@ epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
 }
 
 /**
- * epc_app_filter_builder_set_oars_value:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_set_oars_value:
+ * @builder: an initialised #MctAppFilterBuilder
  * @oars_section: name of the OARS section to set the value for
  * @value: value to set for the @oars_section
  *
@@ -1361,14 +1361,14 @@ epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
  * Any apps which have more intense content in this section should not be usable
  * by the user.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_set_oars_value (EpcAppFilterBuilder   *builder,
+mct_app_filter_builder_set_oars_value (MctAppFilterBuilder   *builder,
                                        const gchar           *oars_section,
-                                       EpcAppFilterOarsValue  value)
+                                       MctAppFilterOarsValue  value)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
   g_return_if_fail (_builder->oars != NULL);
@@ -1379,23 +1379,23 @@ epc_app_filter_builder_set_oars_value (EpcAppFilterBuilder   *builder,
 }
 
 /**
- * epc_app_filter_builder_set_allow_user_installation:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_set_allow_user_installation:
+ * @builder: an initialised #MctAppFilterBuilder
  * @allow_user_installation: %TRUE to allow app installation; %FALSE to
  *    unconditionally disallow it
  *
  * Set whether the user is allowed to install to their flatpak user repository.
  * If this is %TRUE, app installation is still subject to the OARS values
- * (epc_app_filter_builder_set_oars_value()). If it is %FALSE, app installation
+ * (mct_app_filter_builder_set_oars_value()). If it is %FALSE, app installation
  * is unconditionally disallowed for this user.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_set_allow_user_installation (EpcAppFilterBuilder *builder,
+mct_app_filter_builder_set_allow_user_installation (MctAppFilterBuilder *builder,
                                                     gboolean             allow_user_installation)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
 
@@ -1403,23 +1403,23 @@ epc_app_filter_builder_set_allow_user_installation (EpcAppFilterBuilder *builder
 }
 
 /**
- * epc_app_filter_builder_set_allow_system_installation:
- * @builder: an initialised #EpcAppFilterBuilder
+ * mct_app_filter_builder_set_allow_system_installation:
+ * @builder: an initialised #MctAppFilterBuilder
  * @allow_system_installation: %TRUE to allow app installation; %FALSE to
  *    unconditionally disallow it
  *
  * Set whether the user is allowed to install to the flatpak system repository.
  * If this is %TRUE, app installation is still subject to the OARS values
- * (epc_app_filter_builder_set_oars_value()). If it is %FALSE, app installation
+ * (mct_app_filter_builder_set_oars_value()). If it is %FALSE, app installation
  * is unconditionally disallowed for this user.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 void
-epc_app_filter_builder_set_allow_system_installation (EpcAppFilterBuilder *builder,
+mct_app_filter_builder_set_allow_system_installation (MctAppFilterBuilder *builder,
                                                       gboolean             allow_system_installation)
 {
-  EpcAppFilterBuilderReal *_builder = (EpcAppFilterBuilderReal *) builder;
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
 

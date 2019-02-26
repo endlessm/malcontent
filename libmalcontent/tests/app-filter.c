@@ -25,7 +25,7 @@
 #include <glib.h>
 #include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
-#include <libeos-parental-controls/app-filter.h>
+#include <libmalcontent/app-filter.h>
 #include <libglib-testing/dbus-queue.h>
 #include <locale.h>
 #include <string.h>
@@ -71,53 +71,53 @@ assert_strv_equal (const gchar * const *strv_a,
 static void
 test_app_filter_error_quark (void)
 {
-  g_assert_cmpint (epc_app_filter_error_quark (), !=, 0);
+  g_assert_cmpint (mct_app_filter_error_quark (), !=, 0);
 }
 
 /* Test that the #GType definitions for various types work. */
 static void
 test_app_filter_types (void)
 {
-  g_type_ensure (epc_app_filter_get_type ());
-  g_type_ensure (epc_app_filter_builder_get_type ());
+  g_type_ensure (mct_app_filter_get_type ());
+  g_type_ensure (mct_app_filter_builder_get_type ());
 }
 
-/* Test that ref() and unref() work on an #EpcAppFilter. */
+/* Test that ref() and unref() work on an #MctAppFilter. */
 static void
 test_app_filter_refs (void)
 {
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) filter = NULL;
 
-  /* Use an empty #EpcAppFilter. */
-  filter = epc_app_filter_builder_end (&builder);
+  /* Use an empty #MctAppFilter. */
+  filter = mct_app_filter_builder_end (&builder);
 
   g_assert_nonnull (filter);
 
   /* Call is_path_allowed() to check that the filter hasn’t been finalised. */
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  epc_app_filter_ref (filter);
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  epc_app_filter_unref (filter);
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  mct_app_filter_ref (filter);
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  mct_app_filter_unref (filter);
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
 
   /* Final ref is dropped by g_autoptr(). */
 }
 
-/* Fixture for tests which use an #EpcAppFilterBuilder. The builder can either
+/* Fixture for tests which use an #MctAppFilterBuilder. The builder can either
  * be heap- or stack-allocated. @builder will always be a valid pointer to it.
  */
 typedef struct
 {
-  EpcAppFilterBuilder *builder;
-  EpcAppFilterBuilder stack_builder;
+  MctAppFilterBuilder *builder;
+  MctAppFilterBuilder stack_builder;
 } BuilderFixture;
 
 static void
 builder_set_up_stack (BuilderFixture *fixture,
                       gconstpointer   test_data)
 {
-  epc_app_filter_builder_init (&fixture->stack_builder);
+  mct_app_filter_builder_init (&fixture->stack_builder);
   fixture->builder = &fixture->stack_builder;
 }
 
@@ -125,7 +125,7 @@ static void
 builder_tear_down_stack (BuilderFixture *fixture,
                          gconstpointer   test_data)
 {
-  epc_app_filter_builder_clear (&fixture->stack_builder);
+  mct_app_filter_builder_clear (&fixture->stack_builder);
   fixture->builder = NULL;
 }
 
@@ -133,7 +133,7 @@ static void
 builder_set_up_stack2 (BuilderFixture *fixture,
                        gconstpointer   test_data)
 {
-  EpcAppFilterBuilder local_builder = EPC_APP_FILTER_BUILDER_INIT ();
+  MctAppFilterBuilder local_builder = MCT_APP_FILTER_BUILDER_INIT ();
   memcpy (&fixture->stack_builder, &local_builder, sizeof (local_builder));
   fixture->builder = &fixture->stack_builder;
 }
@@ -142,7 +142,7 @@ static void
 builder_tear_down_stack2 (BuilderFixture *fixture,
                           gconstpointer   test_data)
 {
-  epc_app_filter_builder_clear (&fixture->stack_builder);
+  mct_app_filter_builder_clear (&fixture->stack_builder);
   fixture->builder = NULL;
 }
 
@@ -150,152 +150,152 @@ static void
 builder_set_up_heap (BuilderFixture *fixture,
                      gconstpointer   test_data)
 {
-  fixture->builder = epc_app_filter_builder_new ();
+  fixture->builder = mct_app_filter_builder_new ();
 }
 
 static void
 builder_tear_down_heap (BuilderFixture *fixture,
                         gconstpointer   test_data)
 {
-  g_clear_pointer (&fixture->builder, epc_app_filter_builder_free);
+  g_clear_pointer (&fixture->builder, mct_app_filter_builder_free);
 }
 
-/* Test building a non-empty #EpcAppFilter using an #EpcAppFilterBuilder. */
+/* Test building a non-empty #MctAppFilter using an #MctAppFilterBuilder. */
 static void
 test_app_filter_builder_non_empty (BuilderFixture *fixture,
                                    gconstpointer   test_data)
 {
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_autoptr(MctAppFilter) filter = NULL;
   g_autofree const gchar **sections = NULL;
 
-  epc_app_filter_builder_blacklist_path (fixture->builder, "/bin/true");
-  epc_app_filter_builder_blacklist_path (fixture->builder, "/usr/bin/gnome-software");
+  mct_app_filter_builder_blacklist_path (fixture->builder, "/bin/true");
+  mct_app_filter_builder_blacklist_path (fixture->builder, "/usr/bin/gnome-software");
 
-  epc_app_filter_builder_blacklist_flatpak_ref (fixture->builder,
+  mct_app_filter_builder_blacklist_flatpak_ref (fixture->builder,
                                                 "app/org.doom.Doom/x86_64/master");
 
-  epc_app_filter_builder_set_oars_value (fixture->builder, "drugs-alcohol",
-                                         EPC_APP_FILTER_OARS_VALUE_MILD);
-  epc_app_filter_builder_set_oars_value (fixture->builder, "language-humor",
-                                         EPC_APP_FILTER_OARS_VALUE_MODERATE);
-  epc_app_filter_builder_set_allow_user_installation (fixture->builder, TRUE);
-  epc_app_filter_builder_set_allow_system_installation (fixture->builder, FALSE);
+  mct_app_filter_builder_set_oars_value (fixture->builder, "drugs-alcohol",
+                                         MCT_APP_FILTER_OARS_VALUE_MILD);
+  mct_app_filter_builder_set_oars_value (fixture->builder, "language-humor",
+                                         MCT_APP_FILTER_OARS_VALUE_MODERATE);
+  mct_app_filter_builder_set_allow_user_installation (fixture->builder, TRUE);
+  mct_app_filter_builder_set_allow_system_installation (fixture->builder, FALSE);
 
-  filter = epc_app_filter_builder_end (fixture->builder);
+  filter = mct_app_filter_builder_end (fixture->builder);
 
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  g_assert_false (epc_app_filter_is_path_allowed (filter,
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  g_assert_false (mct_app_filter_is_path_allowed (filter,
                                                   "/usr/bin/gnome-software"));
 
-  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
                                                         "app/org.gnome.Ponies/x86_64/master"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
-  g_assert_false (epc_app_filter_is_flatpak_ref_allowed (filter,
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
+  g_assert_false (mct_app_filter_is_flatpak_ref_allowed (filter,
                                                          "app/org.doom.Doom/x86_64/master"));
-  g_assert_false (epc_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
+  g_assert_false (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
 
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_MILD);
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "language-humor"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_MODERATE);
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "something-else"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_MILD);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "language-humor"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_MODERATE);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "something-else"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
 
-  sections = epc_app_filter_get_oars_sections (filter);
+  sections = mct_app_filter_get_oars_sections (filter);
   const gchar * const expected_sections[] = { "drugs-alcohol", "language-humor", NULL };
   assert_strv_equal ((const gchar * const *) sections, expected_sections);
 
-  g_assert_true (epc_app_filter_is_user_installation_allowed (filter));
-  g_assert_false (epc_app_filter_is_system_installation_allowed (filter));
+  g_assert_true (mct_app_filter_is_user_installation_allowed (filter));
+  g_assert_false (mct_app_filter_is_system_installation_allowed (filter));
 }
 
-/* Test building an empty #EpcAppFilter using an #EpcAppFilterBuilder. */
+/* Test building an empty #MctAppFilter using an #MctAppFilterBuilder. */
 static void
 test_app_filter_builder_empty (BuilderFixture *fixture,
                                gconstpointer   test_data)
 {
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_autoptr(MctAppFilter) filter = NULL;
   g_autofree const gchar **sections = NULL;
 
-  filter = epc_app_filter_builder_end (fixture->builder);
+  filter = mct_app_filter_builder_end (fixture->builder);
 
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  g_assert_true (epc_app_filter_is_path_allowed (filter,
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  g_assert_true (mct_app_filter_is_path_allowed (filter,
                                                  "/usr/bin/gnome-software"));
 
-  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
                                                         "app/org.gnome.Ponies/x86_64/master"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
-  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (filter,
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
+  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
                                                         "app/org.doom.Doom/x86_64/master"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
 
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "language-humor"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
-  g_assert_cmpint (epc_app_filter_get_oars_value (filter, "something-else"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "language-humor"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpint (mct_app_filter_get_oars_value (filter, "something-else"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
 
-  sections = epc_app_filter_get_oars_sections (filter);
+  sections = mct_app_filter_get_oars_sections (filter);
   const gchar * const expected_sections[] = { NULL };
   assert_strv_equal ((const gchar * const *) sections, expected_sections);
 
-  g_assert_true (epc_app_filter_is_user_installation_allowed (filter));
-  g_assert_false (epc_app_filter_is_system_installation_allowed (filter));
+  g_assert_true (mct_app_filter_is_user_installation_allowed (filter));
+  g_assert_false (mct_app_filter_is_system_installation_allowed (filter));
 }
 
-/* Check that copying a cleared #EpcAppFilterBuilder works, and the copy can
+/* Check that copying a cleared #MctAppFilterBuilder works, and the copy can
  * then be initialised and used to build a filter. */
 static void
 test_app_filter_builder_copy_empty (void)
 {
-  g_autoptr(EpcAppFilterBuilder) builder = epc_app_filter_builder_new ();
-  g_autoptr(EpcAppFilterBuilder) builder_copy = NULL;
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_autoptr(MctAppFilterBuilder) builder = mct_app_filter_builder_new ();
+  g_autoptr(MctAppFilterBuilder) builder_copy = NULL;
+  g_autoptr(MctAppFilter) filter = NULL;
 
-  epc_app_filter_builder_clear (builder);
-  builder_copy = epc_app_filter_builder_copy (builder);
+  mct_app_filter_builder_clear (builder);
+  builder_copy = mct_app_filter_builder_copy (builder);
 
-  epc_app_filter_builder_init (builder_copy);
-  epc_app_filter_builder_blacklist_path (builder_copy, "/bin/true");
-  filter = epc_app_filter_builder_end (builder_copy);
+  mct_app_filter_builder_init (builder_copy);
+  mct_app_filter_builder_blacklist_path (builder_copy, "/bin/true");
+  filter = mct_app_filter_builder_end (builder_copy);
 
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  g_assert_false (epc_app_filter_is_path_allowed (filter, "/bin/true"));
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
 
-  g_assert_true (epc_app_filter_is_user_installation_allowed (filter));
-  g_assert_false (epc_app_filter_is_system_installation_allowed (filter));
+  g_assert_true (mct_app_filter_is_user_installation_allowed (filter));
+  g_assert_false (mct_app_filter_is_system_installation_allowed (filter));
 }
 
-/* Check that copying a filled #EpcAppFilterBuilder works, and the copy can be
+/* Check that copying a filled #MctAppFilterBuilder works, and the copy can be
  * used to build a filter. */
 static void
 test_app_filter_builder_copy_full (void)
 {
-  g_autoptr(EpcAppFilterBuilder) builder = epc_app_filter_builder_new ();
-  g_autoptr(EpcAppFilterBuilder) builder_copy = NULL;
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_autoptr(MctAppFilterBuilder) builder = mct_app_filter_builder_new ();
+  g_autoptr(MctAppFilterBuilder) builder_copy = NULL;
+  g_autoptr(MctAppFilter) filter = NULL;
 
-  epc_app_filter_builder_blacklist_path (builder, "/bin/true");
-  epc_app_filter_builder_set_allow_user_installation (builder, FALSE);
-  epc_app_filter_builder_set_allow_system_installation (builder, TRUE);
-  builder_copy = epc_app_filter_builder_copy (builder);
-  filter = epc_app_filter_builder_end (builder_copy);
+  mct_app_filter_builder_blacklist_path (builder, "/bin/true");
+  mct_app_filter_builder_set_allow_user_installation (builder, FALSE);
+  mct_app_filter_builder_set_allow_system_installation (builder, TRUE);
+  builder_copy = mct_app_filter_builder_copy (builder);
+  filter = mct_app_filter_builder_end (builder_copy);
 
-  g_assert_true (epc_app_filter_is_path_allowed (filter, "/bin/false"));
-  g_assert_false (epc_app_filter_is_path_allowed (filter, "/bin/true"));
-  g_assert_false (epc_app_filter_is_user_installation_allowed (filter));
-  g_assert_true (epc_app_filter_is_system_installation_allowed (filter));
+  g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
+  g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
+  g_assert_false (mct_app_filter_is_user_installation_allowed (filter));
+  g_assert_true (mct_app_filter_is_system_installation_allowed (filter));
 }
 
 /* Check that various configurations of a #GAppInfo are accepted or rejected
- * as appropriate by epc_app_filter_is_appinfo_allowed(). */
+ * as appropriate by mct_app_filter_is_appinfo_allowed(). */
 static void
 test_app_filter_appinfo (void)
 {
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) filter = NULL;
   const struct
     {
       gboolean expected_allowed;
@@ -379,10 +379,10 @@ test_app_filter_appinfo (void)
         "X-Flatpak-RenamedFrom=org.gnome.Nasty.desktop;\n" },
     };
 
-  epc_app_filter_builder_blacklist_path (&builder, "/bin/false");
-  epc_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_blacklist_path (&builder, "/bin/false");
+  mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
 
-  filter = epc_app_filter_builder_end (&builder);
+  filter = mct_app_filter_builder_end (&builder);
 
   for (gsize i = 0; i < G_N_ELEMENTS (vectors); i++)
     {
@@ -402,9 +402,9 @@ test_app_filter_appinfo (void)
       g_assert_nonnull (appinfo);
 
       if (vectors[i].expected_allowed)
-        g_assert_true (epc_app_filter_is_appinfo_allowed (filter, appinfo));
+        g_assert_true (mct_app_filter_is_appinfo_allowed (filter, appinfo));
       else
-        g_assert_false (epc_app_filter_is_appinfo_allowed (filter, appinfo));
+        g_assert_false (mct_app_filter_is_appinfo_allowed (filter, appinfo));
     }
 }
 
@@ -477,7 +477,7 @@ async_result_cb (GObject      *obj,
 /* Generic mock accountsservice implementation which returns the properties
  * given in #GetAppFilterData.properties if queried for a UID matching
  * #GetAppFilterData.expected_uid. Intended to be used for writing ‘successful’
- * epc_get_app_filter() tests returning a variety of values. */
+ * mct_get_app_filter() tests returning a variety of values. */
 typedef struct
 {
   uid_t expected_uid;
@@ -522,7 +522,7 @@ get_app_filter_server_cb (GtDBusQueue *queue,
                                          g_variant_new_tuple (&properties_variant, 1));
 }
 
-/* Test that getting an #EpcAppFilter from the mock D-Bus service works. The
+/* Test that getting an #MctAppFilter from the mock D-Bus service works. The
  * @test_data is a boolean value indicating whether to do the call
  * synchronously (%FALSE) or asynchronously (%TRUE).
  *
@@ -532,7 +532,7 @@ static void
 test_app_filter_bus_get (BusFixture    *fixture,
                          gconstpointer  test_data)
 {
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   gboolean test_async = GPOINTER_TO_UINT (test_data);
   const GetAppFilterData get_app_filter_data =
@@ -553,17 +553,17 @@ test_app_filter_bus_get (BusFixture    *fixture,
     {
       g_autoptr(GAsyncResult) result = NULL;
 
-      epc_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+      mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid,
                                 FALSE, NULL, async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
-      app_filter = epc_get_app_filter_finish (result, &local_error);
+      app_filter = mct_get_app_filter_finish (result, &local_error);
     }
   else
     {
-      app_filter = epc_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+      app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                        fixture->valid_uid,
                                        FALSE, NULL, &local_error);
     }
@@ -572,13 +572,13 @@ test_app_filter_bus_get (BusFixture    *fixture,
   g_assert_nonnull (app_filter);
 
   /* Check the app filter properties. */
-  g_assert_cmpuint (epc_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
-  g_assert_false (epc_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Chess"));
+  g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_false (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Chess"));
 }
 
-/* Test that getting an #EpcAppFilter containing a whitelist from the mock D-Bus
- * service works, and that the #EpcAppFilter methods handle the whitelist
+/* Test that getting an #MctAppFilter containing a whitelist from the mock D-Bus
+ * service works, and that the #MctAppFilter methods handle the whitelist
  * correctly.
  *
  * The mock D-Bus replies are generated in get_app_filter_server_cb(). */
@@ -586,7 +586,7 @@ static void
 test_app_filter_bus_get_whitelist (BusFixture    *fixture,
                                    gconstpointer  test_data)
 {
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const GetAppFilterData get_app_filter_data =
     {
@@ -606,7 +606,7 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = epc_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
                                    FALSE, NULL, &local_error);
 
@@ -615,18 +615,18 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
 
   /* Check the app filter properties. The returned filter is a whitelist,
    * whereas typically a blacklist is returned. */
-  g_assert_cmpuint (epc_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
-  g_assert_false (epc_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted1"));
-  g_assert_true (epc_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted2"));
-  g_assert_true (epc_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/stable"));
-  g_assert_false (epc_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/unknown"));
-  g_assert_true (epc_app_filter_is_path_allowed (app_filter, "/usr/bin/true"));
-  g_assert_false (epc_app_filter_is_path_allowed (app_filter, "/usr/bin/false"));
+  g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_false (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted1"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted2"));
+  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/stable"));
+  g_assert_false (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/unknown"));
+  g_assert_true (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/true"));
+  g_assert_false (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/false"));
 }
 
-/* Test that getting an #EpcAppFilter containing all possible OARS values from
- * the mock D-Bus service works, and that the #EpcAppFilter methods handle them
+/* Test that getting an #MctAppFilter containing all possible OARS values from
+ * the mock D-Bus service works, and that the #MctAppFilter methods handle them
  * correctly.
  *
  * The mock D-Bus replies are generated in get_app_filter_server_cb(). */
@@ -634,7 +634,7 @@ static void
 test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
                                          gconstpointer  test_data)
 {
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const GetAppFilterData get_app_filter_data =
     {
@@ -656,7 +656,7 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = epc_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
                                    FALSE, NULL, &local_error);
 
@@ -665,23 +665,23 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
 
   /* Check the OARS filter properties. Each OARS value should have been parsed
    * correctly, except for the unknown `other` one. */
-  g_assert_cmpuint (epc_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_NONE);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "violence-sexual"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_MILD);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "violence-fantasy"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_MODERATE);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "violence-realistic"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_INTENSE);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "language-profanity"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "unlisted-category"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_NONE);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-sexual"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_MILD);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-fantasy"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_MODERATE);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-realistic"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_INTENSE);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "language-profanity"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "unlisted-category"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
 }
 
-/* Test that getting an #EpcAppFilter containing only an `AppFilter` property
- * from the mock D-Bus service works, and that the #EpcAppFilter methods use
+/* Test that getting an #MctAppFilter containing only an `AppFilter` property
+ * from the mock D-Bus service works, and that the #MctAppFilter methods use
  * appropriate defaults.
  *
  * The mock D-Bus replies are generated in get_app_filter_server_cb(). */
@@ -689,7 +689,7 @@ static void
 test_app_filter_bus_get_defaults (BusFixture    *fixture,
                                   gconstpointer  test_data)
 {
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const GetAppFilterData get_app_filter_data =
     {
@@ -703,7 +703,7 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = epc_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
                                    FALSE, NULL, &local_error);
 
@@ -711,16 +711,16 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
   g_assert_nonnull (app_filter);
 
   /* Check the default values for the properties. */
-  g_assert_cmpuint (epc_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
-  oars_sections = epc_app_filter_get_oars_sections (app_filter);
+  g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  oars_sections = mct_app_filter_get_oars_sections (app_filter);
   g_assert_cmpuint (g_strv_length ((gchar **) oars_sections), ==, 0);
-  g_assert_cmpint (epc_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
-                   EPC_APP_FILTER_OARS_VALUE_UNKNOWN);
-  g_assert_true (epc_app_filter_is_user_installation_allowed (app_filter));
-  g_assert_false (epc_app_filter_is_system_installation_allowed (app_filter));
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_true (mct_app_filter_is_user_installation_allowed (app_filter));
+  g_assert_false (mct_app_filter_is_system_installation_allowed (app_filter));
 }
 
-/* Test that epc_get_app_filter() returns an appropriate error if the mock D-Bus
+/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
  * service reports that the given user cannot be found.
  *
  * The mock D-Bus replies are generated inline. */
@@ -732,9 +732,9 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
   g_autoptr(GError) local_error = NULL;
   g_autoptr(GDBusMethodInvocation) invocation = NULL;
   g_autofree gchar *error_message = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
 
-  epc_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->missing_uid,
                             FALSE, NULL, async_result_cb, &result);
 
@@ -755,14 +755,14 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = epc_get_app_filter_finish (result, &local_error);
+  app_filter = mct_get_app_filter_finish (result, &local_error);
 
   g_assert_error (local_error,
-                  EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
   g_assert_null (app_filter);
 }
 
-/* Test that epc_get_app_filter() returns an appropriate error if the mock D-Bus
+/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
  * service reports that the properties of the given user can’t be accessed due
  * to permissions.
  *
@@ -776,9 +776,9 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
   g_autoptr(GDBusMethodInvocation) invocation1 = NULL;
   g_autoptr(GDBusMethodInvocation) invocation2 = NULL;
   g_autofree gchar *object_path = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
 
-  epc_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
                             FALSE, NULL, async_result_cb, &result);
 
@@ -810,14 +810,14 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = epc_get_app_filter_finish (result, &local_error);
+  app_filter = mct_get_app_filter_finish (result, &local_error);
 
   g_assert_error (local_error,
-                  EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
-/* Test that epc_get_app_filter() returns an appropriate error if the mock D-Bus
+/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
  * service replies with no app filter properties (implying that it hasn’t sent
  * the property values because of permissions).
  *
@@ -831,9 +831,9 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   g_autoptr(GDBusMethodInvocation) invocation1 = NULL;
   g_autoptr(GDBusMethodInvocation) invocation2 = NULL;
   g_autofree gchar *object_path = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
 
-  epc_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
                             FALSE, NULL, async_result_cb, &result);
 
@@ -866,14 +866,14 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = epc_get_app_filter_finish (result, &local_error);
+  app_filter = mct_get_app_filter_finish (result, &local_error);
 
   g_assert_error (local_error,
-                  EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
-/* Test that epc_get_app_filter() returns an error if the mock D-Bus service
+/* Test that mct_get_app_filter() returns an error if the mock D-Bus service
  * reports an unrecognised error.
  *
  * The mock D-Bus replies are generated inline. */
@@ -884,9 +884,9 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
   g_autoptr(GAsyncResult) result = NULL;
   g_autoptr(GError) local_error = NULL;
   g_autoptr(GDBusMethodInvocation) invocation = NULL;
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
 
-  epc_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
                             FALSE, NULL, async_result_cb, &result);
 
@@ -902,14 +902,14 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
   g_dbus_method_invocation_return_dbus_error (invocation,
                                               "org.freedesktop.Accounts.Error.NewAndInterestingError",
                                               "This is a fake error message "
-                                              "which libeos-parental-controls "
+                                              "which libmalcontent "
                                               "will never have seen before, "
                                               "but must still handle correctly");
 
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = epc_get_app_filter_finish (result, &local_error);
+  app_filter = mct_get_app_filter_finish (result, &local_error);
 
   /* We don’t actually care what error is actually used here. */
   g_assert_error (local_error, G_IO_ERROR, G_IO_ERROR_DBUS_ERROR);
@@ -1023,7 +1023,7 @@ set_app_filter_server_cb (GtDBusQueue *queue,
     }
 }
 
-/* Test that setting an #EpcAppFilter on the mock D-Bus service works. The
+/* Test that setting an #MctAppFilter on the mock D-Bus service works. The
  * @test_data is a boolean value indicating whether to do the call
  * synchronously (%FALSE) or asynchronously (%TRUE).
  *
@@ -1034,8 +1034,8 @@ test_app_filter_bus_set (BusFixture    *fixture,
                          gconstpointer  test_data)
 {
   gboolean success;
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   gboolean test_async = GPOINTER_TO_UINT (test_data);
   const SetAppFilterData set_app_filter_data =
@@ -1049,14 +1049,14 @@ test_app_filter_bus_set (BusFixture    *fixture,
     };
 
   /* Build an app filter. */
-  epc_app_filter_builder_blacklist_path (&builder, "/usr/bin/false");
-  epc_app_filter_builder_blacklist_path (&builder, "/usr/bin/banned");
-  epc_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
-  epc_app_filter_builder_set_oars_value (&builder, "violence-fantasy", EPC_APP_FILTER_OARS_VALUE_INTENSE);
-  epc_app_filter_builder_set_allow_user_installation (&builder, TRUE);
-  epc_app_filter_builder_set_allow_system_installation (&builder, TRUE);
+  mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/false");
+  mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/banned");
+  mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_set_oars_value (&builder, "violence-fantasy", MCT_APP_FILTER_OARS_VALUE_INTENSE);
+  mct_app_filter_builder_set_allow_user_installation (&builder, TRUE);
+  mct_app_filter_builder_set_allow_system_installation (&builder, TRUE);
 
-  app_filter = epc_app_filter_builder_end (&builder);
+  app_filter = mct_app_filter_builder_end (&builder);
 
   /* Set the mock service function and set the filter. */
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
@@ -1066,17 +1066,17 @@ test_app_filter_bus_set (BusFixture    *fixture,
     {
       g_autoptr(GAsyncResult) result = NULL;
 
-      epc_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+      mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
                                 FALSE, NULL, async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
-      success = epc_set_app_filter_finish (result, &local_error);
+      success = mct_set_app_filter_finish (result, &local_error);
     }
   else
     {
-      success = epc_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+      success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                     fixture->valid_uid, app_filter,
                                     FALSE, NULL, &local_error);
     }
@@ -1085,7 +1085,7 @@ test_app_filter_bus_set (BusFixture    *fixture,
   g_assert_true (success);
 }
 
-/* Test that epc_set_app_filter() returns an appropriate error if the mock D-Bus
+/* Test that mct_set_app_filter() returns an appropriate error if the mock D-Bus
  * service reports that the given user cannot be found.
  *
  * The mock D-Bus replies are generated inline. */
@@ -1094,17 +1094,17 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
                                             gconstpointer  test_data)
 {
   gboolean success;
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GAsyncResult) result = NULL;
   g_autoptr(GError) local_error = NULL;
   g_autoptr(GDBusMethodInvocation) invocation = NULL;
   g_autofree gchar *error_message = NULL;
 
   /* Use the default app filter. */
-  app_filter = epc_app_filter_builder_end (&builder);
+  app_filter = mct_app_filter_builder_end (&builder);
 
-  epc_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+  mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->missing_uid, app_filter,
                             FALSE, NULL, async_result_cb, &result);
 
@@ -1125,14 +1125,14 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
   /* Get the set_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  success = epc_set_app_filter_finish (result, &local_error);
+  success = mct_set_app_filter_finish (result, &local_error);
 
   g_assert_error (local_error,
-                  EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
   g_assert_false (success);
 }
 
-/* Test that epc_set_app_filter() returns an appropriate error if the mock D-Bus
+/* Test that mct_set_app_filter() returns an appropriate error if the mock D-Bus
  * service replies with a permission denied error when setting properties.
  *
  * The mock D-Bus replies are generated in set_app_filter_server_cb(). */
@@ -1141,8 +1141,8 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
                                                  gconstpointer  test_data)
 {
   gboolean success;
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const SetAppFilterData set_app_filter_data =
     {
@@ -1153,21 +1153,21 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
     };
 
   /* Use the default app filter. */
-  app_filter = epc_app_filter_builder_end (&builder);
+  app_filter = mct_app_filter_builder_end (&builder);
 
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = epc_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
                                 FALSE, NULL, &local_error);
 
   g_assert_error (local_error,
-                  EPC_APP_FILTER_ERROR, EPC_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_false (success);
 }
 
-/* Test that epc_set_app_filter() returns an error if the mock D-Bus service
+/* Test that mct_set_app_filter() returns an error if the mock D-Bus service
  * reports an unrecognised error.
  *
  * The mock D-Bus replies are generated in set_app_filter_server_cb(). */
@@ -1176,8 +1176,8 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
                                        gconstpointer  test_data)
 {
   gboolean success;
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const SetAppFilterData set_app_filter_data =
     {
@@ -1185,17 +1185,17 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
       .error_index = 0,
       .dbus_error_name = "org.freedesktop.Accounts.Error.NewAndInterestingError",
       .dbus_error_message = "This is a fake error message which "
-                            "libeos-parental-controls will never have seen "
+                            "libmalcontent will never have seen "
                             "before, but must still handle correctly",
     };
 
   /* Use the default app filter. */
-  app_filter = epc_app_filter_builder_end (&builder);
+  app_filter = mct_app_filter_builder_end (&builder);
 
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = epc_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
                                 FALSE, NULL, &local_error);
 
@@ -1203,7 +1203,7 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
   g_assert_false (success);
 }
 
-/* Test that epc_set_app_filter() returns an error if the mock D-Bus service
+/* Test that mct_set_app_filter() returns an error if the mock D-Bus service
  * reports an InvalidArgs error with a given one of its Set() calls.
  *
  * @test_data contains a property index encoded with GINT_TO_POINTER(),
@@ -1216,8 +1216,8 @@ test_app_filter_bus_set_error_invalid_property (BusFixture    *fixture,
                                                 gconstpointer  test_data)
 {
   gboolean success;
-  g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
-  g_autoptr(EpcAppFilter) app_filter = NULL;
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) app_filter = NULL;
   g_autoptr(GError) local_error = NULL;
   const SetAppFilterData set_app_filter_data =
     {
@@ -1232,12 +1232,12 @@ test_app_filter_bus_set_error_invalid_property (BusFixture    *fixture,
     };
 
   /* Use the default app filter. */
-  app_filter = epc_app_filter_builder_end (&builder);
+  app_filter = mct_app_filter_builder_end (&builder);
 
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = epc_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
+  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
                                 FALSE, NULL, &local_error);
 
