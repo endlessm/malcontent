@@ -2,7 +2,7 @@
   <name xml:lang="en">eos-parental-controls</name>
   <shortdesc xml:lang="en">eos-parental-controls provides restrictions for children on EOS</shortdesc>
   <description xml:lang="en">eos-parental-controls implements support for restricting the abilities of non-administrator accounts on an Endless OS system.</description>
-  <homepage rdf:resource="https://github.com/endlessm/eos-parental-controls"/>
+  <homepage rdf:resource="https://gitlab.freedesktop.org/pwithnall/malcontent"/>
   <license rdf:resource="http://usefulinc.com/doap/licenses/lgpl"/>
-  <download-page rdf:resource="https://github.com/endlessm/eos-parental-controls"/>
+  <download-page rdf:resource="https://gitlab.freedesktop.org/pwithnall/malcontent"/>
 </Project>
