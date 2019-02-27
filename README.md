@@ -1,8 +1,8 @@
-eos-parental-controls
-=====================
+malcontent
+==========
 
-eos-parental-controls implements support for restricting the abilities of
-non-administrator accounts on an Endless OS system. Typically, when this is
+malcontent implements support for restricting the abilities of
+non-administrator accounts on a Linux system. Typically, when this is
 used, a non-administrator account will be for a child using the system; and the
 administrator accounts will be for the parents.
 
@@ -13,7 +13,7 @@ accessing and applying the app filter.
 All the library APIs are currently unstable and are likely to change wildly.
 
 Dependencies
-============
+------------
 
  • accounts-service
  • dbus-daemon
@@ -22,17 +22,12 @@ Dependencies
  • gobject-2.0 ≥ 2.54
 
 Licensing
-=========
+---------
 
-All code in this project is licensed under LGPL-2.1+. See debian/copyright and
-COPYING for more details.
+All code in this project is licensed under LGPL-2.1+. See COPYING for more details.
 
 Bugs
-====
+----
 
-Bug reports and patches should be filed in GitHub.
-
-Contact
-=======
-
-https://github.com/endlessm/eos-parental-controls
+Bug reports and patches should be filed in
+[GitLab](https://gitlab.freedesktop.org/pwithnall/malcontent).

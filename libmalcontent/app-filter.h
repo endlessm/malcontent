@@ -29,57 +29,57 @@
 G_BEGIN_DECLS
 
 /**
- * EpcAppFilterError:
- * @EPC_APP_FILTER_ERROR_INVALID_USER: Given user ID doesn’t exist
- * @EPC_APP_FILTER_ERROR_PERMISSION_DENIED: Not authorized to query the app
+ * MctAppFilterError:
+ * @MCT_APP_FILTER_ERROR_INVALID_USER: Given user ID doesn’t exist
+ * @MCT_APP_FILTER_ERROR_PERMISSION_DENIED: Not authorized to query the app
  *    filter for the given user
- * @EPC_APP_FILTER_ERROR_INVALID_DATA: The data stored in the app filter for
+ * @MCT_APP_FILTER_ERROR_INVALID_DATA: The data stored in the app filter for
  *    a user is inconsistent or invalid
  *
- * Errors which can be returned by epc_get_app_filter_async().
+ * Errors which can be returned by mct_get_app_filter_async().
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 typedef enum
 {
-  EPC_APP_FILTER_ERROR_INVALID_USER,
-  EPC_APP_FILTER_ERROR_PERMISSION_DENIED,
-  EPC_APP_FILTER_ERROR_INVALID_DATA,
-} EpcAppFilterError;
+  MCT_APP_FILTER_ERROR_INVALID_USER,
+  MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
+  MCT_APP_FILTER_ERROR_INVALID_DATA,
+} MctAppFilterError;
 
-GQuark epc_app_filter_error_quark (void);
-#define EPC_APP_FILTER_ERROR epc_app_filter_error_quark ()
+GQuark mct_app_filter_error_quark (void);
+#define MCT_APP_FILTER_ERROR mct_app_filter_error_quark ()
 
 /**
- * EpcAppFilterOarsValue:
- * @EPC_APP_FILTER_OARS_VALUE_UNKNOWN: Unknown value for the given
+ * MctAppFilterOarsValue:
+ * @MCT_APP_FILTER_OARS_VALUE_UNKNOWN: Unknown value for the given
  *    section.
- * @EPC_APP_FILTER_OARS_VALUE_NONE: No rating for the given section.
- * @EPC_APP_FILTER_OARS_VALUE_MILD: Mild rating for the given section.
- * @EPC_APP_FILTER_OARS_VALUE_MODERATE: Moderate rating for the given
+ * @MCT_APP_FILTER_OARS_VALUE_NONE: No rating for the given section.
+ * @MCT_APP_FILTER_OARS_VALUE_MILD: Mild rating for the given section.
+ * @MCT_APP_FILTER_OARS_VALUE_MODERATE: Moderate rating for the given
  *    section.
- * @EPC_APP_FILTER_OARS_VALUE_INTENSE: Intense rating for the given
+ * @MCT_APP_FILTER_OARS_VALUE_INTENSE: Intense rating for the given
  *    section.
  *
  * Rating values of the intensity of a given section in an app or game.
  * These are directly equivalent to the values in the #AsContentRatingValue
  * enumeration in libappstream.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 typedef enum
 {
-  EPC_APP_FILTER_OARS_VALUE_UNKNOWN,
-  EPC_APP_FILTER_OARS_VALUE_NONE,
-  EPC_APP_FILTER_OARS_VALUE_MILD,
-  EPC_APP_FILTER_OARS_VALUE_MODERATE,
-  EPC_APP_FILTER_OARS_VALUE_INTENSE,
-} EpcAppFilterOarsValue;
+  MCT_APP_FILTER_OARS_VALUE_UNKNOWN,
+  MCT_APP_FILTER_OARS_VALUE_NONE,
+  MCT_APP_FILTER_OARS_VALUE_MILD,
+  MCT_APP_FILTER_OARS_VALUE_MODERATE,
+  MCT_APP_FILTER_OARS_VALUE_INTENSE,
+} MctAppFilterOarsValue;
 
 /**
- * EpcAppFilter:
+ * MctAppFilter:
  *
- * #EpcAppFilter is an opaque, immutable structure which contains a snapshot of
+ * #MctAppFilter is an opaque, immutable structure which contains a snapshot of
  * the app filtering settings for a user at a given time. This includes a list
  * of apps which are explicitly banned or allowed to be run by that user.
  *
@@ -87,72 +87,72 @@ typedef enum
  * are read-only for non-administrative users. The precise policy is set using
  * polkit.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-typedef struct _EpcAppFilter EpcAppFilter;
-GType epc_app_filter_get_type (void);
+typedef struct _MctAppFilter MctAppFilter;
+GType mct_app_filter_get_type (void);
 
-EpcAppFilter *epc_app_filter_ref   (EpcAppFilter *filter);
-void          epc_app_filter_unref (EpcAppFilter *filter);
+MctAppFilter *mct_app_filter_ref   (MctAppFilter *filter);
+void          mct_app_filter_unref (MctAppFilter *filter);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilter, epc_app_filter_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctAppFilter, mct_app_filter_unref)
 
-uid_t    epc_app_filter_get_user_id            (EpcAppFilter *filter);
-gboolean epc_app_filter_is_path_allowed        (EpcAppFilter *filter,
+uid_t    mct_app_filter_get_user_id            (MctAppFilter *filter);
+gboolean mct_app_filter_is_path_allowed        (MctAppFilter *filter,
                                                 const gchar  *path);
-gboolean epc_app_filter_is_flatpak_ref_allowed (EpcAppFilter *filter,
+gboolean mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
                                                 const gchar  *app_ref);
-gboolean epc_app_filter_is_flatpak_app_allowed (EpcAppFilter *filter,
+gboolean mct_app_filter_is_flatpak_app_allowed (MctAppFilter *filter,
                                                 const gchar  *app_id);
-gboolean epc_app_filter_is_appinfo_allowed     (EpcAppFilter *filter,
+gboolean mct_app_filter_is_appinfo_allowed     (MctAppFilter *filter,
                                                 GAppInfo     *app_info);
 
-const gchar           **epc_app_filter_get_oars_sections (EpcAppFilter *filter);
-EpcAppFilterOarsValue   epc_app_filter_get_oars_value    (EpcAppFilter *filter,
+const gchar           **mct_app_filter_get_oars_sections (MctAppFilter *filter);
+MctAppFilterOarsValue   mct_app_filter_get_oars_value    (MctAppFilter *filter,
                                                           const gchar  *oars_section);
 
-gboolean                epc_app_filter_is_user_installation_allowed   (EpcAppFilter *filter);
-gboolean                epc_app_filter_is_system_installation_allowed (EpcAppFilter *filter);
+gboolean                mct_app_filter_is_user_installation_allowed   (MctAppFilter *filter);
+gboolean                mct_app_filter_is_system_installation_allowed (MctAppFilter *filter);
 
-EpcAppFilter *epc_get_app_filter        (GDBusConnection      *connection,
+MctAppFilter *mct_get_app_filter        (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          gboolean              allow_interactive_authorization,
                                          GCancellable         *cancellable,
                                          GError              **error);
-void          epc_get_app_filter_async  (GDBusConnection      *connection,
+void          mct_get_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          gboolean              allow_interactive_authorization,
                                          GCancellable         *cancellable,
                                          GAsyncReadyCallback   callback,
                                          gpointer              user_data);
-EpcAppFilter *epc_get_app_filter_finish (GAsyncResult         *result,
+MctAppFilter *mct_get_app_filter_finish (GAsyncResult         *result,
                                          GError              **error);
 
-gboolean      epc_set_app_filter        (GDBusConnection      *connection,
+gboolean      mct_set_app_filter        (GDBusConnection      *connection,
                                          uid_t                 user_id,
-                                         EpcAppFilter         *app_filter,
+                                         MctAppFilter         *app_filter,
                                          gboolean              allow_interactive_authorization,
                                          GCancellable         *cancellable,
                                          GError              **error);
-void          epc_set_app_filter_async  (GDBusConnection      *connection,
+void          mct_set_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
-                                         EpcAppFilter         *app_filter,
+                                         MctAppFilter         *app_filter,
                                          gboolean              allow_interactive_authorization,
                                          GCancellable         *cancellable,
                                          GAsyncReadyCallback   callback,
                                          gpointer              user_data);
-gboolean      epc_set_app_filter_finish (GAsyncResult         *result,
+gboolean      mct_set_app_filter_finish (GAsyncResult         *result,
                                          GError              **error);
 
 /**
- * EpcAppFilterBuilder:
+ * MctAppFilterBuilder:
  *
- * #EpcAppFilterBuilder is a stack-allocated mutable structure used to build an
- * #EpcAppFilter instance. Use epc_app_filter_builder_init(), various method
+ * #MctAppFilterBuilder is a stack-allocated mutable structure used to build an
+ * #MctAppFilter instance. Use mct_app_filter_builder_init(), various method
  * calls to set properties of the app filter, and then
- * epc_app_filter_builder_end(), to construct an #EpcAppFilter.
+ * mct_app_filter_builder_end(), to construct an #MctAppFilter.
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
 typedef struct
 {
@@ -163,24 +163,24 @@ typedef struct
   gboolean b1;
   gpointer p2;
   gpointer p3;
-} EpcAppFilterBuilder;
+} MctAppFilterBuilder;
 
-GType epc_app_filter_builder_get_type (void);
+GType mct_app_filter_builder_get_type (void);
 
 /**
- * EPC_APP_FILTER_BUILDER_INIT:
+ * MCT_APP_FILTER_BUILDER_INIT:
  *
- * Initialise a stack-allocated #EpcAppFilterBuilder instance at declaration
+ * Initialise a stack-allocated #MctAppFilterBuilder instance at declaration
  * time.
  *
  * This is typically used with g_auto():
  * |[
- * g_auto(EpcAppFilterBuilder) builder = EPC_APP_FILTER_BUILDER_INIT ();
+ * g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
  * ]|
  *
- * Since: 0.1.0
+ * Since: 0.2.0
  */
-#define EPC_APP_FILTER_BUILDER_INIT() \
+#define MCT_APP_FILTER_BUILDER_INIT() \
   { \
     g_ptr_array_new_with_free_func (g_free), \
     g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL), \
@@ -188,31 +188,31 @@ GType epc_app_filter_builder_get_type (void);
     FALSE, \
   }
 
-void epc_app_filter_builder_init  (EpcAppFilterBuilder *builder);
-void epc_app_filter_builder_clear (EpcAppFilterBuilder *builder);
+void mct_app_filter_builder_init  (MctAppFilterBuilder *builder);
+void mct_app_filter_builder_clear (MctAppFilterBuilder *builder);
 
-G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (EpcAppFilterBuilder,
-                                  epc_app_filter_builder_clear)
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (MctAppFilterBuilder,
+                                  mct_app_filter_builder_clear)
 
-EpcAppFilterBuilder *epc_app_filter_builder_new  (void);
-EpcAppFilterBuilder *epc_app_filter_builder_copy (EpcAppFilterBuilder *builder);
-void                 epc_app_filter_builder_free (EpcAppFilterBuilder *builder);
+MctAppFilterBuilder *mct_app_filter_builder_new  (void);
+MctAppFilterBuilder *mct_app_filter_builder_copy (MctAppFilterBuilder *builder);
+void                 mct_app_filter_builder_free (MctAppFilterBuilder *builder);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (EpcAppFilterBuilder, epc_app_filter_builder_free)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctAppFilterBuilder, mct_app_filter_builder_free)
 
-EpcAppFilter *epc_app_filter_builder_end (EpcAppFilterBuilder *builder);
+MctAppFilter *mct_app_filter_builder_end (MctAppFilterBuilder *builder);
 
-void epc_app_filter_builder_blacklist_path        (EpcAppFilterBuilder   *builder,
+void mct_app_filter_builder_blacklist_path        (MctAppFilterBuilder   *builder,
                                                    const gchar           *path);
-void epc_app_filter_builder_blacklist_flatpak_ref (EpcAppFilterBuilder *builder,
+void mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
                                                    const gchar         *app_ref);
-void epc_app_filter_builder_set_oars_value        (EpcAppFilterBuilder   *builder,
+void mct_app_filter_builder_set_oars_value        (MctAppFilterBuilder   *builder,
                                                    const gchar           *oars_section,
-                                                   EpcAppFilterOarsValue  value);
+                                                   MctAppFilterOarsValue  value);
 
-void epc_app_filter_builder_set_allow_user_installation   (EpcAppFilterBuilder *builder,
+void mct_app_filter_builder_set_allow_user_installation   (MctAppFilterBuilder *builder,
                                                            gboolean             allow_user_installation);
-void epc_app_filter_builder_set_allow_system_installation (EpcAppFilterBuilder *builder,
+void mct_app_filter_builder_set_allow_system_installation (MctAppFilterBuilder *builder,
                                                            gboolean             allow_system_installation);
 
 G_END_DECLS

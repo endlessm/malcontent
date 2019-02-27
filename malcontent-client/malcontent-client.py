@@ -21,8 +21,8 @@ import os
 import pwd
 import sys
 import gi
-gi.require_version('EosParentalControls', '0')  # noqa
-from gi.repository import EosParentalControls, GLib
+gi.require_version('Malcontent', '0')  # noqa
+from gi.repository import Malcontent, GLib
 
 
 # Exit codes, which are a documented part of the API.
@@ -37,7 +37,7 @@ def __get_app_filter(user_id, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
-    return EosParentalControls.get_app_filter(
+    return Malcontent.get_app_filter(
         connection=None, user_id=user_id,
         allow_interactive_authorization=interactive, cancellable=None)
 
@@ -58,7 +58,7 @@ def __set_app_filter(user_id, app_filter, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
-    EosParentalControls.set_app_filter(
+    Malcontent.set_app_filter(
         connection=None, user_id=user_id, app_filter=app_filter,
         allow_interactive_authorization=interactive, cancellable=None)
 
@@ -98,16 +98,16 @@ def __lookup_user_id_or_error(user):
 
 
 oars_value_mapping = {
-    EosParentalControls.AppFilterOarsValue.UNKNOWN: "unknown",
-    EosParentalControls.AppFilterOarsValue.NONE: "none",
-    EosParentalControls.AppFilterOarsValue.MILD: "mild",
-    EosParentalControls.AppFilterOarsValue.MODERATE: "moderate",
-    EosParentalControls.AppFilterOarsValue.INTENSE: "intense",
+    Malcontent.AppFilterOarsValue.UNKNOWN: "unknown",
+    Malcontent.AppFilterOarsValue.NONE: "none",
+    Malcontent.AppFilterOarsValue.MILD: "mild",
+    Malcontent.AppFilterOarsValue.MODERATE: "moderate",
+    Malcontent.AppFilterOarsValue.INTENSE: "intense",
 }
 
 
 def __oars_value_to_string(value):
-    """Convert an EosParentalControls.AppFilterOarsValue to a human-readable
+    """Convert an Malcontent.AppFilterOarsValue to a human-readable
     string."""
     try:
         return oars_value_mapping[value]
@@ -117,7 +117,7 @@ def __oars_value_to_string(value):
 
 def __oars_value_from_string(value_str):
     """Convert a human-readable string to an
-    EosParentalControls.AppFilterOarsValue."""
+    Malcontent.AppFilterOarsValue."""
     for k, v in oars_value_mapping.items():
         if v == value_str:
             return k
@@ -196,7 +196,7 @@ def command_set(user, allow_user_installation=True,
                 quiet=False, interactive=True):
     """Set the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
-    builder = EosParentalControls.AppFilterBuilder.new()
+    builder = Malcontent.AppFilterBuilder.new()
     builder.set_allow_user_installation(allow_user_installation)
     builder.set_allow_system_installation(allow_system_installation)
 
