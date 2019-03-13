@@ -1,7 +1,7 @@
 deps = [
   dependency('gio-2.0', version: '>= 2.60.0'),
   dependency('gio-unix-2.0', version: '>= 2.44'),
-  dependency('glib-2.0', version: '>= 2.54.2'),
+  dependency('glib-2.0', version: '>= 2.60.0'),
   dependency('gobject-2.0', version: '>= 2.44'),
   libmalcontent_dep,
   libglib_testing_dep,
