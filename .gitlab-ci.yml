@@ -22,7 +22,6 @@ debian-unstable:
   except:
     - tags
   script:
-    - git submodule update --init
     - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true _build .
     - meson test -C _build
     - ninja -C _build coverage
