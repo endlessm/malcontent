@@ -30,6 +30,7 @@
 #include <locale.h>
 #include <string.h>
 #include "accounts-service-iface.h"
+#include "accounts-service-extension-iface.h"
 
 
 /* Check two arrays contain exactly the same items in the same order. */
@@ -443,13 +444,13 @@ bus_set_up (BusFixture    *fixture,
   object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", fixture->valid_uid);
   gt_dbus_queue_export_object (fixture->queue,
                                object_path,
-                               (GDBusInterfaceInfo *) &app_filter_interface_info,
+                               (GDBusInterfaceInfo *) &com_endlessm_parental_controls_app_filter_interface,
                                &local_error);
   g_assert_no_error (local_error);
 
   gt_dbus_queue_export_object (fixture->queue,
                                "/org/freedesktop/Accounts",
-                               (GDBusInterfaceInfo *) &accounts_interface_info,
+                               (GDBusInterfaceInfo *) &org_freedesktop_accounts_interface,
                                &local_error);
   g_assert_no_error (local_error);
 }
