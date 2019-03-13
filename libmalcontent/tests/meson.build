@@ -3,8 +3,8 @@ deps = [
   dependency('gio-unix-2.0', version: '>= 2.44'),
   dependency('glib-2.0', version: '>= 2.60.0'),
   dependency('gobject-2.0', version: '>= 2.44'),
+  dependency('glib-testing-0'),
   libmalcontent_dep,
-  libglib_testing_dep,
 ]
 
 envs = test_env + [

@@ -1,3 +1,0 @@
-[submodule "subprojects/libglib-testing"]
-	path = subprojects/libglib-testing
-	url = https://gitlab.gnome.org/pwithnall/libglib-testing.git
