@@ -3,7 +3,5 @@ Overview of changes in malcontent 0.2.0
 
 * Renamed project from eos-parental-controls to malcontent
 
-* Add libglib-testing as a hard dependency; remove the option to build it as a subproject
-
 * Bugs fixed:
  - !1 Rename project
