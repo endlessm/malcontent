@@ -555,7 +555,8 @@ test_app_filter_bus_get (BusFixture    *fixture,
 
       mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid,
-                                FALSE, NULL, async_result_cb, &result);
+                                MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
@@ -565,7 +566,8 @@ test_app_filter_bus_get (BusFixture    *fixture,
     {
       app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                        fixture->valid_uid,
-                                       FALSE, NULL, &local_error);
+                                       MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                       &local_error);
     }
 
   g_assert_no_error (local_error);
@@ -608,7 +610,8 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
 
   app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
-                                   FALSE, NULL, &local_error);
+                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                   &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -658,7 +661,8 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
 
   app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
-                                   FALSE, NULL, &local_error);
+                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                   &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -705,7 +709,8 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
 
   app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                    fixture->valid_uid,
-                                   FALSE, NULL, &local_error);
+                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                   &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -736,7 +741,8 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
 
   mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->missing_uid,
-                            FALSE, NULL, async_result_cb, &result);
+                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
   gint64 user_id;
@@ -780,7 +786,8 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
 
   mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
-                            FALSE, NULL, async_result_cb, &result);
+                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
   gint64 user_id;
@@ -835,7 +842,8 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
 
   mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
-                            FALSE, NULL, async_result_cb, &result);
+                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
   gint64 user_id;
@@ -888,7 +896,8 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
 
   mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->valid_uid,
-                            FALSE, NULL, async_result_cb, &result);
+                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
 
   /* Handle the FindUserById() call and return a bogus error. */
   gint64 user_id;
@@ -1068,7 +1077,8 @@ test_app_filter_bus_set (BusFixture    *fixture,
 
       mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
-                                FALSE, NULL, async_result_cb, &result);
+                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
@@ -1078,7 +1088,8 @@ test_app_filter_bus_set (BusFixture    *fixture,
     {
       success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                     fixture->valid_uid, app_filter,
-                                    FALSE, NULL, &local_error);
+                                    MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                    &local_error);
     }
 
   g_assert_no_error (local_error);
@@ -1106,7 +1117,8 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
 
   mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
                             fixture->missing_uid, app_filter,
-                            FALSE, NULL, async_result_cb, &result);
+                            MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
   gint64 user_id;
@@ -1160,7 +1172,8 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
 
   success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
-                                FALSE, NULL, &local_error);
+                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
@@ -1197,7 +1210,8 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
 
   success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
-                                FALSE, NULL, &local_error);
+                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                &local_error);
 
   g_assert_error (local_error, G_IO_ERROR, G_IO_ERROR_DBUS_ERROR);
   g_assert_false (success);
@@ -1239,7 +1253,8 @@ test_app_filter_bus_set_error_invalid_property (BusFixture    *fixture,
 
   success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
                                 fixture->valid_uid, app_filter,
-                                FALSE, NULL, &local_error);
+                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                &local_error);
 
   g_assert_error (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS);
   g_assert_false (success);

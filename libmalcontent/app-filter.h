@@ -77,6 +77,40 @@ typedef enum
 } MctAppFilterOarsValue;
 
 /**
+ * MctGetAppFilterFlags:
+ * @MCT_GET_APP_FILTER_FLAGS_NONE: No flags set.
+ * @MCT_GET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
+ *    requesting authorization.
+ *
+ * Flags to control the behaviour of mct_get_app_filter() and
+ * mct_get_app_filter_async().
+ *
+ * Since: 0.3.0
+ */
+typedef enum
+{
+  MCT_GET_APP_FILTER_FLAGS_NONE = 0,
+  MCT_GET_APP_FILTER_FLAGS_INTERACTIVE,
+} MctGetAppFilterFlags;
+
+/**
+ * MctSetAppFilterFlags:
+ * @MCT_SET_APP_FILTER_FLAGS_NONE: No flags set.
+ * @MCT_SET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
+ *    requesting authorization.
+ *
+ * Flags to control the behaviour of mct_set_app_filter() and
+ * mct_set_app_filter_async().
+ *
+ * Since: 0.3.0
+ */
+typedef enum
+{
+  MCT_SET_APP_FILTER_FLAGS_NONE = 0,
+  MCT_SET_APP_FILTER_FLAGS_INTERACTIVE,
+} MctSetAppFilterFlags;
+
+/**
  * MctAppFilter:
  *
  * #MctAppFilter is an opaque, immutable structure which contains a snapshot of
@@ -116,12 +150,12 @@ gboolean                mct_app_filter_is_system_installation_allowed (MctAppFil
 
 MctAppFilter *mct_get_app_filter        (GDBusConnection      *connection,
                                          uid_t                 user_id,
-                                         gboolean              allow_interactive_authorization,
+                                         MctGetAppFilterFlags  flags,
                                          GCancellable         *cancellable,
                                          GError              **error);
 void          mct_get_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
-                                         gboolean              allow_interactive_authorization,
+                                         MctGetAppFilterFlags  flags,
                                          GCancellable         *cancellable,
                                          GAsyncReadyCallback   callback,
                                          gpointer              user_data);
@@ -131,13 +165,13 @@ MctAppFilter *mct_get_app_filter_finish (GAsyncResult         *result,
 gboolean      mct_set_app_filter        (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          MctAppFilter         *app_filter,
-                                         gboolean              allow_interactive_authorization,
+                                         MctSetAppFilterFlags  flags,
                                          GCancellable         *cancellable,
                                          GError              **error);
 void          mct_set_app_filter_async  (GDBusConnection      *connection,
                                          uid_t                 user_id,
                                          MctAppFilter         *app_filter,
-                                         gboolean              allow_interactive_authorization,
+                                         MctSetAppFilterFlags  flags,
                                          GCancellable         *cancellable,
                                          GAsyncReadyCallback   callback,
                                          gpointer              user_data);

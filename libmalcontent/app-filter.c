@@ -563,22 +563,21 @@ accounts_find_user_by_id (GDBusConnection  *connection,
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to query, typically coming from getuid()
- * @allow_interactive_authorization: %TRUE to allow interactive polkit
- *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @flags: flags to affect the behaviour of the call
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @error: return location for a #GError, or %NULL
  *
  * Synchronous version of mct_get_app_filter_async().
  *
  * Returns: (transfer full): app filter for the queried user
- * Since: 0.2.0
+ * Since: 0.3.0
  */
 MctAppFilter *
-mct_get_app_filter (GDBusConnection  *connection,
-                    uid_t             user_id,
-                    gboolean          allow_interactive_authorization,
-                    GCancellable     *cancellable,
-                    GError          **error)
+mct_get_app_filter (GDBusConnection       *connection,
+                    uid_t                  user_id,
+                    MctGetAppFilterFlags   flags,
+                    GCancellable          *cancellable,
+                    GError               **error)
 {
   g_autofree gchar *object_path = NULL;
   g_autoptr(GVariant) result_variant = NULL;
@@ -603,7 +602,7 @@ mct_get_app_filter (GDBusConnection  *connection,
     return NULL;
 
   object_path = accounts_find_user_by_id (connection, user_id,
-                                          allow_interactive_authorization,
+                                          (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return NULL;
@@ -616,7 +615,7 @@ mct_get_app_filter (GDBusConnection  *connection,
                                    "GetAll",
                                    g_variant_new ("(s)", "com.endlessm.ParentalControls.AppFilter"),
                                    G_VARIANT_TYPE ("(a{sv})"),
-                                   allow_interactive_authorization
+                                   (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -700,7 +699,7 @@ typedef struct
 {
   GDBusConnection *connection;  /* (nullable) (owned) */
   uid_t user_id;
-  gboolean allow_interactive_authorization;
+  MctGetAppFilterFlags flags;
 } GetAppFilterData;
 
 static void
@@ -717,8 +716,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * @connection: (nullable): a #GDBusConnection to the system bus, or %NULL to
  *    use the default
  * @user_id: ID of the user to query, typically coming from getuid()
- * @allow_interactive_authorization: %TRUE to allow interactive polkit
- *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @flags: flags to affect the behaviour of the call
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @callback: a #GAsyncReadyCallback
  * @user_data: user data to pass to @callback
@@ -733,12 +731,12 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
  * returned.
  *
- * Since: 0.2.0
+ * Since: 0.3.0
  */
 void
 mct_get_app_filter_async  (GDBusConnection     *connection,
                            uid_t                user_id,
-                           gboolean             allow_interactive_authorization,
+                           MctGetAppFilterFlags flags,
                            GCancellable        *cancellable,
                            GAsyncReadyCallback  callback,
                            gpointer             user_data)
@@ -755,7 +753,7 @@ mct_get_app_filter_async  (GDBusConnection     *connection,
   data = g_new0 (GetAppFilterData, 1);
   data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
-  data->allow_interactive_authorization = allow_interactive_authorization;
+  data->flags = flags;
   g_task_set_task_data (task, g_steal_pointer (&data),
                         (GDestroyNotify) get_app_filter_data_free);
 
@@ -773,7 +771,7 @@ get_app_filter_thread_cb (GTask        *task,
   g_autoptr(GError) local_error = NULL;
 
   filter = mct_get_app_filter (data->connection, data->user_id,
-                               data->allow_interactive_authorization,
+                               data->flags,
                                cancellable, &local_error);
 
   if (local_error != NULL)
@@ -810,23 +808,22 @@ mct_get_app_filter_finish (GAsyncResult  *result,
  *    use the default
  * @user_id: ID of the user to set the filter for, typically coming from getuid()
  * @app_filter: (transfer none): the app filter to set for the user
- * @allow_interactive_authorization: %TRUE to allow interactive polkit
- *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @flags: flags to affect the behaviour of the call
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @error: return location for a #GError, or %NULL
  *
  * Synchronous version of mct_set_app_filter_async().
  *
  * Returns: %TRUE on success, %FALSE otherwise
- * Since: 0.2.0
+ * Since: 0.3.0
  */
 gboolean
-mct_set_app_filter (GDBusConnection  *connection,
-                    uid_t             user_id,
-                    MctAppFilter     *app_filter,
-                    gboolean          allow_interactive_authorization,
-                    GCancellable     *cancellable,
-                    GError          **error)
+mct_set_app_filter (GDBusConnection       *connection,
+                    uid_t                  user_id,
+                    MctAppFilter          *app_filter,
+                    MctSetAppFilterFlags   flags,
+                    GCancellable          *cancellable,
+                    GError               **error)
 {
   g_autofree gchar *object_path = NULL;
   g_autoptr(GVariant) app_filter_variant = NULL;
@@ -851,7 +848,7 @@ mct_set_app_filter (GDBusConnection  *connection,
     return FALSE;
 
   object_path = accounts_find_user_by_id (connection, user_id,
-                                          allow_interactive_authorization,
+                                          (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return FALSE;
@@ -873,7 +870,7 @@ mct_set_app_filter (GDBusConnection  *connection,
                                                   "AppFilter",
                                                   g_steal_pointer (&app_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   allow_interactive_authorization
+                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -896,7 +893,7 @@ mct_set_app_filter (GDBusConnection  *connection,
                                                   "OarsFilter",
                                                   g_steal_pointer (&oars_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   allow_interactive_authorization
+                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -919,7 +916,7 @@ mct_set_app_filter (GDBusConnection  *connection,
                                                   "AllowUserInstallation",
                                                   g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   allow_interactive_authorization
+                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -942,7 +939,7 @@ mct_set_app_filter (GDBusConnection  *connection,
                                                   "AllowSystemInstallation",
                                                   g_steal_pointer (&allow_system_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   allow_interactive_authorization
+                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -967,7 +964,7 @@ typedef struct
   GDBusConnection *connection;  /* (nullable) (owned) */
   uid_t user_id;
   MctAppFilter *app_filter;  /* (owned) */
-  gboolean allow_interactive_authorization;
+  MctSetAppFilterFlags flags;
 } SetAppFilterData;
 
 static void
@@ -986,8 +983,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  *    use the default
  * @user_id: ID of the user to set the filter for, typically coming from getuid()
  * @app_filter: (transfer none): the app filter to set for the user
- * @allow_interactive_authorization: %TRUE to allow interactive polkit
- *    authorization dialogues to be displayed during the call; %FALSE otherwise
+ * @flags: flags to affect the behaviour of the call
  * @cancellable: (nullable): a #GCancellable, or %NULL
  * @callback: a #GAsyncReadyCallback
  * @user_data: user data to pass to @callback
@@ -1002,16 +998,16 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
  * returned. The user’s app filter settings will be left in an undefined state.
  *
- * Since: 0.2.0
+ * Since: 0.3.0
  */
 void
-mct_set_app_filter_async (GDBusConnection     *connection,
-                          uid_t                user_id,
-                          MctAppFilter        *app_filter,
-                          gboolean             allow_interactive_authorization,
-                          GCancellable        *cancellable,
-                          GAsyncReadyCallback  callback,
-                          gpointer             user_data)
+mct_set_app_filter_async (GDBusConnection      *connection,
+                          uid_t                 user_id,
+                          MctAppFilter         *app_filter,
+                          MctSetAppFilterFlags  flags,
+                          GCancellable         *cancellable,
+                          GAsyncReadyCallback   callback,
+                          gpointer              user_data)
 {
   g_autoptr(GTask) task = NULL;
   g_autoptr(SetAppFilterData) data = NULL;
@@ -1028,7 +1024,7 @@ mct_set_app_filter_async (GDBusConnection     *connection,
   data->connection = (connection != NULL) ? g_object_ref (connection) : NULL;
   data->user_id = user_id;
   data->app_filter = mct_app_filter_ref (app_filter);
-  data->allow_interactive_authorization = allow_interactive_authorization;
+  data->flags = flags;
   g_task_set_task_data (task, g_steal_pointer (&data),
                         (GDestroyNotify) set_app_filter_data_free);
 
@@ -1046,8 +1042,7 @@ set_app_filter_thread_cb (GTask        *task,
   g_autoptr(GError) local_error = NULL;
 
   success = mct_set_app_filter (data->connection, data->user_id,
-                                data->app_filter,
-                                data->allow_interactive_authorization,
+                                data->app_filter, data->flags,
                                 cancellable, &local_error);
 
   if (local_error != NULL)

@@ -37,9 +37,14 @@ def __get_app_filter(user_id, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
+    if interactive:
+        flags = Malcontent.GetAppFilterFlags.INTERACTIVE
+    else:
+        flags = Malcontent.GetAppFilterFlags.NONE
+
     return Malcontent.get_app_filter(
         connection=None, user_id=user_id,
-        allow_interactive_authorization=interactive, cancellable=None)
+        flags=flags, cancellable=None)
 
 
 def __get_app_filter_or_error(user_id, interactive):
@@ -58,9 +63,14 @@ def __set_app_filter(user_id, app_filter, interactive):
 
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
+    if interactive:
+        flags = Malcontent.GetAppFilterFlags.INTERACTIVE
+    else:
+        flags = Malcontent.GetAppFilterFlags.NONE
+
     Malcontent.set_app_filter(
         connection=None, user_id=user_id, app_filter=app_filter,
-        allow_interactive_authorization=interactive, cancellable=None)
+        flags=flags, cancellable=None)
 
 
 def __set_app_filter_or_error(user_id, app_filter, interactive):
