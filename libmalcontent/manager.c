@@ -44,6 +44,7 @@ struct _MctManager
   GObject parent_instance;
 
   GDBusConnection *connection;  /* (owned) */
+  guint user_changed_id;
 };
 
 G_DEFINE_TYPE (MctManager, mct_manager, G_TYPE_OBJECT)
@@ -104,11 +105,47 @@ mct_manager_set_property (GObject      *object,
     }
 }
 
+static void _mct_manager_user_changed_cb (GDBusConnection *connection,
+                                          const gchar     *sender_name,
+                                          const gchar     *object_path,
+                                          const gchar     *interface_name,
+                                          const gchar     *signal_name,
+                                          GVariant        *parameters,
+                                          gpointer         user_data);
+
+static void
+mct_manager_constructed (GObject *object)
+{
+  MctManager *self = MCT_MANAGER (object);
+
+  /* Chain up. */
+  G_OBJECT_CLASS (mct_manager_parent_class)->constructed (object);
+
+  /* Connect to notifications from AccountsService. */
+  g_assert (self->connection != NULL);
+  self->user_changed_id =
+      g_dbus_connection_signal_subscribe (self->connection,
+                                          "org.freedesktop.Accounts",  /* sender */
+                                          "org.freedesktop.Accounts.User",  /* interface name */
+                                          "Changed",  /* signal name */
+                                          NULL,  /* object path */
+                                          NULL,  /* arg0 */
+                                          G_DBUS_SIGNAL_FLAGS_NONE,
+                                          _mct_manager_user_changed_cb,
+                                          self, NULL);
+}
+
 static void
 mct_manager_dispose (GObject *object)
 {
   MctManager *self = MCT_MANAGER (object);
 
+  if (self->user_changed_id != 0 && self->connection != NULL)
+    {
+      g_dbus_connection_signal_unsubscribe (self->connection,
+                                            self->user_changed_id);
+      self->user_changed_id = 0;
+    }
   g_clear_object (&self->connection);
 
   G_OBJECT_CLASS (mct_manager_parent_class)->dispose (object);
@@ -119,6 +156,7 @@ mct_manager_class_init (MctManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->constructed = mct_manager_constructed;
   object_class->dispose = mct_manager_dispose;
   object_class->get_property = mct_manager_get_property;
   object_class->set_property = mct_manager_set_property;
@@ -143,6 +181,21 @@ mct_manager_class_init (MctManagerClass *klass)
   g_object_class_install_properties (object_class,
                                      G_N_ELEMENTS (props),
                                      props);
+
+  /**
+   * MctManager::app-filter-changed:
+   * @self: a #MctManager
+   * @user_id: UID of the user whose app filter has changed
+   *
+   * Emitted when the app filter stored for a user changes.
+   *
+   * Since: 0.3.0
+   */
+  g_signal_new ("app-filter-changed", G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL, NULL,
+                G_TYPE_NONE, 1,
+                G_TYPE_UINT64);
 }
 
 /**
@@ -162,6 +215,39 @@ mct_manager_new (GDBusConnection *connection)
   return g_object_new (MCT_TYPE_MANAGER,
                        "connection", connection,
                        NULL);
+}
+
+static void
+_mct_manager_user_changed_cb (GDBusConnection *connection,
+                              const gchar     *sender_name,
+                              const gchar     *object_path,
+                              const gchar     *interface_name,
+                              const gchar     *signal_name,
+                              GVariant        *parameters,
+                              gpointer         user_data)
+{
+  MctManager *manager = MCT_MANAGER (user_data);
+  g_autoptr(GError) local_error = NULL;
+  const gchar *uid_str;
+  guint64 uid;
+
+  g_assert (g_str_equal (interface_name, "org.freedesktop.Accounts.User"));
+  g_assert (g_str_equal (signal_name, "Changed"));
+
+  /* Extract the UID from the object path. This is a bit hacky, but probably
+   * better than depending on libaccountsservice just for this. */
+  if (!g_str_has_prefix (object_path, "/org/freedesktop/Accounts/User"))
+    return;
+
+  uid_str = object_path + strlen ("/org/freedesktop/Accounts/User");
+  if (!g_ascii_string_to_unsigned (uid_str, 10, 0, G_MAXUINT64, &uid, &local_error))
+    {
+      g_warning ("Error converting object path ‘%s’ to user ID: %s",
+                 object_path, local_error->message);
+      g_clear_error (&local_error);
+    }
+
+  g_signal_emit_by_name (manager, "app-filter-changed", uid);
 }
 
 /**
