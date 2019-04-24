@@ -163,6 +163,37 @@ def command_get(user, quiet=False, interactive=True):
         print('App installation is disallowed to system repository')
 
 
+def command_monitor(user, quiet=False, interactive=True):
+    """Monitor app filter changes for the given user."""
+    if user == '':
+        filter_user_id = 0
+    else:
+        filter_user_id = __lookup_user_id_or_error(user)
+    apply_filter = (user != '')
+
+    def _on_app_filter_changed(manager, changed_user_id):
+        if not apply_filter or changed_user_id == filter_user_id:
+            print('App filter changed for user ID {}'.format(changed_user_id))
+
+    connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+    manager = Malcontent.Manager.new(connection)
+    manager.connect('app-filter-changed', _on_app_filter_changed)
+
+    if apply_filter:
+        print('Monitoring app filter changes for '
+              'user ID {}'.format(filter_user_id))
+    else:
+        print('Monitoring app filter changes for all users')
+
+    # Loop until Ctrl+C is pressed.
+    context = GLib.MainContext.default()
+    while True:
+        try:
+            context.iteration(may_block=True)
+        except KeyboardInterrupt:
+            break
+
+
 def command_check(user, path, quiet=False, interactive=True):
     """Check the given path or flatpak ref is runnable by the given user,
     according to their app filter."""
@@ -266,6 +297,15 @@ def main():
     parser_get.add_argument('user', default='', nargs='?',
                             help='user ID or username to get the app filter '
                                  'for (default: current user)')
+
+    # ‘monitor’ command
+    parser_monitor = subparsers.add_parser('monitor',
+                                           help='monitor parental controls '
+                                                'settings changes')
+    parser_monitor.set_defaults(function=command_monitor)
+    parser_monitor.add_argument('user', default='', nargs='?',
+                                help='user ID or username to monitor the app '
+                                     'filter for (default: all users)')
 
     # ‘check’ command
     parser_check = subparsers.add_parser('check', parents=[common_parser],
