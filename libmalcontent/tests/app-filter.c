@@ -26,6 +26,7 @@
 #include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
 #include <libmalcontent/app-filter.h>
+#include <libmalcontent/manager.h>
 #include <libglib-testing/dbus-queue.h>
 #include <locale.h>
 #include <string.h>
@@ -422,6 +423,7 @@ typedef struct
   GtDBusQueue *queue;  /* (owned) */
   uid_t valid_uid;
   uid_t missing_uid;
+  MctManager *manager;  /* (owned) */
 } BusFixture;
 
 static void
@@ -452,12 +454,15 @@ bus_set_up (BusFixture    *fixture,
                                (GDBusInterfaceInfo *) &accounts_interface_info,
                                &local_error);
   g_assert_no_error (local_error);
+
+  fixture->manager = mct_manager_new (gt_dbus_queue_get_client_connection (fixture->queue));
 }
 
 static void
 bus_tear_down (BusFixture    *fixture,
                gconstpointer  test_data)
 {
+  g_clear_object (&fixture->manager);
   gt_dbus_queue_disconnect (fixture->queue, TRUE);
   g_clear_pointer (&fixture->queue, gt_dbus_queue_free);
 }
@@ -477,7 +482,7 @@ async_result_cb (GObject      *obj,
 /* Generic mock accountsservice implementation which returns the properties
  * given in #GetAppFilterData.properties if queried for a UID matching
  * #GetAppFilterData.expected_uid. Intended to be used for writing ‘successful’
- * mct_get_app_filter() tests returning a variety of values. */
+ * mct_manager_get_app_filter() tests returning a variety of values. */
 typedef struct
 {
   uid_t expected_uid;
@@ -553,21 +558,21 @@ test_app_filter_bus_get (BusFixture    *fixture,
     {
       g_autoptr(GAsyncResult) result = NULL;
 
-      mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                                fixture->valid_uid,
-                                MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                                async_result_cb, &result);
+      mct_manager_get_app_filter_async (fixture->manager,
+                                        fixture->valid_uid,
+                                        MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                        async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
-      app_filter = mct_get_app_filter_finish (result, &local_error);
+      app_filter = mct_manager_get_app_filter_finish (fixture->manager, result, &local_error);
     }
   else
     {
-      app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                       fixture->valid_uid,
-                                       MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                                       &local_error);
+      app_filter = mct_manager_get_app_filter (fixture->manager,
+                                               fixture->valid_uid,
+                                               MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                               &local_error);
     }
 
   g_assert_no_error (local_error);
@@ -608,10 +613,10 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                   fixture->valid_uid,
-                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                                   &local_error);
+  app_filter = mct_manager_get_app_filter (fixture->manager,
+                                           fixture->valid_uid,
+                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -659,10 +664,10 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                   fixture->valid_uid,
-                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                                   &local_error);
+  app_filter = mct_manager_get_app_filter (fixture->manager,
+                                           fixture->valid_uid,
+                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -707,10 +712,10 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
                                  (gpointer) &get_app_filter_data);
 
-  app_filter = mct_get_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                   fixture->valid_uid,
-                                   MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                                   &local_error);
+  app_filter = mct_manager_get_app_filter (fixture->manager,
+                                           fixture->valid_uid,
+                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           &local_error);
 
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
@@ -725,8 +730,8 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
   g_assert_false (mct_app_filter_is_system_installation_allowed (app_filter));
 }
 
-/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
- * service reports that the given user cannot be found.
+/* Test that mct_manager_get_app_filter() returns an appropriate error if the
+ * mock D-Bus service reports that the given user cannot be found.
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -739,10 +744,10 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
   g_autofree gchar *error_message = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
-  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->missing_uid,
-                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_get_app_filter_async (fixture->manager,
+                                    fixture->missing_uid,
+                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
   gint64 user_id;
@@ -761,16 +766,17 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = mct_get_app_filter_finish (result, &local_error);
+  app_filter = mct_manager_get_app_filter_finish (fixture->manager, result,
+                                                  &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
   g_assert_null (app_filter);
 }
 
-/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
- * service reports that the properties of the given user can’t be accessed due
- * to permissions.
+/* Test that mct_manager_get_app_filter() returns an appropriate error if the
+ * mock D-Bus service reports that the properties of the given user can’t be
+ * accessed due to permissions.
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -784,10 +790,10 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
   g_autofree gchar *object_path = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
-  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->valid_uid,
-                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_get_app_filter_async (fixture->manager,
+                                    fixture->valid_uid,
+                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
   gint64 user_id;
@@ -817,16 +823,17 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = mct_get_app_filter_finish (result, &local_error);
+  app_filter = mct_manager_get_app_filter_finish (fixture->manager, result,
+                                                  &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
-/* Test that mct_get_app_filter() returns an appropriate error if the mock D-Bus
- * service replies with no app filter properties (implying that it hasn’t sent
- * the property values because of permissions).
+/* Test that mct_manager_get_app_filter() returns an appropriate error if the
+ * mock D-Bus service replies with no app filter properties (implying that it
+ * hasn’t sent the property values because of permissions).
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -840,10 +847,10 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   g_autofree gchar *object_path = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
-  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->valid_uid,
-                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_get_app_filter_async (fixture->manager,
+                                    fixture->valid_uid,
+                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
   gint64 user_id;
@@ -874,15 +881,16 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = mct_get_app_filter_finish (result, &local_error);
+  app_filter = mct_manager_get_app_filter_finish (fixture->manager, result,
+                                                  &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
-/* Test that mct_get_app_filter() returns an error if the mock D-Bus service
- * reports an unrecognised error.
+/* Test that mct_manager_get_app_filter() returns an error if the mock D-Bus
+ * service reports an unrecognised error.
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -894,10 +902,10 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
   g_autoptr(GDBusMethodInvocation) invocation = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
-  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->valid_uid,
-                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_get_app_filter_async (fixture->manager,
+                                    fixture->valid_uid,
+                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call and return a bogus error. */
   gint64 user_id;
@@ -918,16 +926,17 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = mct_get_app_filter_finish (result, &local_error);
+  app_filter = mct_manager_get_app_filter_finish (fixture->manager, result,
+                                                  &local_error);
 
   /* We don’t actually care what error is actually used here. */
   g_assert_error (local_error, G_IO_ERROR, G_IO_ERROR_DBUS_ERROR);
   g_assert_null (app_filter);
 }
 
-/* Test that mct_get_app_filter() returns an error if the mock D-Bus service
- * reports an unknown interface, which means that parental controls are not
- * installed properly.
+/* Test that mct_manager_get_app_filter() returns an error if the mock D-Bus
+ * service reports an unknown interface, which means that parental controls are
+ * not installed properly.
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -941,10 +950,10 @@ test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
   g_autofree gchar *object_path = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
-  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->valid_uid,
-                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_get_app_filter_async (fixture->manager,
+                                    fixture->valid_uid,
+                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
   gint64 user_id;
@@ -975,7 +984,8 @@ test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
   /* Get the get_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  app_filter = mct_get_app_filter_finish (result, &local_error);
+  app_filter = mct_manager_get_app_filter_finish (fixture->manager, result,
+                                                  &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_DISABLED);
@@ -1132,29 +1142,30 @@ test_app_filter_bus_set (BusFixture    *fixture,
     {
       g_autoptr(GAsyncResult) result = NULL;
 
-      mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                                fixture->valid_uid, app_filter,
-                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                                async_result_cb, &result);
+      mct_manager_set_app_filter_async (fixture->manager,
+                                        fixture->valid_uid, app_filter,
+                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        async_result_cb, &result);
 
       while (result == NULL)
         g_main_context_iteration (NULL, TRUE);
-      success = mct_set_app_filter_finish (result, &local_error);
+      success = mct_manager_set_app_filter_finish (fixture->manager, result,
+                                                   &local_error);
     }
   else
     {
-      success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                    fixture->valid_uid, app_filter,
-                                    MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                                    &local_error);
+      success = mct_manager_set_app_filter (fixture->manager,
+                                            fixture->valid_uid, app_filter,
+                                            MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                            &local_error);
     }
 
   g_assert_no_error (local_error);
   g_assert_true (success);
 }
 
-/* Test that mct_set_app_filter() returns an appropriate error if the mock D-Bus
- * service reports that the given user cannot be found.
+/* Test that mct_manager__set_app_filter() returns an appropriate error if the
+ * mock D-Bus service reports that the given user cannot be found.
  *
  * The mock D-Bus replies are generated inline. */
 static void
@@ -1172,10 +1183,10 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
   /* Use the default app filter. */
   app_filter = mct_app_filter_builder_end (&builder);
 
-  mct_set_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
-                            fixture->missing_uid, app_filter,
-                            MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                            async_result_cb, &result);
+  mct_manager_set_app_filter_async (fixture->manager,
+                                    fixture->missing_uid, app_filter,
+                                    MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                    async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
   gint64 user_id;
@@ -1194,15 +1205,17 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
   /* Get the set_app_filter() result. */
   while (result == NULL)
     g_main_context_iteration (NULL, TRUE);
-  success = mct_set_app_filter_finish (result, &local_error);
+  success = mct_manager_set_app_filter_finish (fixture->manager, result,
+                                               &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
   g_assert_false (success);
 }
 
-/* Test that mct_set_app_filter() returns an appropriate error if the mock D-Bus
- * service replies with a permission denied error when setting properties.
+/* Test that mct_manager_set_app_filter() returns an appropriate error if the
+ * mock D-Bus service replies with a permission denied error when setting
+ * properties.
  *
  * The mock D-Bus replies are generated in set_app_filter_server_cb(). */
 static void
@@ -1227,18 +1240,18 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                fixture->valid_uid, app_filter,
-                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                                &local_error);
+  success = mct_manager_set_app_filter (fixture->manager,
+                                        fixture->valid_uid, app_filter,
+                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        &local_error);
 
   g_assert_error (local_error,
                   MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
   g_assert_false (success);
 }
 
-/* Test that mct_set_app_filter() returns an error if the mock D-Bus service
- * reports an unrecognised error.
+/* Test that mct_manager_set_app_filter() returns an error if the mock D-Bus
+ * service reports an unrecognised error.
  *
  * The mock D-Bus replies are generated in set_app_filter_server_cb(). */
 static void
@@ -1265,17 +1278,17 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                fixture->valid_uid, app_filter,
-                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                                &local_error);
+  success = mct_manager_set_app_filter (fixture->manager,
+                                        fixture->valid_uid, app_filter,
+                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        &local_error);
 
   g_assert_error (local_error, G_IO_ERROR, G_IO_ERROR_DBUS_ERROR);
   g_assert_false (success);
 }
 
-/* Test that mct_set_app_filter() returns an error if the mock D-Bus service
- * reports an InvalidArgs error with a given one of its Set() calls.
+/* Test that mct_manager_set_app_filter() returns an error if the mock D-Bus
+ * service reports an InvalidArgs error with a given one of its Set() calls.
  *
  * @test_data contains a property index encoded with GINT_TO_POINTER(),
  * indicating which Set() call to return the error on, since the calls are made
@@ -1308,10 +1321,10 @@ test_app_filter_bus_set_error_invalid_property (BusFixture    *fixture,
   gt_dbus_queue_set_server_func (fixture->queue, set_app_filter_server_cb,
                                  (gpointer) &set_app_filter_data);
 
-  success = mct_set_app_filter (gt_dbus_queue_get_client_connection (fixture->queue),
-                                fixture->valid_uid, app_filter,
-                                MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
-                                &local_error);
+  success = mct_manager_set_app_filter (fixture->manager,
+                                        fixture->valid_uid, app_filter,
+                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        &local_error);
 
   g_assert_error (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS);
   g_assert_false (success);

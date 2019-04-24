@@ -2,9 +2,14 @@ libmalcontent_api_version = '0'
 libmalcontent_api_name = 'malcontent-' + libmalcontent_api_version
 libmalcontent_sources = [
   'app-filter.c',
+  'manager.c',
 ]
 libmalcontent_headers = [
   'app-filter.h',
+  'manager.h',
+]
+libmalcontent_private_headers = [
+  'app-filter-private.h',
 ]
 
 libmalcontent_public_deps = [
@@ -20,7 +25,7 @@ libmalcontent_private_deps = [
 libmalcontent_include_subdir = join_paths(libmalcontent_api_name, 'libmalcontent')
 
 libmalcontent = library(libmalcontent_api_name,
-  libmalcontent_sources + libmalcontent_headers,
+  libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers,
   dependencies: libmalcontent_public_deps + libmalcontent_private_deps,
   include_directories: root_inc,
   install: true,
@@ -49,7 +54,7 @@ pkgconfig.generate(
 )
 
 gnome.generate_gir(libmalcontent,
-  sources: libmalcontent_sources + libmalcontent_headers,
+  sources: libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers,
   nsversion: libmalcontent_api_version,
   namespace: 'Malcontent',
   symbol_prefix: 'mct_',
@@ -57,6 +62,7 @@ gnome.generate_gir(libmalcontent,
   export_packages: 'libmalcontent',
   includes: ['GObject-2.0', 'Gio-2.0'],
   install: true,
+  dependencies: libmalcontent_dep,
 )
 
 subdir('tests')

@@ -22,7 +22,7 @@ import pwd
 import sys
 import gi
 gi.require_version('Malcontent', '0')  # noqa
-from gi.repository import Malcontent, GLib
+from gi.repository import Malcontent, GLib, Gio
 
 
 # Exit codes, which are a documented part of the API.
@@ -42,8 +42,10 @@ def __get_app_filter(user_id, interactive):
     else:
         flags = Malcontent.GetAppFilterFlags.NONE
 
-    return Malcontent.get_app_filter(
-        connection=None, user_id=user_id,
+    connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+    manager = Malcontent.Manager.new(connection)
+    return manager.get_app_filter(
+        user_id=user_id,
         flags=flags, cancellable=None)
 
 
@@ -68,8 +70,10 @@ def __set_app_filter(user_id, app_filter, interactive):
     else:
         flags = Malcontent.GetAppFilterFlags.NONE
 
-    Malcontent.set_app_filter(
-        connection=None, user_id=user_id, app_filter=app_filter,
+    connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+    manager = Malcontent.Manager.new(connection)
+    manager.set_app_filter(
+        user_id=user_id, app_filter=app_filter,
         flags=flags, cancellable=None)
 
 

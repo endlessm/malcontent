@@ -37,7 +37,8 @@ G_BEGIN_DECLS
  *    a user is inconsistent or invalid
  * @MCT_APP_FILTER_ERROR_DISABLED: App filtering is disabled for all users (Since: 0.3.0)
  *
- * Errors which can be returned by mct_get_app_filter_async().
+ * Errors relating to #MctAppFilter instances, which can be returned by
+ * mct_manager_get_app_filter_async() (for example).
  *
  * Since: 0.2.0
  */
@@ -79,40 +80,6 @@ typedef enum
 } MctAppFilterOarsValue;
 
 /**
- * MctGetAppFilterFlags:
- * @MCT_GET_APP_FILTER_FLAGS_NONE: No flags set.
- * @MCT_GET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
- *    requesting authorization.
- *
- * Flags to control the behaviour of mct_get_app_filter() and
- * mct_get_app_filter_async().
- *
- * Since: 0.3.0
- */
-typedef enum
-{
-  MCT_GET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_GET_APP_FILTER_FLAGS_INTERACTIVE,
-} MctGetAppFilterFlags;
-
-/**
- * MctSetAppFilterFlags:
- * @MCT_SET_APP_FILTER_FLAGS_NONE: No flags set.
- * @MCT_SET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
- *    requesting authorization.
- *
- * Flags to control the behaviour of mct_set_app_filter() and
- * mct_set_app_filter_async().
- *
- * Since: 0.3.0
- */
-typedef enum
-{
-  MCT_SET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_SET_APP_FILTER_FLAGS_INTERACTIVE,
-} MctSetAppFilterFlags;
-
-/**
  * MctAppFilter:
  *
  * #MctAppFilter is an opaque, immutable structure which contains a snapshot of
@@ -149,36 +116,6 @@ MctAppFilterOarsValue   mct_app_filter_get_oars_value    (MctAppFilter *filter,
 
 gboolean                mct_app_filter_is_user_installation_allowed   (MctAppFilter *filter);
 gboolean                mct_app_filter_is_system_installation_allowed (MctAppFilter *filter);
-
-MctAppFilter *mct_get_app_filter        (GDBusConnection      *connection,
-                                         uid_t                 user_id,
-                                         MctGetAppFilterFlags  flags,
-                                         GCancellable         *cancellable,
-                                         GError              **error);
-void          mct_get_app_filter_async  (GDBusConnection      *connection,
-                                         uid_t                 user_id,
-                                         MctGetAppFilterFlags  flags,
-                                         GCancellable         *cancellable,
-                                         GAsyncReadyCallback   callback,
-                                         gpointer              user_data);
-MctAppFilter *mct_get_app_filter_finish (GAsyncResult         *result,
-                                         GError              **error);
-
-gboolean      mct_set_app_filter        (GDBusConnection      *connection,
-                                         uid_t                 user_id,
-                                         MctAppFilter         *app_filter,
-                                         MctSetAppFilterFlags  flags,
-                                         GCancellable         *cancellable,
-                                         GError              **error);
-void          mct_set_app_filter_async  (GDBusConnection      *connection,
-                                         uid_t                 user_id,
-                                         MctAppFilter         *app_filter,
-                                         MctSetAppFilterFlags  flags,
-                                         GCancellable         *cancellable,
-                                         GAsyncReadyCallback   callback,
-                                         gpointer              user_data);
-gboolean      mct_set_app_filter_finish (GAsyncResult         *result,
-                                         GError              **error);
 
 /**
  * MctAppFilterBuilder:
