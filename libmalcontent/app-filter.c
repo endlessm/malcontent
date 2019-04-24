@@ -623,8 +623,23 @@ mct_get_app_filter (GDBusConnection       *connection,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                                          user_id);
+      g_autoptr(GError) app_filter_error = NULL;
+
+      if (g_error_matches (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS))
+        {
+          /* o.fd.D.GetAll() will return InvalidArgs errors if
+           * accountsservice doesn’t have the com.endlessm.ParentalControls.AppFilter
+           * extension interface installed. */
+          app_filter_error = g_error_new_literal (MCT_APP_FILTER_ERROR,
+                                                  MCT_APP_FILTER_ERROR_DISABLED,
+                                                  _("App filtering is globally disabled"));
+        }
+      else
+        {
+          app_filter_error = bus_error_to_app_filter_error (local_error,
+                                                            user_id);
+        }
+
       g_propagate_error (error, g_steal_pointer (&app_filter_error));
       return NULL;
     }

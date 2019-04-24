@@ -925,6 +925,63 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
   g_assert_null (app_filter);
 }
 
+/* Test that mct_get_app_filter() returns an error if the mock D-Bus service
+ * reports an unknown interface, which means that parental controls are not
+ * installed properly.
+ *
+ * The mock D-Bus replies are generated inline. */
+static void
+test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
+                                        gconstpointer  test_data)
+{
+  g_autoptr(GAsyncResult) result = NULL;
+  g_autoptr(GError) local_error = NULL;
+  g_autoptr(GDBusMethodInvocation) invocation1 = NULL;
+  g_autoptr(GDBusMethodInvocation) invocation2 = NULL;
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
+
+  mct_get_app_filter_async (gt_dbus_queue_get_client_connection (fixture->queue),
+                            fixture->valid_uid,
+                            MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                            async_result_cb, &result);
+
+  /* Handle the FindUserById() call. */
+  gint64 user_id;
+  invocation1 =
+      gt_dbus_queue_assert_pop_message (fixture->queue,
+                                        "/org/freedesktop/Accounts",
+                                        "org.freedesktop.Accounts",
+                                        "FindUserById", "(x)", &user_id);
+  g_assert_cmpint (user_id, ==, fixture->valid_uid);
+
+  object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", (uid_t) user_id);
+  g_dbus_method_invocation_return_value (invocation1, g_variant_new ("(o)", object_path));
+
+  /* Handle the Properties.GetAll() call and return an InvalidArgs error. */
+  const gchar *property_interface;
+  invocation2 =
+      gt_dbus_queue_assert_pop_message (fixture->queue,
+                                        object_path,
+                                        "org.freedesktop.DBus.Properties",
+                                        "GetAll", "(&s)", &property_interface);
+  g_assert_cmpstr (property_interface, ==, "com.endlessm.ParentalControls.AppFilter");
+
+  g_dbus_method_invocation_return_dbus_error (invocation2,
+                                              "org.freedesktop.DBus.Error.InvalidArgs",
+                                              "No such interface "
+                                              "“com.endlessm.ParentalControls.AppFilter”");
+
+  /* Get the get_app_filter() result. */
+  while (result == NULL)
+    g_main_context_iteration (NULL, TRUE);
+  app_filter = mct_get_app_filter_finish (result, &local_error);
+
+  g_assert_error (local_error,
+                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_DISABLED);
+  g_assert_null (app_filter);
+}
+
 /* Generic mock accountsservice implementation which handles properties being
  * set on a mock User object, and compares their values to the given
  * `expected_*` ones.
@@ -1315,6 +1372,8 @@ main (int    argc,
               bus_set_up, test_app_filter_bus_get_error_permission_denied_missing, bus_tear_down);
   g_test_add ("/app-filter/bus/get/error/unknown", BusFixture, NULL,
               bus_set_up, test_app_filter_bus_get_error_unknown, bus_tear_down);
+  g_test_add ("/app-filter/bus/get/error/disabled", BusFixture, NULL,
+              bus_set_up, test_app_filter_bus_get_error_disabled, bus_tear_down);
 
   g_test_add ("/app-filter/bus/set/async", BusFixture, GUINT_TO_POINTER (TRUE),
               bus_set_up, test_app_filter_bus_set, bus_tear_down);

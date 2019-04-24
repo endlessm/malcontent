@@ -35,6 +35,7 @@ G_BEGIN_DECLS
  *    filter for the given user
  * @MCT_APP_FILTER_ERROR_INVALID_DATA: The data stored in the app filter for
  *    a user is inconsistent or invalid
+ * @MCT_APP_FILTER_ERROR_DISABLED: App filtering is disabled for all users (Since: 0.3.0)
  *
  * Errors which can be returned by mct_get_app_filter_async().
  *
@@ -45,6 +46,7 @@ typedef enum
   MCT_APP_FILTER_ERROR_INVALID_USER,
   MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
   MCT_APP_FILTER_ERROR_INVALID_DATA,
+  MCT_APP_FILTER_ERROR_DISABLED,
 } MctAppFilterError;
 
 GQuark mct_app_filter_error_quark (void);
