@@ -588,7 +588,6 @@ mct_get_app_filter (GDBusConnection       *connection,
   g_auto(GStrv) app_list = NULL;
   const gchar *content_rating_kind;
   g_autoptr(GVariant) oars_variant = NULL;
-  g_autoptr(GHashTable) oars_map = NULL;
   gboolean allow_user_installation;
   gboolean allow_system_installation;
 
