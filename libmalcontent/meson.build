@@ -6,6 +6,7 @@ libmalcontent_sources = [
 ]
 libmalcontent_headers = [
   'app-filter.h',
+  'malcontent.h',
   'manager.h',
 ]
 libmalcontent_private_headers = [
