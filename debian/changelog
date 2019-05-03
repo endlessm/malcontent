@@ -1,0 +1,5 @@
+malcontent (0.3.0-0) unstable; urgency=medium
+
+  * Initial release, based on eos-parental-controls packaging (Closes: T25564)
+
+ -- Philip Withnall <withnall@endlessm.com>  Fri, 03 May 2019 12:09:00 +0100

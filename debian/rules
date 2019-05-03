@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export LC_ALL=C.UTF-8
+
+override_dh_auto_configure:
+	dh_auto_configure \
+		-- \
+		-Dinstalled_tests=true \
+		$(NULL)
+
+override_dh_missing:
+	dh_missing --fail-missing
+
+%:
+	dh $@ --with gir
