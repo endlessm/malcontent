@@ -82,7 +82,7 @@ test_c_args = [
   '-Wmissing-prototypes',
   '-Wnested-externs',
   '-Wno-error=cpp',
-  '-Wno-missing-field-initializers',
+  '-Wmissing-field-initializers',
   '-Wno-suggest-attribute=format',
   '-Wno-unused-parameter',
   '-Wnull-dereference',
