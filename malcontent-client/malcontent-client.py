@@ -216,12 +216,14 @@ def command_check(user, path, quiet=False, interactive=True):
         noun = 'Path'
 
     if is_allowed:
-        print('{} {} is allowed by app filter for user {}'.format(
-            noun, path, user_id))
+        if not quiet:
+            print('{} {} is allowed by app filter for user {}'.format(
+                noun, path, user_id))
         return
     else:
-        print('{} {} is not allowed by app filter for user {}'.format(
-            noun, path, user_id))
+        if not quiet:
+            print('{} {} is not allowed by app filter for user {}'.format(
+                noun, path, user_id))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
