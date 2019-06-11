@@ -265,7 +265,8 @@ def command_set(user, allow_user_installation=True,
 
     __set_app_filter_or_error(user_id, app_filter, interactive)
 
-    print('App filter for user {} set'.format(user_id))
+    if not quiet:
+        print('App filter for user {} set'.format(user_id))
 
 
 def main():
