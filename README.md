@@ -82,6 +82,7 @@ Dependencies
  * gio-2.0 ≥ 2.54
  * glib-2.0 ≥ 2.54
  * gobject-2.0 ≥ 2.54
+ * polkit-gobject-1
 
 Licensing
 ---------
