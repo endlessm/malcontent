@@ -175,6 +175,9 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   mct_app_filter_builder_blacklist_flatpak_ref (fixture->builder,
                                                 "app/org.doom.Doom/x86_64/master");
 
+  mct_app_filter_builder_blacklist_content_type (fixture->builder,
+                                                 "x-scheme-handler/http");
+
   mct_app_filter_builder_set_oars_value (fixture->builder, "drugs-alcohol",
                                          MCT_APP_FILTER_OARS_VALUE_MILD);
   mct_app_filter_builder_set_oars_value (fixture->builder, "language-humor",
@@ -194,6 +197,11 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   g_assert_false (mct_app_filter_is_flatpak_ref_allowed (filter,
                                                          "app/org.doom.Doom/x86_64/master"));
   g_assert_false (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
+
+  g_assert_false (mct_app_filter_is_content_type_allowed (filter,
+                                                          "x-scheme-handler/http"));
+  g_assert_true (mct_app_filter_is_content_type_allowed (filter,
+                                                         "text/plain"));
 
   g_assert_cmpint (mct_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
                    MCT_APP_FILTER_OARS_VALUE_MILD);
@@ -231,6 +239,9 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
                                                         "app/org.doom.Doom/x86_64/master"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
 
+  g_assert_true (mct_app_filter_is_content_type_allowed (filter,
+                                                         "x-scheme-handler/http"));
+
   g_assert_cmpint (mct_app_filter_get_oars_value (filter, "drugs-alcohol"), ==,
                    MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
   g_assert_cmpint (mct_app_filter_get_oars_value (filter, "language-humor"), ==,
@@ -260,11 +271,16 @@ test_app_filter_builder_copy_empty (void)
 
   mct_app_filter_builder_init (builder_copy);
   mct_app_filter_builder_blacklist_path (builder_copy, "/bin/true");
+  mct_app_filter_builder_blacklist_content_type (builder_copy,
+                                                 "x-scheme-handler/http");
   filter = mct_app_filter_builder_end (builder_copy);
 
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
-
+  g_assert_true (mct_app_filter_is_content_type_allowed (filter,
+                                                         "text/plain"));
+  g_assert_false (mct_app_filter_is_content_type_allowed (filter,
+                                                          "x-scheme-handler/http"));
   g_assert_true (mct_app_filter_is_user_installation_allowed (filter));
   g_assert_false (mct_app_filter_is_system_installation_allowed (filter));
 }
@@ -279,6 +295,8 @@ test_app_filter_builder_copy_full (void)
   g_autoptr(MctAppFilter) filter = NULL;
 
   mct_app_filter_builder_blacklist_path (builder, "/bin/true");
+  mct_app_filter_builder_blacklist_content_type (builder,
+                                                 "x-scheme-handler/http");
   mct_app_filter_builder_set_allow_user_installation (builder, FALSE);
   mct_app_filter_builder_set_allow_system_installation (builder, TRUE);
   builder_copy = mct_app_filter_builder_copy (builder);
@@ -286,6 +304,10 @@ test_app_filter_builder_copy_full (void)
 
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
+  g_assert_true (mct_app_filter_is_content_type_allowed (filter,
+                                                         "text/plain"));
+  g_assert_false (mct_app_filter_is_content_type_allowed (filter,
+                                                          "x-scheme-handler/http"));
   g_assert_false (mct_app_filter_is_user_installation_allowed (filter));
   g_assert_true (mct_app_filter_is_system_installation_allowed (filter));
 }
@@ -310,42 +332,56 @@ test_app_filter_appinfo (void)
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n" },
-      /* Allowed by its path and its flatpak ID: */
+      /* Allowed by its path and its content type: */
       { TRUE,
         "[Desktop Entry]\n"
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n"
+        "MimeType=text/plain\n" },
+      /* Allowed by its path, its content type and its flatpak ID: */
+      { TRUE,
+        "[Desktop Entry]\n"
+        "Name=Some Name\n"
+        "Exec=/bin/true\n"
+        "Type=Application\n"
+        "MimeType=text/plain\n"
         "X-Flatpak=org.gnome.Nice\n" },
-      /* Allowed by its path and its flatpak ID: */
+      /* Allowed by its path, its content type and its flatpak ID: */
       { TRUE,
         "[Desktop Entry]\n"
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n"
+        "MimeType=text/plain\n"
         "X-Flatpak=org.gnome.Nice\n"
         "X-Flatpak-RenamedFrom=\n" },
-      /* Allowed by its path, its flatpak ID and its old flatpak IDs: */
+      /* Allowed by its path, its content type, its flatpak ID and
+       * its old flatpak IDs: */
       { TRUE,
         "[Desktop Entry]\n"
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n"
+        "MimeType=text/plain\n"
         "X-Flatpak-RenamedFrom=org.gnome.OldNice\n" },
-      /* Allowed by its path, its flatpak ID and its old flatpak IDs (which
-       * contain some spurious entries): */
+      /* Allowed by its path, its content type, its flatpak ID and its old
+       * flatpak IDs (which contain some spurious entries): */
       { TRUE,
         "[Desktop Entry]\n"
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n"
+        "MimeType=text/plain\n"
         "X-Flatpak-RenamedFrom=org.gnome.OldNice;;;\n" },
-      /* Allowed by its path, its flatpak ID and its old flatpak IDs: */
+      /* Allowed by its path, its content type, its flatpak ID and
+       * its old flatpak IDs: */
       { TRUE,
         "[Desktop Entry]\n"
         "Name=Some Name\n"
         "Exec=/bin/true\n"
         "Type=Application\n"
+        "MimeType=text/plain\n"
         "X-Flatpak-RenamedFrom=org.gnome.OldNice.desktop\n" },
       /* Disallowed by its path: */
       { FALSE,
@@ -353,6 +389,13 @@ test_app_filter_appinfo (void)
         "Name=Some Name\n"
         "Exec=/bin/false\n"
         "Type=Application\n" },
+      /* Allowed by its path, disallowed by its content type: */
+      { FALSE,
+        "[Desktop Entry]\n"
+        "Name=Some Name\n"
+        "Exec=/bin/true\n"
+        "Type=Application\n"
+        "MimeType=x-scheme-handler/http\n" },
       /* Allowed by its path, disallowed by its flatpak ID: */
       { FALSE,
         "[Desktop Entry]\n"
@@ -378,10 +421,21 @@ test_app_filter_appinfo (void)
         "Type=Application\n"
         "X-Flatpak=org.gnome.WasNasty\n"
         "X-Flatpak-RenamedFrom=org.gnome.Nasty.desktop;\n" },
+      /* Allowed by its path, current flatpak ID, old flatpak ID, but
+       * disabled by content type: */
+      { FALSE,
+        "[Desktop Entry]\n"
+        "Name=Some Name\n"
+        "Exec=/bin/true\n"
+        "Type=Application\n"
+        "X-Flatpak=org.gnome.WasNasty\n"
+        "X-Flatpak-RenamedFrom=org.gnome.OldNice\n"
+        "MimeType=x-scheme-handler/http\n" },
     };
 
   mct_app_filter_builder_blacklist_path (&builder, "/bin/false");
   mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_blacklist_content_type (&builder, "x-scheme-handler/http");
 
   filter = mct_app_filter_builder_end (&builder);
 
@@ -604,7 +658,8 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
         "'AppFilter': <(true, ["
           "'app/org.gnome.Whitelisted1/x86_64/stable',"
           "'app/org.gnome.Whitelisted2/x86_64/stable',"
-          "'/usr/bin/true'"
+          "'/usr/bin/true',"
+          "'text/plain'"
         "])>,"
         "'OarsFilter': <('oars-1.1', @a{ss} {})>"
       "}"
@@ -631,6 +686,10 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
   g_assert_false (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/unknown"));
   g_assert_true (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/true"));
   g_assert_false (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/false"));
+  g_assert_true (mct_app_filter_is_content_type_allowed (app_filter,
+                                                         "text/plain"));
+  g_assert_false (mct_app_filter_is_content_type_allowed (app_filter,
+                                                          "x-scheme-handler/http"));
 }
 
 /* Test that getting an #MctAppFilter containing all possible OARS values from
@@ -1117,7 +1176,7 @@ test_app_filter_bus_set (BusFixture    *fixture,
   const SetAppFilterData set_app_filter_data =
     {
       .expected_uid = fixture->valid_uid,
-      .expected_app_filter_value = "(false, ['/usr/bin/false', '/usr/bin/banned', 'app/org.gnome.Nasty/x86_64/stable'])",
+      .expected_app_filter_value = "(false, ['/usr/bin/false', '/usr/bin/banned', 'app/org.gnome.Nasty/x86_64/stable', 'x-scheme-handler/http'])",
       .expected_oars_filter_value = "('oars-1.1', { 'violence-fantasy': 'intense' })",
       .expected_allow_user_installation_value = "true",
       .expected_allow_system_installation_value = "true",
@@ -1128,6 +1187,7 @@ test_app_filter_bus_set (BusFixture    *fixture,
   mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/false");
   mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/banned");
   mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_blacklist_content_type (&builder, "x-scheme-handler/http");
   mct_app_filter_builder_set_oars_value (&builder, "violence-fantasy", MCT_APP_FILTER_OARS_VALUE_INTENSE);
   mct_app_filter_builder_set_allow_user_installation (&builder, TRUE);
   mct_app_filter_builder_set_allow_system_installation (&builder, TRUE);
