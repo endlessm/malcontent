@@ -195,7 +195,7 @@ def command_monitor(user, quiet=False, interactive=True):
 
 
 def command_check(user, arg, quiet=False, interactive=True):
-    """Check the given path or flatpak ref is runnable by the
+    """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
@@ -209,11 +209,21 @@ def command_check(user, arg, quiet=False, interactive=True):
         # Flatpak ref
         is_allowed = app_filter.is_flatpak_ref_allowed(arg)
         noun = 'Flatpak ref'
-    else:
+    # TODO - if a content type starts with app/ or runtime/ the arg
+    # will be considered a flatpak ID or ref
+    elif not arg.startswith('/') and not arg.endswith('/') and \
+        arg.count('/') == 1:
+        # Content type
+        is_allowed = app_filter.is_content_type_allowed(arg)
+        noun = 'Content type'
+    elif os.path.isabs(arg):
         # File system path
-        arg = os.path.abspath(arg)
         is_allowed = app_filter.is_path_allowed(arg)
         noun = 'Path'
+    else:
+        print('Unknown value ‘{}’'.format(arg),
+              file=sys.stderr)
+        raise SystemExit(EXIT_INVALID_OPTION)
 
     if is_allowed:
         if not quiet:
@@ -259,8 +269,17 @@ def command_set(user, allow_user_installation=True,
             builder.set_oars_value(section, value)
         elif arg.startswith('app/') or arg.startswith('runtime/'):
             builder.blacklist_flatpak_ref(arg)
-        else:
+        # TODO - if a content type starts with app/ or runtime/ the arg
+        # will be considered a flatpak ref
+        elif not arg.startswith('/') and not arg.endswith('/') and \
+            arg.count('/') == 1:
+            builder.blacklist_content_type(arg)
+        elif os.path.isabs(arg):
             builder.blacklist_path(arg)
+        else:
+            print('Unknown value ‘{}’'.format(arg),
+                  file=sys.stderr)
+            raise SystemExit(EXIT_INVALID_OPTION)
     app_filter = builder.end()
 
     __set_app_filter_or_error(user_id, app_filter, interactive)
@@ -320,7 +339,8 @@ def main():
                               help='user ID or username to get the app filter '
                                    'for (default: current user)')
     parser_check.add_argument('arg',
-                              help='path to a program or flatpak ref to check')
+                              help='path to a program, content type or '
+                                   'flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
@@ -363,7 +383,7 @@ def main():
                             help='unconditionally disallow installation to '
                                  'the system flatpak repo')
     parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths or flatpak refs to '
+                            help='paths, content types or flatpak refs to '
                                  'blacklist and OARS section=value '
                                  'pairs to store')
     parser_set.set_defaults(allow_user_installation=True,
