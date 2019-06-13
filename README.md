@@ -1,10 +1,12 @@
 malcontent
 ==========
 
-malcontent implements support for restricting the abilities of
+malcontent implements support for restricting the type of content accessible to
 non-administrator accounts on a Linux system. Typically, when this is
 used, a non-administrator account will be for a child using the system; and the
-administrator accounts will be for the parents.
+administrator accounts will be for the parents; and the content being filtered
+will be apps which are not suitable for the child to use, due to (for example)
+being too violent.
 
 It provides an
 [accounts-service](https://gitlab.freedesktop.org/accountsservice/accountsservice)
@@ -14,7 +16,7 @@ accessing and applying the app filter. This results in the policy being stored
 in `/var/lib/AccountsService/users/${user}`, which is a key file readable and
 writable only by the accounts-service daemon. Access to the data is mediated
 through accounts-service’s D-Bus interface, which libmalcontent is a client
-library for
+library for.
 
 All the library APIs are currently unstable and are likely to change wildly.
 
@@ -32,7 +34,21 @@ Two kinds of policy are currently supported:
    installed. Applications which are already installed are not subject to this
    filter.
 
-Additional policies may be added in future.
+Additional policies may be added in future, such as filtering by content type
+or limiting the amount of time a user is allowed to use the system for.
+
+Any application or service which provides the user with access to content which
+should be parentally filtered is responsible for querying the user’s parental
+controls filter and refusing to provide the content if not permitted by the
+filter. This could mean refusing to launch a flatpak app, hiding a search
+result in gnome-shell, or hiding an app in gnome-software because of its high
+OARS rating.
+
+A sufficiently technically advanced user may always work around these parental
+controls. malcontent is not a mandatory access control (MAC) system like
+AppArmor or SELinux. However, its correct use by applications should provide
+enough of an obstacle to prevent users easily or accidentally having access to
+content which they shouldn’t.
 
 Example usage
 ---
@@ -66,6 +82,7 @@ Dependencies
  * gio-2.0 ≥ 2.54
  * glib-2.0 ≥ 2.54
  * gobject-2.0 ≥ 2.54
+ * polkit-gobject-1
 
 Licensing
 ---------
