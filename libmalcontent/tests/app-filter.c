@@ -31,6 +31,7 @@
 #include <locale.h>
 #include <string.h>
 #include "accounts-service-iface.h"
+#include "accounts-service-extension-iface.h"
 
 
 /* Check two arrays contain exactly the same items in the same order. */
@@ -46,27 +47,6 @@ assert_strv_equal (const gchar * const *strv_a,
   g_assert_null (strv_a[i]);
   g_assert_null (strv_b[i]);
 }
-
-/* FIXME: Use g_assert_cmpvariant() when
- * https://gitlab.gnome.org/GNOME/glib/issues/1191 is fixed. */
-#define assert_cmpvariant(v1, v2) \
-  G_STMT_START \
-  { \
-    GVariant *__v1 = (v1), *__v2 = (v2); \
-    if (!g_variant_equal (__v1, __v2)) \
-      { \
-        gchar *__s1, *__s2, *__msg; \
-        __s1 = g_variant_print (__v1, TRUE); \
-        __s2 = g_variant_print (__v2, TRUE); \
-        __msg = g_strdup_printf ("assertion failed (" #v1 " == " #v2 "): %s does not equal %s", __s1, __s2); \
-        g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, __msg); \
-        g_free (__s1); \
-        g_free (__s2); \
-        g_free (__msg); \
-      } \
-  } \
-  G_STMT_END
-
 
 /* A placeholder smoketest which checks that the error quark works. */
 static void
@@ -445,13 +425,13 @@ bus_set_up (BusFixture    *fixture,
   object_path = g_strdup_printf ("/org/freedesktop/Accounts/User%u", fixture->valid_uid);
   gt_dbus_queue_export_object (fixture->queue,
                                object_path,
-                               (GDBusInterfaceInfo *) &app_filter_interface_info,
+                               (GDBusInterfaceInfo *) &com_endlessm_parental_controls_app_filter_interface,
                                &local_error);
   g_assert_no_error (local_error);
 
   gt_dbus_queue_export_object (fixture->queue,
                                "/org/freedesktop/Accounts",
-                               (GDBusInterfaceInfo *) &accounts_interface_info,
+                               (GDBusInterfaceInfo *) &org_freedesktop_accounts_interface,
                                &local_error);
   g_assert_no_error (local_error);
 
@@ -1092,7 +1072,7 @@ set_app_filter_server_cb (GtDBusQueue *queue,
       else
         {
           expected_property_value = g_variant_new_parsed (set_app_filter_data_get_expected_property_value (data, property_name));
-          assert_cmpvariant (property_value, expected_property_value);
+          g_assert_cmpvariant (property_value, expected_property_value);
 
           g_dbus_method_invocation_return_value (property_invocation, NULL);
         }
