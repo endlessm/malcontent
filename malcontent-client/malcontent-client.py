@@ -194,36 +194,36 @@ def command_monitor(user, quiet=False, interactive=True):
             break
 
 
-def command_check(user, path, quiet=False, interactive=True):
-    """Check the given path or flatpak ref is runnable by the given user,
-    according to their app filter."""
+def command_check(user, arg, quiet=False, interactive=True):
+    """Check the given path or flatpak ref is runnable by the
+    given user, according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    if path.startswith('app/') and path.count('/') < 3:
+    if arg.startswith('app/') and arg.count('/') < 3:
         # Flatpak app ID
-        path = path[4:]
-        is_allowed = app_filter.is_flatpak_app_allowed(path)
+        arg = arg[4:]
+        is_allowed = app_filter.is_flatpak_app_allowed(arg)
         noun = 'Flatpak app ID'
-    elif path.startswith('app/') or path.startswith('runtime/'):
+    elif arg.startswith('app/') or arg.startswith('runtime/'):
         # Flatpak ref
-        is_allowed = app_filter.is_flatpak_ref_allowed(path)
+        is_allowed = app_filter.is_flatpak_ref_allowed(arg)
         noun = 'Flatpak ref'
     else:
         # File system path
-        path = os.path.abspath(path)
-        is_allowed = app_filter.is_path_allowed(path)
+        arg = os.path.abspath(arg)
+        is_allowed = app_filter.is_path_allowed(arg)
         noun = 'Path'
 
     if is_allowed:
         if not quiet:
             print('{} {} is allowed by app filter for user {}'.format(
-                noun, path, user_id))
+                noun, arg, user_id))
         return
     else:
         if not quiet:
             print('{} {} is not allowed by app filter for user {}'.format(
-                noun, path, user_id))
+                noun, arg, user_id))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
@@ -312,14 +312,15 @@ def main():
 
     # ‘check’ command
     parser_check = subparsers.add_parser('check', parents=[common_parser],
-                                         help='check whether a path is '
+                                         help='check whether a path or '
+                                              'flatpak ref is '
                                               'allowed by app filter')
     parser_check.set_defaults(function=command_check)
     parser_check.add_argument('user', default='', nargs='?',
                               help='user ID or username to get the app filter '
                                    'for (default: current user)')
-    parser_check.add_argument('path',
-                              help='path to a program to check')
+    parser_check.add_argument('arg',
+                              help='path to a program or flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
@@ -362,7 +363,8 @@ def main():
                             help='unconditionally disallow installation to '
                                  'the system flatpak repo')
     parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths to blacklist and OARS section=value '
+                            help='paths or flatpak refs to '
+                                 'blacklist and OARS section=value '
                                  'pairs to store')
     parser_set.set_defaults(allow_user_installation=True,
                             allow_system_installation=False)
