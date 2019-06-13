@@ -24,7 +24,9 @@ fedora:
     - git submodule update --init
     - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true _build .
     - meson test -C _build
-    - ninja -C _build coverage
+    # FIXME: lcov doesn't support gcc9 yet:
+    # https://github.com/linux-test-project/lcov/issues/58
+    - ninja -C _build coverage || true
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
   artifacts:
     when: always
