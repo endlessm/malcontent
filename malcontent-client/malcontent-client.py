@@ -204,6 +204,15 @@ def is_valid_flatpak_ref(arg):
             parts[1] != '' and parts[2] != '' and parts[3] != '')
 
 
+# Simple check to check whether @arg is a valid content type - it uses the
+# same logic as 'MctAppFilter' to determine it and should be kept in sync
+# with its implementation
+def is_valid_content_type(arg):
+    parts = arg.split('/')
+    return (len(parts) == 2 and \
+            parts[0] != '' and parts[1] != '')
+
+
 def command_check(user, arg, quiet=False, interactive=True):
     """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
@@ -212,10 +221,14 @@ def command_check(user, arg, quiet=False, interactive=True):
 
     is_maybe_flatpak_id = arg.startswith('app/') and arg.count('/') < 3
     is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+    # Only check if arg is a valid content type if not already considered a
+    # valid flatpak id, otherwise we always get multiple types recognised
+    # when passing flatpak IDs as argument
+    is_maybe_content_type = not is_maybe_flatpak_id and is_valid_content_type(arg)
     is_maybe_path = os.path.exists(arg)
 
     recognised_types = sum([is_maybe_flatpak_id, is_maybe_flatpak_ref,
-                            is_maybe_path])
+                            is_maybe_content_type, is_maybe_path])
     if recognised_types == 0:
         print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
         raise SystemExit(EXIT_INVALID_OPTION)
@@ -232,6 +245,10 @@ def command_check(user, arg, quiet=False, interactive=True):
         # Flatpak ref
         is_allowed = app_filter.is_flatpak_ref_allowed(arg)
         noun = 'Flatpak ref'
+    elif is_maybe_content_type:
+        # Content type
+        is_allowed = app_filter.is_content_type_allowed(arg)
+        noun = 'Content type'
     elif is_maybe_path:
         path = os.path.abspath(arg)
         is_allowed = app_filter.is_path_allowed(path)
@@ -283,10 +300,11 @@ def command_set(user, allow_user_installation=True,
             builder.set_oars_value(section, value)
         else:
             is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+            is_maybe_content_type = is_valid_content_type(arg)
             is_maybe_path = os.path.exists(arg)
 
             recognised_types = sum([is_maybe_flatpak_ref,
-                                    is_maybe_path])
+                                    is_maybe_content_type, is_maybe_path])
             if recognised_types == 0:
                 print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
                 raise SystemExit(EXIT_INVALID_OPTION)
@@ -296,6 +314,8 @@ def command_set(user, allow_user_installation=True,
                 raise SystemExit(EXIT_INVALID_OPTION)
             elif is_maybe_flatpak_ref:
                 builder.blacklist_flatpak_ref(arg)
+            elif is_maybe_content_type:
+                builder.blacklist_content_type(arg)
             elif is_maybe_path:
                 path = os.path.abspath(arg)
                 builder.blacklist_path(path)
@@ -353,15 +373,16 @@ def main():
 
     # ‘check’ command
     parser_check = subparsers.add_parser('check', parents=[common_parser],
-                                         help='check whether a path or '
-                                              'flatpak ref is '
+                                         help='check whether a path, content '
+                                              'type or flatpak ref is '
                                               'allowed by app filter')
     parser_check.set_defaults(function=command_check)
     parser_check.add_argument('user', default='', nargs='?',
                               help='user ID or username to get the app filter '
                                    'for (default: current user)')
     parser_check.add_argument('arg',
-                              help='path to a program or flatpak ref to check')
+                              help='path to a program, content type or '
+                                   'flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
@@ -404,7 +425,7 @@ def main():
                             help='unconditionally disallow installation to '
                                  'the system flatpak repo')
     parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths or flatpak refs to '
+                            help='paths, content types or flatpak refs to '
                                  'blacklist and OARS section=value '
                                  'pairs to store')
     parser_set.set_defaults(allow_user_installation=True,
