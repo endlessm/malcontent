@@ -124,8 +124,12 @@ mct_app_filter_is_path_allowed (MctAppFilter *filter,
   g_return_val_if_fail (g_path_is_absolute (path), FALSE);
 
   g_autofree gchar *canonical_path = g_canonicalize_filename (path, "/");
+  g_autofree gchar *canonical_path_utf8 = g_filename_to_utf8 (canonical_path, -1,
+                                                              NULL, NULL, NULL);
+  g_return_val_if_fail (canonical_path_utf8 != NULL, FALSE);
+
   gboolean path_in_list = g_strv_contains ((const gchar * const *) filter->app_list,
-                                           canonical_path);
+                                           canonical_path_utf8);
 
   switch (filter->app_list_type)
     {
@@ -433,7 +437,7 @@ mct_app_filter_is_system_installation_allowed (MctAppFilter *filter)
  */
 typedef struct
 {
-  GPtrArray *paths_blacklist;  /* (nullable) (owned) (element-type filename) */
+  GPtrArray *blacklist;  /* (nullable) (owned) (element-type utf8) */
   GHashTable *oars;  /* (nullable) (owned) (element-type utf8 MctAppFilterOarsValue) */
   gboolean allow_user_installation;
   gboolean allow_system_installation;
@@ -471,7 +475,7 @@ mct_app_filter_builder_init (MctAppFilterBuilder *builder)
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist == NULL);
+  g_return_if_fail (_builder->blacklist == NULL);
   g_return_if_fail (_builder->oars == NULL);
 
   memcpy (builder, &local_builder, sizeof (local_builder));
@@ -497,7 +501,7 @@ mct_app_filter_builder_clear (MctAppFilterBuilder *builder)
 
   g_return_if_fail (_builder != NULL);
 
-  g_clear_pointer (&_builder->paths_blacklist, g_ptr_array_unref);
+  g_clear_pointer (&_builder->blacklist, g_ptr_array_unref);
   g_clear_pointer (&_builder->oars, g_hash_table_unref);
 }
 
@@ -547,8 +551,8 @@ mct_app_filter_builder_copy (MctAppFilterBuilder *builder)
   _copy = (MctAppFilterBuilderReal *) copy;
 
   mct_app_filter_builder_clear (copy);
-  if (_builder->paths_blacklist != NULL)
-    _copy->paths_blacklist = g_ptr_array_ref (_builder->paths_blacklist);
+  if (_builder->blacklist != NULL)
+    _copy->blacklist = g_ptr_array_ref (_builder->blacklist);
   if (_builder->oars != NULL)
     _copy->oars = g_hash_table_ref (_builder->oars);
   _copy->allow_user_installation = _builder->allow_user_installation;
@@ -598,11 +602,11 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   g_autoptr(GVariant) oars_variant = NULL;
 
   g_return_val_if_fail (_builder != NULL, NULL);
-  g_return_val_if_fail (_builder->paths_blacklist != NULL, NULL);
+  g_return_val_if_fail (_builder->blacklist != NULL, NULL);
   g_return_val_if_fail (_builder->oars != NULL, NULL);
 
   /* Ensure the paths list is %NULL-terminated. */
-  g_ptr_array_add (_builder->paths_blacklist, NULL);
+  g_ptr_array_add (_builder->blacklist, NULL);
 
   /* Build the OARS variant. */
   g_hash_table_iter_init (&iter, _builder->oars);
@@ -633,7 +637,7 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   app_filter = g_new0 (MctAppFilter, 1);
   app_filter->ref_count = 1;
   app_filter->user_id = -1;
-  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->paths_blacklist), FALSE);
+  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->blacklist), FALSE);
   app_filter->app_list_type = MCT_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = _builder->allow_user_installation;
@@ -662,15 +666,18 @@ mct_app_filter_builder_blacklist_path (MctAppFilterBuilder *builder,
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist != NULL);
+  g_return_if_fail (_builder->blacklist != NULL);
   g_return_if_fail (path != NULL);
   g_return_if_fail (g_path_is_absolute (path));
 
   g_autofree gchar *canonical_path = g_canonicalize_filename (path, "/");
+  g_autofree gchar *canonical_path_utf8 = g_filename_to_utf8 (canonical_path, -1,
+                                                              NULL, NULL, NULL);
+  g_return_if_fail (canonical_path_utf8 != NULL);
 
-  if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
-                                         canonical_path, g_str_equal, NULL))
-    g_ptr_array_add (_builder->paths_blacklist, g_steal_pointer (&canonical_path));
+  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+                                         canonical_path_utf8, g_str_equal, NULL))
+    g_ptr_array_add (_builder->blacklist, g_steal_pointer (&canonical_path_utf8));
 }
 
 /**
@@ -691,12 +698,12 @@ mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist != NULL);
+  g_return_if_fail (_builder->blacklist != NULL);
   g_return_if_fail (app_ref != NULL);
 
-  if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
+  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
                                          app_ref, g_str_equal, NULL))
-    g_ptr_array_add (_builder->paths_blacklist, g_strdup (app_ref));
+    g_ptr_array_add (_builder->blacklist, g_strdup (app_ref));
 }
 
 /**
