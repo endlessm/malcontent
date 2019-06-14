@@ -194,36 +194,77 @@ def command_monitor(user, quiet=False, interactive=True):
             break
 
 
-def command_check(user, path, quiet=False, interactive=True):
-    """Check the given path or flatpak ref is runnable by the given user,
-    according to their app filter."""
+# Simple check to check whether @arg is a valid flatpak ref - it uses the
+# same logic as 'MctAppFilter' to determine it and should be kept in sync
+# with its implementation
+def is_valid_flatpak_ref(arg):
+    parts = arg.split('/')
+    return (len(parts) == 4 and \
+            (parts[0] == 'app' or parts[0] == 'runtime') and \
+            parts[1] != '' and parts[2] != '' and parts[3] != '')
+
+
+# Simple check to check whether @arg is a valid content type - it uses the
+# same logic as 'MctAppFilter' to determine it and should be kept in sync
+# with its implementation
+def is_valid_content_type(arg):
+    parts = arg.split('/')
+    return (len(parts) == 2 and \
+            parts[0] != '' and parts[1] != '')
+
+
+def command_check(user, arg, quiet=False, interactive=True):
+    """Check the given path, content type or flatpak ref is runnable by the
+    given user, according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    if path.startswith('app/') and path.count('/') < 3:
+    is_maybe_flatpak_id = arg.startswith('app/') and arg.count('/') < 3
+    is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+    # Only check if arg is a valid content type if not already considered a
+    # valid flatpak id, otherwise we always get multiple types recognised
+    # when passing flatpak IDs as argument
+    is_maybe_content_type = not is_maybe_flatpak_id and is_valid_content_type(arg)
+    is_maybe_path = os.path.exists(arg)
+
+    recognised_types = sum([is_maybe_flatpak_id, is_maybe_flatpak_ref,
+                            is_maybe_content_type, is_maybe_path])
+    if recognised_types == 0:
+        print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
+        raise SystemExit(EXIT_INVALID_OPTION)
+    elif recognised_types > 1:
+        print('Ambiguous argument ‘{}’ recognised as multiple types'.format(arg),
+              file=sys.stderr)
+        raise SystemExit(EXIT_INVALID_OPTION)
+    elif is_maybe_flatpak_id:
         # Flatpak app ID
-        path = path[4:]
-        is_allowed = app_filter.is_flatpak_app_allowed(path)
+        arg = arg[4:]
+        is_allowed = app_filter.is_flatpak_app_allowed(arg)
         noun = 'Flatpak app ID'
-    elif path.startswith('app/') or path.startswith('runtime/'):
+    elif is_maybe_flatpak_ref:
         # Flatpak ref
-        is_allowed = app_filter.is_flatpak_ref_allowed(path)
+        is_allowed = app_filter.is_flatpak_ref_allowed(arg)
         noun = 'Flatpak ref'
-    else:
-        # File system path
-        path = os.path.abspath(path)
+    elif is_maybe_content_type:
+        # Content type
+        is_allowed = app_filter.is_content_type_allowed(arg)
+        noun = 'Content type'
+    elif is_maybe_path:
+        path = os.path.abspath(arg)
         is_allowed = app_filter.is_path_allowed(path)
         noun = 'Path'
+    else:
+        raise AssertionError('code should not be reached')
 
     if is_allowed:
         if not quiet:
             print('{} {} is allowed by app filter for user {}'.format(
-                noun, path, user_id))
+                noun, arg, user_id))
         return
     else:
         if not quiet:
             print('{} {} is not allowed by app filter for user {}'.format(
-                noun, path, user_id))
+                noun, arg, user_id))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
@@ -257,10 +298,30 @@ def command_set(user, allow_user_installation=True,
                       file=sys.stderr)
                 raise SystemExit(EXIT_INVALID_OPTION)
             builder.set_oars_value(section, value)
-        elif arg.startswith('app/') or arg.startswith('runtime/'):
-            builder.blacklist_flatpak_ref(arg)
         else:
-            builder.blacklist_path(arg)
+            is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+            is_maybe_content_type = is_valid_content_type(arg)
+            is_maybe_path = os.path.exists(arg)
+
+            recognised_types = sum([is_maybe_flatpak_ref,
+                                    is_maybe_content_type, is_maybe_path])
+            if recognised_types == 0:
+                print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
+                raise SystemExit(EXIT_INVALID_OPTION)
+            elif recognised_types > 1:
+                print('Ambiguous argument ‘{}’ recognised as multiple types'.format(arg),
+                      file=sys.stderr)
+                raise SystemExit(EXIT_INVALID_OPTION)
+            elif is_maybe_flatpak_ref:
+                builder.blacklist_flatpak_ref(arg)
+            elif is_maybe_content_type:
+                builder.blacklist_content_type(arg)
+            elif is_maybe_path:
+                path = os.path.abspath(arg)
+                builder.blacklist_path(path)
+            else:
+                raise AssertionError('code should not be reached')
+
     app_filter = builder.end()
 
     __set_app_filter_or_error(user_id, app_filter, interactive)
@@ -312,14 +373,16 @@ def main():
 
     # ‘check’ command
     parser_check = subparsers.add_parser('check', parents=[common_parser],
-                                         help='check whether a path is '
+                                         help='check whether a path, content '
+                                              'type or flatpak ref is '
                                               'allowed by app filter')
     parser_check.set_defaults(function=command_check)
     parser_check.add_argument('user', default='', nargs='?',
                               help='user ID or username to get the app filter '
                                    'for (default: current user)')
-    parser_check.add_argument('path',
-                              help='path to a program to check')
+    parser_check.add_argument('arg',
+                              help='path to a program, content type or '
+                                   'flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
@@ -362,7 +425,8 @@ def main():
                             help='unconditionally disallow installation to '
                                  'the system flatpak repo')
     parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths to blacklist and OARS section=value '
+                            help='paths, content types or flatpak refs to '
+                                 'blacklist and OARS section=value '
                                  'pairs to store')
     parser_set.set_defaults(allow_user_installation=True,
                             allow_system_installation=False)

@@ -1,6 +1,6 @@
 /* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
  *
- * Copyright © 2018 Endless Mobile, Inc.
+ * Copyright © 2018-2019 Endless Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
  *
  * Authors:
  *  - Philip Withnall <withnall@endlessm.com>
+ *  - Andre Moreira Magalhaes <andre@endlessm.com>
  */
 
 #pragma once
@@ -109,6 +110,8 @@ gboolean mct_app_filter_is_flatpak_app_allowed (MctAppFilter *filter,
                                                 const gchar  *app_id);
 gboolean mct_app_filter_is_appinfo_allowed     (MctAppFilter *filter,
                                                 GAppInfo     *app_info);
+gboolean mct_app_filter_is_content_type_allowed (MctAppFilter *filter,
+                                                 const gchar  *content_type);
 
 const gchar           **mct_app_filter_get_oars_sections (MctAppFilter *filter);
 MctAppFilterOarsValue   mct_app_filter_get_oars_value    (MctAppFilter *filter,
@@ -182,6 +185,9 @@ void mct_app_filter_builder_blacklist_path        (MctAppFilterBuilder   *builde
                                                    const gchar           *path);
 void mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
                                                    const gchar         *app_ref);
+void mct_app_filter_builder_blacklist_content_type (MctAppFilterBuilder *builder,
+                                                    const gchar         *content_type);
+
 void mct_app_filter_builder_set_oars_value        (MctAppFilterBuilder   *builder,
                                                    const gchar           *oars_section,
                                                    MctAppFilterOarsValue  value);
