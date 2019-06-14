@@ -1,12 +1,11 @@
-image: debian:unstable
+image: fedora:30
 
 before_script:
-  - apt update -qq
-  - apt install -y -qq build-essential meson pkg-config gtk-doc-tools
-                       libxml2-utils gobject-introspection
-                       libgirepository1.0-dev libglib2.0-dev
-                       gettext libdbus-1-dev libpolkit-gobject-1-dev git
-                       policykit-1 lcov
+  - dnf install -y meson pkgconf-pkg-config gtk-doc
+                   libxml2-devel dbus-daemon
+                   glib2-devel dbus-devel gobject-introspection-devel
+                   gettext-devel polkit-devel polkit-gnome git
+                   lcov
   - export LANG=C.UTF-8
 
 stages:
@@ -17,7 +16,7 @@ cache:
   paths:
     - _ccache/
 
-debian-unstable:
+fedora:
   stage: build
   except:
     - tags
@@ -25,7 +24,9 @@ debian-unstable:
     - git submodule update --init
     - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true _build .
     - meson test -C _build
-    - ninja -C _build coverage
+    # FIXME: lcov doesn't support gcc9 yet:
+    # https://github.com/linux-test-project/lcov/issues/58
+    - ninja -C _build coverage || true
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
   artifacts:
     when: always
