@@ -1,6 +1,6 @@
 /* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
  *
- * Copyright © 2018 Endless Mobile, Inc.
+ * Copyright © 2018-2019 Endless Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
  *
  * Authors:
  *  - Philip Withnall <withnall@endlessm.com>
+ *  - Andre Moreira Magalhaes <andre@endlessm.com>
  */
 
 #include "config.h"
@@ -124,8 +125,12 @@ mct_app_filter_is_path_allowed (MctAppFilter *filter,
   g_return_val_if_fail (g_path_is_absolute (path), FALSE);
 
   g_autofree gchar *canonical_path = g_canonicalize_filename (path, "/");
+  g_autofree gchar *canonical_path_utf8 = g_filename_to_utf8 (canonical_path, -1,
+                                                              NULL, NULL, NULL);
+  g_return_val_if_fail (canonical_path_utf8 != NULL, FALSE);
+
   gboolean path_in_list = g_strv_contains ((const gchar * const *) filter->app_list,
-                                           canonical_path);
+                                           canonical_path_utf8);
 
   switch (filter->app_list_type)
     {
@@ -136,6 +141,34 @@ mct_app_filter_is_path_allowed (MctAppFilter *filter,
     default:
       g_assert_not_reached ();
     }
+}
+
+/* Check whether a given @ref is a valid flatpak ref.
+ *
+ * For simplicity and to avoid duplicating the whole logic behind
+ * flatpak_ref_parse() this method will only check whether:
+ * - the @ref contains exactly 3 slash chars
+ * - the @ref starts with either app/ or runtime/
+ * - the name, arch and branch components of the @ref are not empty
+ *
+ * We avoid using flatpak_ref_parse() to allow for libflatpak
+ * to depend on malcontent without causing a cyclic dependency.
+ */
+static gboolean
+is_valid_flatpak_ref (const gchar *ref)
+{
+  g_auto(GStrv) parts = NULL;
+
+  if (ref == NULL)
+    return FALSE;
+
+  parts = g_strsplit (ref, "/", 0);
+  return (g_strv_length (parts) == 4 &&
+          (strcmp (parts[0], "app") == 0 ||
+           strcmp (parts[0], "runtime") == 0) &&
+          *parts[1] != '\0' &&
+          *parts[2] != '\0' &&
+          *parts[3] != '\0');
 }
 
 /**
@@ -157,6 +190,7 @@ mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
   g_return_val_if_fail (filter != NULL, FALSE);
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
   g_return_val_if_fail (app_ref != NULL, FALSE);
+  g_return_val_if_fail (is_valid_flatpak_ref (app_ref), FALSE);
 
   gboolean ref_in_list = g_strv_contains ((const gchar * const *) filter->app_list,
                                           app_ref);
@@ -201,9 +235,8 @@ mct_app_filter_is_flatpak_app_allowed (MctAppFilter *filter,
   gboolean id_in_list = FALSE;
   for (gsize i = 0; filter->app_list[i] != NULL; i++)
     {
-      /* Avoid using flatpak_ref_parse() to avoid a dependency on libflatpak
-       * just for that one function. */
-      if (g_str_has_prefix (filter->app_list[i], "app/") &&
+      if (is_valid_flatpak_ref (filter->app_list[i]) &&
+          g_str_has_prefix (filter->app_list[i], "app/") &&
           strncmp (filter->app_list[i] + strlen ("app/"), app_id, app_id_len) == 0 &&
           filter->app_list[i][strlen ("app/") + app_id_len] == '/')
         {
@@ -242,6 +275,7 @@ mct_app_filter_is_appinfo_allowed (MctAppFilter *filter,
                                    GAppInfo     *app_info)
 {
   g_autofree gchar *abs_path = NULL;
+  const gchar * const *types = NULL;
 
   g_return_val_if_fail (filter != NULL, FALSE);
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
@@ -252,6 +286,13 @@ mct_app_filter_is_appinfo_allowed (MctAppFilter *filter,
   if (abs_path != NULL &&
       !mct_app_filter_is_path_allowed (filter, abs_path))
     return FALSE;
+
+  types = g_app_info_get_supported_types (app_info);
+  for (gsize i = 0; types != NULL && types[i] != NULL; i++)
+    {
+      if (!mct_app_filter_is_content_type_allowed (filter, types[i]))
+        return FALSE;
+    }
 
   if (G_IS_DESKTOP_APP_INFO (app_info))
     {
@@ -290,6 +331,67 @@ mct_app_filter_is_appinfo_allowed (MctAppFilter *filter,
     }
 
   return TRUE;
+}
+
+/* Check whether a given @content_type is valid.
+ *
+ * For simplicity this method will only check whether:
+ * - the @content_type contains exactly 1 slash char
+ * - the @content_type does not start with a slash char
+ * - the type and subtype components of the @content_type are not empty
+ */
+static gboolean
+is_valid_content_type (const gchar *content_type)
+{
+  g_auto(GStrv) parts = NULL;
+
+  if (content_type == NULL)
+    return FALSE;
+
+  parts = g_strsplit (content_type, "/", 0);
+  return (g_strv_length (parts) == 2 &&
+          *parts[0] != '\0' &&
+          *parts[1] != '\0');
+}
+
+/**
+ * mct_app_filter_is_content_type_allowed:
+ * @filter: an #MctAppFilter
+ * @content_type: content type to check
+ *
+ * Check whether apps handling the given @content_type are allowed to be run
+ * according to this app filter.
+ *
+ * Note that this method doesn’t match content subtypes. For example, if
+ * `application/xml` is added to the blacklist but `application/xspf+xml` is not,
+ * a check for whether `application/xspf+xml` is blacklisted would return false.
+ *
+ * Returns: %TRUE if the user this @filter corresponds to is allowed to run
+ *    programs handling @content_type according to the @filter policy;
+ *    %FALSE otherwise
+ * Since: 0.4.0
+ */
+gboolean
+mct_app_filter_is_content_type_allowed (MctAppFilter *filter,
+                                        const gchar  *content_type)
+{
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+  g_return_val_if_fail (content_type != NULL, FALSE);
+  g_return_val_if_fail (is_valid_content_type (content_type), FALSE);
+
+  gboolean ref_in_list = g_strv_contains ((const gchar * const *) filter->app_list,
+                                          content_type);
+
+  switch (filter->app_list_type)
+    {
+    case MCT_APP_FILTER_LIST_BLACKLIST:
+      return !ref_in_list;
+    case MCT_APP_FILTER_LIST_WHITELIST:
+      return ref_in_list;
+    default:
+      g_assert_not_reached ();
+    }
 }
 
 static gint
@@ -433,7 +535,7 @@ mct_app_filter_is_system_installation_allowed (MctAppFilter *filter)
  */
 typedef struct
 {
-  GPtrArray *paths_blacklist;  /* (nullable) (owned) (element-type filename) */
+  GPtrArray *blacklist;  /* (nullable) (owned) (element-type utf8) */
   GHashTable *oars;  /* (nullable) (owned) (element-type utf8 MctAppFilterOarsValue) */
   gboolean allow_user_installation;
   gboolean allow_system_installation;
@@ -471,7 +573,7 @@ mct_app_filter_builder_init (MctAppFilterBuilder *builder)
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist == NULL);
+  g_return_if_fail (_builder->blacklist == NULL);
   g_return_if_fail (_builder->oars == NULL);
 
   memcpy (builder, &local_builder, sizeof (local_builder));
@@ -497,7 +599,7 @@ mct_app_filter_builder_clear (MctAppFilterBuilder *builder)
 
   g_return_if_fail (_builder != NULL);
 
-  g_clear_pointer (&_builder->paths_blacklist, g_ptr_array_unref);
+  g_clear_pointer (&_builder->blacklist, g_ptr_array_unref);
   g_clear_pointer (&_builder->oars, g_hash_table_unref);
 }
 
@@ -547,8 +649,8 @@ mct_app_filter_builder_copy (MctAppFilterBuilder *builder)
   _copy = (MctAppFilterBuilderReal *) copy;
 
   mct_app_filter_builder_clear (copy);
-  if (_builder->paths_blacklist != NULL)
-    _copy->paths_blacklist = g_ptr_array_ref (_builder->paths_blacklist);
+  if (_builder->blacklist != NULL)
+    _copy->blacklist = g_ptr_array_ref (_builder->blacklist);
   if (_builder->oars != NULL)
     _copy->oars = g_hash_table_ref (_builder->oars);
   _copy->allow_user_installation = _builder->allow_user_installation;
@@ -598,11 +700,11 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   g_autoptr(GVariant) oars_variant = NULL;
 
   g_return_val_if_fail (_builder != NULL, NULL);
-  g_return_val_if_fail (_builder->paths_blacklist != NULL, NULL);
+  g_return_val_if_fail (_builder->blacklist != NULL, NULL);
   g_return_val_if_fail (_builder->oars != NULL, NULL);
 
   /* Ensure the paths list is %NULL-terminated. */
-  g_ptr_array_add (_builder->paths_blacklist, NULL);
+  g_ptr_array_add (_builder->blacklist, NULL);
 
   /* Build the OARS variant. */
   g_hash_table_iter_init (&iter, _builder->oars);
@@ -633,7 +735,7 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   app_filter = g_new0 (MctAppFilter, 1);
   app_filter->ref_count = 1;
   app_filter->user_id = -1;
-  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->paths_blacklist), FALSE);
+  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->blacklist), FALSE);
   app_filter->app_list_type = MCT_APP_FILTER_LIST_BLACKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = _builder->allow_user_installation;
@@ -662,15 +764,18 @@ mct_app_filter_builder_blacklist_path (MctAppFilterBuilder *builder,
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist != NULL);
+  g_return_if_fail (_builder->blacklist != NULL);
   g_return_if_fail (path != NULL);
   g_return_if_fail (g_path_is_absolute (path));
 
   g_autofree gchar *canonical_path = g_canonicalize_filename (path, "/");
+  g_autofree gchar *canonical_path_utf8 = g_filename_to_utf8 (canonical_path, -1,
+                                                              NULL, NULL, NULL);
+  g_return_if_fail (canonical_path_utf8 != NULL);
 
-  if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
-                                         canonical_path, g_str_equal, NULL))
-    g_ptr_array_add (_builder->paths_blacklist, g_steal_pointer (&canonical_path));
+  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+                                         canonical_path_utf8, g_str_equal, NULL))
+    g_ptr_array_add (_builder->blacklist, g_steal_pointer (&canonical_path_utf8));
 }
 
 /**
@@ -691,12 +796,44 @@ mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->paths_blacklist != NULL);
+  g_return_if_fail (_builder->blacklist != NULL);
   g_return_if_fail (app_ref != NULL);
+  g_return_if_fail (is_valid_flatpak_ref (app_ref));
 
-  if (!g_ptr_array_find_with_equal_func (_builder->paths_blacklist,
+  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
                                          app_ref, g_str_equal, NULL))
-    g_ptr_array_add (_builder->paths_blacklist, g_strdup (app_ref));
+    g_ptr_array_add (_builder->blacklist, g_strdup (app_ref));
+}
+
+/**
+ * mct_app_filter_builder_blacklist_content_type:
+ * @builder: an initialised #MctAppFilterBuilder
+ * @content_type: a content type to blacklist
+ *
+ * Add @content_type to the blacklist of content types in the filter under
+ * construction. The @content_type will not be added again if it’s already been
+ * added.
+ *
+ * Note that this method doesn’t handle content subtypes. For example, if
+ * `application/xml` is added to the blacklist but `application/xspf+xml` is not,
+ * a check for whether `application/xspf+xml` is blacklisted would return false.
+ *
+ * Since: 0.4.0
+ */
+void
+mct_app_filter_builder_blacklist_content_type (MctAppFilterBuilder *builder,
+                                               const gchar         *content_type)
+{
+  MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+  g_return_if_fail (_builder->blacklist != NULL);
+  g_return_if_fail (content_type != NULL);
+  g_return_if_fail (is_valid_content_type (content_type));
+
+  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+                                         content_type, g_str_equal, NULL))
+    g_ptr_array_add (_builder->blacklist, g_strdup (content_type));
 }
 
 /**

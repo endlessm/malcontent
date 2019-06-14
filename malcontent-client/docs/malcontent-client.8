@@ -1,7 +1,7 @@
 .\" Manpage for malcontent\-client.
 .\" Documentation is under the same licence as the malcontent
 .\" package.
-.TH man 8 "03 Oct 2018" "1.0" "malcontent\-client man page"
+.TH man 8 "13 Jun 2019" "1.1" "malcontent\-client man page"
 .\"
 .SH NAME
 .IX Header "NAME"
@@ -12,7 +12,7 @@ malcontent\-client — Parental Controls Access Utility
 .\"
 \fBmalcontent\-client get [\-q] [\-n] [\fPUSER\fB]
 .PP
-\fBmalcontent\-client check [\-q] [\-n] [\fPUSER\fB] \fPPATH\fB
+\fBmalcontent\-client check [\-q] [\-n] [\fPUSER\fB] \fPARG\fB
 .\"
 .SH DESCRIPTION
 .IX Header "DESCRIPTION"
@@ -50,9 +50,9 @@ authorization.)
 Username or ID of the user to get the app filter for. If not specified, the
 current user will be used by default.
 .\"
-.IP "\fBPATH\fP"
-Path to a program to check against the app filter, to see if it can be run by
-the specified user.
+.IP "\fBARG\fP"
+Path to a program, content type or flatpak ref to check against the app filter,
+to see if it is allowed for the specified user.
 .\"
 .IP "\fB\-q\fP, \fB\-\-quiet\fP"
 Only output error messages, and no informational messages, as the operation
@@ -85,8 +85,8 @@ encounters problems.
 .IP "0" 4
 .IX Item "0"
 No problems occurred. The utility ran and successfully queried the app filter.
-If running the \fBcheck\fP command, the given path was allowed to be run by the
-given user.
+If running the \fBcheck\fP command, the given path, content type or flatpak ref
+was allowed for the given user.
 .\"
 .IP "1" 4
 .IX Item "1"
@@ -99,8 +99,8 @@ The current user was not authorized to query the app filter for the given user.
 .\"
 .IP "3" 4
 .IX Item "3"
-If running the \fBcheck\fP command, the given path was \fInot\fP allowed to be
-run by the given user.
+If running the \fBcheck\fP command, the given path, content type or flatpak ref
+was \fInot\fP allowed for the given user.
 .\"
 .SH BUGS
 .IX Header "BUGS"
