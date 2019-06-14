@@ -194,26 +194,50 @@ def command_monitor(user, quiet=False, interactive=True):
             break
 
 
+# Simple check to check whether @arg is a valid flatpak ref - it uses the
+# same logic as 'MctAppFilter' to determine it and should be kept in sync
+# with its implementation
+def is_valid_flatpak_ref(arg):
+    parts = arg.split('/')
+    return (len(parts) == 4 and \
+            (parts[0] == 'app' or parts[0] == 'runtime') and \
+            parts[1] != '' and parts[2] != '' and parts[3] != '')
+
+
 def command_check(user, arg, quiet=False, interactive=True):
-    """Check the given path or flatpak ref is runnable by the
+    """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    if arg.startswith('app/') and arg.count('/') < 3:
+    is_maybe_flatpak_id = arg.startswith('app/') and arg.count('/') < 3
+    is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+    is_maybe_path = os.path.exists(arg)
+
+    recognised_types = sum([is_maybe_flatpak_id, is_maybe_flatpak_ref,
+                            is_maybe_path])
+    if recognised_types == 0:
+        print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
+        raise SystemExit(EXIT_INVALID_OPTION)
+    elif recognised_types > 1:
+        print('Ambiguous argument ‘{}’ recognised as multiple types'.format(arg),
+              file=sys.stderr)
+        raise SystemExit(EXIT_INVALID_OPTION)
+    elif is_maybe_flatpak_id:
         # Flatpak app ID
         arg = arg[4:]
         is_allowed = app_filter.is_flatpak_app_allowed(arg)
         noun = 'Flatpak app ID'
-    elif arg.startswith('app/') or arg.startswith('runtime/'):
+    elif is_maybe_flatpak_ref:
         # Flatpak ref
         is_allowed = app_filter.is_flatpak_ref_allowed(arg)
         noun = 'Flatpak ref'
-    else:
-        # File system path
-        arg = os.path.abspath(arg)
-        is_allowed = app_filter.is_path_allowed(arg)
+    elif is_maybe_path:
+        path = os.path.abspath(arg)
+        is_allowed = app_filter.is_path_allowed(path)
         noun = 'Path'
+    else:
+        raise AssertionError('code should not be reached')
 
     if is_allowed:
         if not quiet:
@@ -257,10 +281,27 @@ def command_set(user, allow_user_installation=True,
                       file=sys.stderr)
                 raise SystemExit(EXIT_INVALID_OPTION)
             builder.set_oars_value(section, value)
-        elif arg.startswith('app/') or arg.startswith('runtime/'):
-            builder.blacklist_flatpak_ref(arg)
         else:
-            builder.blacklist_path(arg)
+            is_maybe_flatpak_ref = is_valid_flatpak_ref(arg)
+            is_maybe_path = os.path.exists(arg)
+
+            recognised_types = sum([is_maybe_flatpak_ref,
+                                    is_maybe_path])
+            if recognised_types == 0:
+                print('Unknown argument ‘{}’'.format(arg), file=sys.stderr)
+                raise SystemExit(EXIT_INVALID_OPTION)
+            elif recognised_types > 1:
+                print('Ambiguous argument ‘{}’ recognised as multiple types'.format(arg),
+                      file=sys.stderr)
+                raise SystemExit(EXIT_INVALID_OPTION)
+            elif is_maybe_flatpak_ref:
+                builder.blacklist_flatpak_ref(arg)
+            elif is_maybe_path:
+                path = os.path.abspath(arg)
+                builder.blacklist_path(path)
+            else:
+                raise AssertionError('code should not be reached')
+
     app_filter = builder.end()
 
     __set_app_filter_or_error(user_id, app_filter, interactive)
