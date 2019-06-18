@@ -1,3 +1,9 @@
+malcontent (0.4.0-0) unstable; urgency=medium
+
+  * Bump to upstream 0.4.0
+
+ -- Andre Moreira Magalhaes <andre@endlessm.com>  Mon, 17 Jun 2019 23:02:09 -0300
+
 malcontent (0.3.0-0) unstable; urgency=medium
 
   * Initial release, based on eos-parental-controls packaging (Closes: T25564)
