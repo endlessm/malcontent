@@ -1,3 +1,19 @@
+Overview of changes in malcontent 0.4.0
+=======================================
+
+* Implement `--quiet` in the `check` and `set` subcommands of
+  `malcontent-client` to make it nicer to use from scripts (!13)
+
+* Add support for filtering apps by content type (!15)
+
+* Bugs fixed:
+ - !2 tests: Use gdbus-codegen to drop hand-coded interface definitions
+ - !12 libmalcontent: Add missing field initialisers to BUILDER_INIT
+ - !13 Implement --quiet in the check and set subcommands of malcontent-client
+ - !14 Improve README coverage of whole system design
+ - !15 Add support to filter by content type
+
+
 Overview of changes in malcontent 0.3.0
 =======================================
 
