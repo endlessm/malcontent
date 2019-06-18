@@ -188,6 +188,8 @@ mct_manager_class_init (MctManagerClass *klass)
    * @user_id: UID of the user whose app filter has changed
    *
    * Emitted when the app filter stored for a user changes.
+   * The new app filter for the user should be requested again from
+   * the #MctManager instance.
    *
    * Since: 0.3.0
    */
