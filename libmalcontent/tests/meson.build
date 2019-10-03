@@ -16,7 +16,7 @@ gdbus_codegen = find_program('gdbus-codegen')
 
 accounts_service_iface_h = custom_target(
   'accounts-service-iface.h',
-  input: ['org.freedesktop.Accounts.xml'],
+  input: ['org.freedesktop.Accounts.xml', 'org.freedesktop.Accounts.User.xml'],
   output: ['accounts-service-iface.h'],
   command: [gdbus_codegen,
             '--interface-info-header',
@@ -25,7 +25,7 @@ accounts_service_iface_h = custom_target(
 )
 accounts_service_iface_c = custom_target(
   'accounts-service-iface.c',
-  input: ['org.freedesktop.Accounts.xml'],
+  input: ['org.freedesktop.Accounts.xml', 'org.freedesktop.Accounts.User.xml'],
   output: ['accounts-service-iface.c'],
   command: [gdbus_codegen,
             '--interface-info-body',
