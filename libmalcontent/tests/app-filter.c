@@ -675,6 +675,12 @@ bus_set_up (BusFixture    *fixture,
   g_assert_no_error (local_error);
 
   gt_dbus_queue_export_object (fixture->queue,
+                               object_path,
+                               (GDBusInterfaceInfo *) &org_freedesktop_accounts_user_interface,
+                               &local_error);
+  g_assert_no_error (local_error);
+
+  gt_dbus_queue_export_object (fixture->queue,
                                "/org/freedesktop/Accounts",
                                (GDBusInterfaceInfo *) &org_freedesktop_accounts_interface,
                                &local_error);
@@ -708,9 +714,17 @@ async_result_cb (GObject      *obj,
  * given in #GetAppFilterData.properties if queried for a UID matching
  * #GetAppFilterData.expected_uid. Intended to be used for writing ‘successful’
  * mct_manager_get_app_filter() tests returning a variety of values. */
+typedef enum
+{
+  /* Copied from accounts-service: */
+  ACCOUNT_TYPE_NORMAL = 0,
+  ACCOUNT_TYPE_ADMINISTRATOR = 1,
+} AccountType;
+
 typedef struct
 {
   uid_t expected_uid;
+  gint32 account_type;
   const gchar *properties;
 } GetAppFilterData;
 
@@ -722,6 +736,7 @@ get_app_filter_server_cb (GtDBusQueue *queue,
   const GetAppFilterData *data = user_data;
   g_autoptr(GDBusMethodInvocation) invocation1 = NULL;
   g_autoptr(GDBusMethodInvocation) invocation2 = NULL;
+  g_autoptr(GDBusMethodInvocation) invocation3 = NULL;
   g_autofree gchar *object_path = NULL;
   g_autoptr(GVariant) properties_variant = NULL;
 
@@ -750,6 +765,21 @@ get_app_filter_server_cb (GtDBusQueue *queue,
   properties_variant = g_variant_ref_sink (g_variant_new_parsed (data->properties));
   g_dbus_method_invocation_return_value (invocation2,
                                          g_variant_new_tuple (&properties_variant, 1));
+
+  /* Handle the Properties.Get() call for the AccountType, and say the account
+   * is a normal user or admin (depending on `data->account_type`). */
+  const gchar *property_name;
+  invocation3 =
+      gt_dbus_queue_assert_pop_message (queue,
+                                        object_path,
+                                        "org.freedesktop.DBus.Properties",
+                                        "Get", "(&s&s)",
+                                        &property_interface, &property_name);
+  g_assert_cmpstr (property_interface, ==, "org.freedesktop.Accounts.User");
+  g_assert_cmpstr (property_name, ==, "AccountType");
+
+  g_dbus_method_invocation_return_value (invocation3,
+                                         g_variant_new_parsed ("(<%i>,)", data->account_type));
 }
 
 /* Test that getting an #MctAppFilter from the mock D-Bus service works. The
@@ -768,6 +798,7 @@ test_app_filter_bus_get (BusFixture    *fixture,
   const GetAppFilterData get_app_filter_data =
     {
       .expected_uid = fixture->valid_uid,
+      .account_type = ACCOUNT_TYPE_NORMAL,
       .properties = "{"
         "'AllowUserInstallation': <true>,"
         "'AllowSystemInstallation': <false>,"
@@ -824,6 +855,7 @@ test_app_filter_bus_get_allowlist (BusFixture    *fixture,
   const GetAppFilterData get_app_filter_data =
     {
       .expected_uid = fixture->valid_uid,
+      .account_type = ACCOUNT_TYPE_NORMAL,
       .properties = "{"
         "'AllowUserInstallation': <true>,"
         "'AllowSystemInstallation': <true>,"
@@ -879,6 +911,7 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
   const GetAppFilterData get_app_filter_data =
     {
       .expected_uid = fixture->valid_uid,
+      .account_type = ACCOUNT_TYPE_NORMAL,
       .properties = "{"
         "'AllowUserInstallation': <true>,"
         "'AllowSystemInstallation': <true>,"
@@ -936,6 +969,7 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
   const GetAppFilterData get_app_filter_data =
     {
       .expected_uid = fixture->valid_uid,
+      .account_type = ACCOUNT_TYPE_NORMAL,
       .properties = "{"
         "'AppFilter': <(false, @as [])>"
       "}"
@@ -962,6 +996,50 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
                    MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
   g_assert_true (mct_app_filter_is_user_installation_allowed (app_filter));
   g_assert_false (mct_app_filter_is_system_installation_allowed (app_filter));
+}
+
+/* As with test_app_filter_bus_get_defaults(), but check that the default value
+ * for mct_app_filter_is_system_installation_allowed() is true for
+ * administrators.
+ *
+ * NOTE: This is a downstream Endless addition.
+ *
+ * The mock D-Bus replies are generated in get_app_filter_server_cb(). */
+static void
+test_app_filter_bus_get_defaults_administrator (BusFixture    *fixture,
+                                                gconstpointer  test_data)
+{
+  g_autoptr(MctAppFilter) app_filter = NULL;
+  g_autoptr(GError) local_error = NULL;
+  const GetAppFilterData get_app_filter_data =
+    {
+      .expected_uid = fixture->valid_uid,
+      .account_type = ACCOUNT_TYPE_ADMINISTRATOR,
+      .properties = "{"
+        "'AppFilter': <(false, @as [])>"
+      "}"
+    };
+  g_autofree const gchar **oars_sections = NULL;
+
+  gt_dbus_queue_set_server_func (fixture->queue, get_app_filter_server_cb,
+                                 (gpointer) &get_app_filter_data);
+
+  app_filter = mct_manager_get_app_filter (fixture->manager,
+                                           fixture->valid_uid,
+                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           &local_error);
+
+  g_assert_no_error (local_error);
+  g_assert_nonnull (app_filter);
+
+  /* Check the default values for the properties. */
+  g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  oars_sections = mct_app_filter_get_oars_sections (app_filter);
+  g_assert_cmpuint (g_strv_length ((gchar **) oars_sections), ==, 0);
+  g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
+                   MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
+  g_assert_true (mct_app_filter_is_user_installation_allowed (app_filter));
+  g_assert_true (mct_app_filter_is_system_installation_allowed (app_filter));
 }
 
 /* Test that mct_manager_get_app_filter() returns an appropriate error if the
@@ -1078,6 +1156,7 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   g_autoptr(GError) local_error = NULL;
   g_autoptr(GDBusMethodInvocation) invocation1 = NULL;
   g_autoptr(GDBusMethodInvocation) invocation2 = NULL;
+  g_autoptr(GDBusMethodInvocation) invocation3 = NULL;
   g_autofree gchar *object_path = NULL;
   g_autoptr(MctAppFilter) app_filter = NULL;
 
@@ -1111,6 +1190,21 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
   g_assert_cmpstr (property_interface, ==, "com.endlessm.ParentalControls.AppFilter");
 
   g_dbus_method_invocation_return_value (invocation2, g_variant_new ("(a{sv})", NULL));
+
+  /* Handle the Properties.Get() call for the AccountType, and say the account
+   * is a normal user. */
+  const gchar *property_name;
+  invocation3 =
+      gt_dbus_queue_assert_pop_message (fixture->queue,
+                                        object_path,
+                                        "org.freedesktop.DBus.Properties",
+                                        "Get", "(&s&s)",
+                                        &property_interface, &property_name);
+  g_assert_cmpstr (property_interface, ==, "org.freedesktop.Accounts.User");
+  g_assert_cmpstr (property_name, ==, "AccountType");
+
+  g_dbus_method_invocation_return_value (invocation3,
+                                         g_variant_new_parsed ("(<%i>,)", ACCOUNT_TYPE_NORMAL));
 
   /* Get the get_app_filter() result. */
   while (result == NULL)
@@ -1619,6 +1713,8 @@ main (int    argc,
               bus_set_up, test_app_filter_bus_get_all_oars_values, bus_tear_down);
   g_test_add ("/app-filter/bus/get/defaults", BusFixture, NULL,
               bus_set_up, test_app_filter_bus_get_defaults, bus_tear_down);
+  g_test_add ("/app-filter/bus/get/defaults/administrator", BusFixture, NULL,
+              bus_set_up, test_app_filter_bus_get_defaults_administrator, bus_tear_down);
 
   g_test_add ("/app-filter/bus/get/error/invalid-user", BusFixture, NULL,
               bus_set_up, test_app_filter_bus_get_error_invalid_user, bus_tear_down);
