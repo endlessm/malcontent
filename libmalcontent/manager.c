@@ -361,8 +361,10 @@ mct_manager_get_app_filter (MctManager            *self,
 {
   g_autofree gchar *object_path = NULL;
   g_autoptr(GVariant) result_variant = NULL;
+  g_autoptr(GVariant) account_type_variant = NULL;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GError) local_error = NULL;
+  g_autoptr(MctAppFilter) app_filter = NULL;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
   g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
@@ -410,6 +412,29 @@ mct_manager_get_app_filter (MctManager            *self,
       return NULL;
     }
 
+  account_type_variant =
+      g_dbus_connection_call_sync (self->connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "Get",
+                                   g_variant_new ("(ss)", "org.freedesktop.Accounts.User", "AccountType"),
+                                   G_VARIANT_TYPE ("(v)"),
+                                   (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE)
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_autoptr(GError) manager_error = NULL;
+
+      manager_error = bus_error_to_manager_error (local_error, user_id);
+      g_propagate_error (error, g_steal_pointer (&manager_error));
+      return NULL;
+    }
+
   /* Extract the properties we care about. They may be silently omitted from the
    * results if we don’t have permission to access them. */
   properties = g_variant_get_child_value (result_variant, 0);
@@ -422,7 +447,29 @@ mct_manager_get_app_filter (MctManager            *self,
       return NULL;
     }
 
-  return mct_app_filter_deserialize (properties, user_id, error);
+  app_filter = mct_app_filter_deserialize (properties, user_id, error);
+
+  if (app_filter == NULL)
+    return NULL;
+
+  /* FIXME: Workaround to force AllowSystemInstallation to be true for
+   * administrators. See https://phabricator.endlessm.com/T27854#760320.
+   *
+   * The `AccountType` property of accountsservice indicates whether an account
+   * is an administrator (1) or normal user (0). */
+  if (!app_filter->allow_system_installation)
+    {
+      g_autoptr(GVariant) account_type_inner_variant = NULL;
+
+      g_variant_get (account_type_variant, "(v)", &account_type_inner_variant);
+      if (g_variant_is_of_type (account_type_inner_variant, G_VARIANT_TYPE_INT32) &&
+          g_variant_get_int32 (account_type_inner_variant) == 1)
+        {
+          app_filter->allow_system_installation = TRUE;
+        }
+    }
+
+  return g_steal_pointer (&app_filter);
 }
 
 static void get_app_filter_thread_cb (GTask        *task,
