@@ -402,7 +402,7 @@ def main():
                                             'settings')
     parser_set.set_defaults(function=command_set)
     parser_set.add_argument('user', default='', nargs='?',
-                            help='user ID or username to get the app filter '
+                            help='user ID or username to set the app filter '
                                  'for (default: current user)')
     parser_set.add_argument('--allow-user-installation',
                             dest='allow_user_installation',
