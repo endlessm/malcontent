@@ -138,7 +138,7 @@ def __oars_value_from_string(value_str):
     raise KeyError('Unknown OARS value ‘{}’'.format(value_str))
 
 
-def command_get(user, quiet=False, interactive=True):
+def command_get_app_filter(user, quiet=False, interactive=True):
     """Get the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
@@ -335,8 +335,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Query and update parental controls.')
     subparsers = parser.add_subparsers(metavar='command',
-                                       help='command to run (default: ‘get’)')
-    parser.set_defaults(function=command_get)
+                                       help='command to run (default: '
+                                            '‘get-app-filter’)')
+    parser.set_defaults(function=command_get_app_filter)
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='output no informational messages')
     parser.set_defaults(quiet=False)
@@ -353,14 +354,16 @@ def main():
                        help='opposite of --no-interactive')
     common_parser.set_defaults(interactive=True)
 
-    # ‘get’ command
-    parser_get = subparsers.add_parser('get', parents=[common_parser],
-                                       help='get current parental controls '
-                                            'settings')
-    parser_get.set_defaults(function=command_get)
-    parser_get.add_argument('user', default='', nargs='?',
-                            help='user ID or username to get the app filter '
-                                 'for (default: current user)')
+    # ‘get-app-filter’ command
+    parser_get_app_filter = \
+        subparsers.add_parser('get-app-filter',
+                              parents=[common_parser],
+                              help='get current app filter settings')
+    parser_get_app_filter.set_defaults(function=command_get_app_filter)
+    parser_get_app_filter.add_argument('user', default='', nargs='?',
+                                       help='user ID or username to get the '
+                                       'app filter for (default: current '
+                                       'user)')
 
     # ‘monitor’ command
     parser_monitor = subparsers.add_parser('monitor',
