@@ -33,9 +33,14 @@ accounts_service_iface_c = custom_target(
             '@INPUT@'],
 )
 
+accounts_service_extension_ifaces = [
+  join_paths(meson.source_root(), 'accounts-service', 'com.endlessm.ParentalControls.AppFilter.xml'),
+  join_paths(meson.source_root(), 'accounts-service', 'com.endlessm.ParentalControls.SessionLimits.xml'),
+]
+
 accounts_service_extension_iface_h = custom_target(
   'accounts-service-extension-iface.h',
-  input: ['com.endlessm.ParentalControls.AppFilter.xml'],
+  input: accounts_service_extension_ifaces,
   output: ['accounts-service-extension-iface.h'],
   command: [gdbus_codegen,
             '--interface-info-header',
@@ -44,7 +49,7 @@ accounts_service_extension_iface_h = custom_target(
 )
 accounts_service_extension_iface_c = custom_target(
   'accounts-service-extension-iface.c',
-  input: ['com.endlessm.ParentalControls.AppFilter.xml'],
+  input: accounts_service_extension_ifaces,
   output: ['accounts-service-extension-iface.c'],
   command: [gdbus_codegen,
             '--interface-info-body',
@@ -54,6 +59,12 @@ accounts_service_extension_iface_c = custom_target(
 
 test_programs = [
   ['app-filter', [
+    accounts_service_iface_h,
+    accounts_service_iface_c,
+    accounts_service_extension_iface_h,
+    accounts_service_extension_iface_c,
+  ], deps],
+  ['session-limits', [
     accounts_service_iface_h,
     accounts_service_iface_c,
     accounts_service_extension_iface_h,
