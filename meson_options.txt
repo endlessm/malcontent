@@ -4,3 +4,8 @@ option(
   value: false,
   description: 'enable installed tests'
 )
+option(
+  'pamlibdir',
+  type: 'string',
+  description: 'directory for PAM modules'
+)

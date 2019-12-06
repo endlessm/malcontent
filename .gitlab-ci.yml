@@ -5,7 +5,7 @@ before_script:
                    libxml2-devel dbus-daemon
                    glib2-devel dbus-devel gobject-introspection-devel
                    gettext-devel polkit-devel polkit-gnome git
-                   lcov
+                   lcov pam-devel
   - export LANG=C.UTF-8
 
 stages:
