@@ -17,6 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 import argparse
+import datetime
 import os
 import pwd
 import sys
@@ -75,6 +76,34 @@ def __get_app_filter_or_error(user_id, interactive):
         return __get_app_filter(user_id, interactive)
     except GLib.Error as e:
         print('Error getting app filter for user {}: {}'.format(
+            user_id, e.message), file=sys.stderr)
+        raise SystemExit(__manager_error_to_exit_code(e))
+
+
+def __get_session_limits(user_id, interactive):
+    """Get the session limits for `user_id` off the bus.
+
+    If `interactive` is `True`, interactive polkit authorisation dialogues will
+    be allowed. An exception will be raised on failure."""
+    if interactive:
+        flags = Malcontent.ManagerGetValueFlags.INTERACTIVE
+    else:
+        flags = Malcontent.ManagerGetValueFlags.NONE
+
+    connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+    manager = Malcontent.Manager.new(connection)
+    return manager.get_session_limits(
+        user_id=user_id,
+        flags=flags, cancellable=None)
+
+
+def __get_session_limits_or_error(user_id, interactive):
+    """Wrapper around __get_session_limits() which prints an error and raises
+    SystemExit, rather than an internal exception."""
+    try:
+        return __get_session_limits(user_id, interactive)
+    except GLib.Error as e:
+        print('Error getting session limits for user {}: {}'.format(
             user_id, e.message), file=sys.stderr)
         raise SystemExit(__manager_error_to_exit_code(e))
 
@@ -185,6 +214,24 @@ def command_get_app_filter(user, quiet=False, interactive=True):
         print('App installation is allowed to system repository')
     else:
         print('App installation is disallowed to system repository')
+
+
+def command_get_session_limits(user, now=None, quiet=False, interactive=True):
+    """Get the session limits for the given user."""
+    (user_id, username) = __lookup_user_id_or_error(user)
+    session_limits = __get_session_limits_or_error(user_id, interactive)
+
+    (user_allowed_now, time_remaining_secs, time_limit_enabled) = \
+        session_limits.check_time_remaining(now.timestamp() * GLib.USEC_PER_SEC)
+
+    if not time_limit_enabled:
+        print('Session limits are not enabled for user {}'.format(username))
+    elif user_allowed_now:
+        print('Session limits are enabled for user {}, and they have {} '
+              'seconds remaining'.format(username, time_remaining_secs))
+    else:
+        print('Session limits are enabled for user {}, and they have no time '
+              'remaining'.format(username))
 
 
 def command_monitor(user, quiet=False, interactive=True):
@@ -389,6 +436,24 @@ def main():
                                        help='user ID or username to get the '
                                        'app filter for (default: current '
                                        'user)')
+
+    # ‘get-session-limits’ command
+    parser_get_session_limits = \
+        subparsers.add_parser('get-session-limits',
+                              parents=[common_parser],
+                              help='get current session limit settings')
+    parser_get_session_limits.set_defaults(function=command_get_session_limits)
+    parser_get_session_limits.add_argument('user', default='', nargs='?',
+                                           help='user ID or username to get '
+                                           'the session limits for (default: '
+                                           'current user)')
+    parser_get_session_limits.add_argument(
+        '--now',
+        metavar='yyyy-mm-ddThh:mm:ssZ',
+        type=lambda d: datetime.datetime.strptime(d, '%Y-%m-%dT%H:%M:%S%z'),
+        default=datetime.datetime.now(),
+        help='date/time to use as the value for ‘now’ (default: wall clock '
+             'time)')
 
     # ‘monitor’ command
     parser_monitor = subparsers.add_parser('monitor',
