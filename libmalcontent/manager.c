@@ -298,7 +298,7 @@ bus_remote_error_matches (const GError *error,
   return g_str_equal (error_name, expected_error_name);
 }
 
-/* Convert a #GDBusError into a #MctAppFilter error. */
+/* Convert a #GDBusError into a #MctAppFilterError. */
 static GError *
 bus_error_to_app_filter_error (const GError *bus_error,
                                uid_t         user_id)
