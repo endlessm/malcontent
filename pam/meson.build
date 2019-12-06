@@ -20,3 +20,5 @@ pam_malcontent = shared_library('pam_malcontent',
   include_directories: root_inc,
   install: true,
   install_dir: pamlibdir)
+
+subdir('tests')
