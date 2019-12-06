@@ -97,6 +97,7 @@ GQuark mct_manager_error_quark (void);
 #define MCT_MANAGER_ERROR mct_manager_error_quark ()
 
 #include <libmalcontent/app-filter.h>
+#include <libmalcontent/session-limits.h>
 
 #define MCT_TYPE_MANAGER mct_manager_get_type ()
 G_DECLARE_FINAL_TYPE (MctManager, mct_manager, MCT, MANAGER, GObject)
@@ -134,5 +135,20 @@ void          mct_manager_set_app_filter_async  (MctManager            *self,
 gboolean      mct_manager_set_app_filter_finish (MctManager            *self,
                                                  GAsyncResult          *result,
                                                  GError               **error);
+
+MctSessionLimits *mct_manager_get_session_limits        (MctManager                *self,
+                                                         uid_t                      user_id,
+                                                         MctManagerGetValueFlags    flags,
+                                                         GCancellable              *cancellable,
+                                                         GError                   **error);
+void              mct_manager_get_session_limits_async  (MctManager                *self,
+                                                         uid_t                      user_id,
+                                                         MctManagerGetValueFlags    flags,
+                                                         GCancellable              *cancellable,
+                                                         GAsyncReadyCallback        callback,
+                                                         gpointer                   user_data);
+MctSessionLimits *mct_manager_get_session_limits_finish (MctManager                *self,
+                                                         GAsyncResult              *result,
+                                                         GError                   **error);
 
 G_END_DECLS

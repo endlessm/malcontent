@@ -28,8 +28,10 @@
 #include <gio/gio.h>
 #include <libmalcontent/app-filter.h>
 #include <libmalcontent/manager.h>
+#include <libmalcontent/session-limits.h>
 
 #include "libmalcontent/app-filter-private.h"
+#include "libmalcontent/session-limits-private.h"
 
 
 G_DEFINE_QUARK (MctManagerError, mct_manager_error)
@@ -865,4 +867,240 @@ mct_manager_set_app_filter_finish (MctManager    *self,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+/**
+ * mct_manager_get_session_limits:
+ * @self: a #MctManager
+ * @user_id: ID of the user to query, typically coming from getuid()
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @error: return location for a #GError, or %NULL
+ *
+ * Synchronous version of mct_manager_get_session_limits_async().
+ *
+ * Returns: (transfer full): session limits for the queried user
+ * Since: 0.5.0
+ */
+MctSessionLimits *
+mct_manager_get_session_limits (MctManager                *self,
+                                uid_t                      user_id,
+                                MctManagerGetValueFlags    flags,
+                                GCancellable              *cancellable,
+                                GError                   **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) result_variant = NULL;
+  g_autoptr(GVariant) properties = NULL;
+  g_autoptr(GError) local_error = NULL;
+  g_autoptr(MctSessionLimits) session_limits = NULL;
+  guint32 limit_type;
+  guint32 daily_start_time, daily_end_time;
+
+  g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  object_path = accounts_find_user_by_id (self->connection, user_id,
+                                          (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE),
+                                          cancellable, error);
+  if (object_path == NULL)
+    return NULL;
+
+  result_variant =
+      g_dbus_connection_call_sync (self->connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "GetAll",
+                                   g_variant_new ("(s)", "com.endlessm.ParentalControls.SessionLimits"),
+                                   G_VARIANT_TYPE ("(a{sv})"),
+                                   (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE)
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_autoptr(GError) manager_error = NULL;
+
+      if (g_error_matches (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS))
+        {
+          /* o.fd.D.GetAll() will return InvalidArgs errors if
+           * accountsservice doesn’t have the com.endlessm.ParentalControls.SessionLimits
+           * extension interface installed. */
+          manager_error = g_error_new_literal (MCT_MANAGER_ERROR,
+                                               MCT_MANAGER_ERROR_DISABLED,
+                                               _("Session limits are globally disabled"));
+        }
+      else
+        {
+          manager_error = bus_error_to_manager_error (local_error, user_id);
+        }
+
+      g_propagate_error (error, g_steal_pointer (&manager_error));
+      return NULL;
+    }
+
+  /* Extract the properties we care about. They may be silently omitted from the
+   * results if we don’t have permission to access them. */
+  properties = g_variant_get_child_value (result_variant, 0);
+  if (!g_variant_lookup (properties, "LimitType", "u",
+                         &limit_type))
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_PERMISSION_DENIED,
+                   _("Not allowed to query session limits data for user %u"),
+                   (guint) user_id);
+      return NULL;
+    }
+
+  /* Check that the limit type is something we support. */
+  G_STATIC_ASSERT (sizeof (limit_type) >= sizeof (MctSessionLimitsType));
+
+  if ((guint) limit_type > MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has an unrecognized type ‘%u’"),
+                   (guint) user_id, limit_type);
+      return NULL;
+    }
+
+  if (!g_variant_lookup (properties, "DailySchedule", "(uu)",
+                         &daily_start_time, &daily_end_time))
+    {
+      /* Default value. */
+      daily_start_time = 0;
+      daily_end_time = 24 * 60 * 60;
+    }
+
+  if (daily_start_time >= daily_end_time ||
+      daily_end_time > 24 * 60 * 60)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has invalid daily schedule %u–%u"),
+                   (guint) user_id, daily_start_time, daily_end_time);
+      return NULL;
+    }
+
+  /* Success. Create an #MctSessionLimits object to contain the results. */
+  session_limits = g_new0 (MctSessionLimits, 1);
+  session_limits->ref_count = 1;
+  session_limits->user_id = user_id;
+  session_limits->limit_type = limit_type;
+  session_limits->daily_start_time = daily_start_time;
+  session_limits->daily_end_time = daily_end_time;
+
+  return g_steal_pointer (&session_limits);
+}
+
+static void get_session_limits_thread_cb (GTask        *task,
+                                          gpointer      source_object,
+                                          gpointer      task_data,
+                                          GCancellable *cancellable);
+
+typedef struct
+{
+  uid_t user_id;
+  MctManagerGetValueFlags flags;
+} GetSessionLimitsData;
+
+static void
+get_session_limits_data_free (GetSessionLimitsData *data)
+{
+  g_free (data);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetSessionLimitsData, get_session_limits_data_free)
+
+/**
+ * mct_manager_get_session_limits_async:
+ * @self: a #MctManager
+ * @user_id: ID of the user to query, typically coming from getuid()
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: a #GAsyncReadyCallback
+ * @user_data: user data to pass to @callback
+ *
+ * Asynchronously get a snapshot of the session limit settings for the given
+ * @user_id.
+ *
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
+ * returned via mct_manager_get_session_limits_finish().
+ *
+ * Since: 0.5.0
+ */
+void
+mct_manager_get_session_limits_async  (MctManager               *self,
+                                       uid_t                     user_id,
+                                       MctManagerGetValueFlags   flags,
+                                       GCancellable             *cancellable,
+                                       GAsyncReadyCallback       callback,
+                                       gpointer                  user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(GetSessionLimitsData) data = NULL;
+
+  g_return_if_fail (MCT_IS_MANAGER (self));
+  g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, mct_manager_get_session_limits_async);
+
+  data = g_new0 (GetSessionLimitsData, 1);
+  data->user_id = user_id;
+  data->flags = flags;
+  g_task_set_task_data (task, g_steal_pointer (&data),
+                        (GDestroyNotify) get_session_limits_data_free);
+
+  g_task_run_in_thread (task, get_session_limits_thread_cb);
+}
+
+static void
+get_session_limits_thread_cb (GTask        *task,
+                              gpointer      source_object,
+                              gpointer      task_data,
+                              GCancellable *cancellable)
+{
+  g_autoptr(MctSessionLimits) limits = NULL;
+  MctManager *manager = MCT_MANAGER (source_object);
+  GetSessionLimitsData *data = task_data;
+  g_autoptr(GError) local_error = NULL;
+
+  limits = mct_manager_get_session_limits (manager, data->user_id,
+                                           data->flags,
+                                           cancellable, &local_error);
+
+  if (local_error != NULL)
+    g_task_return_error (task, g_steal_pointer (&local_error));
+  else
+    g_task_return_pointer (task, g_steal_pointer (&limits),
+                           (GDestroyNotify) mct_session_limits_unref);
+}
+
+/**
+ * mct_manager_get_session_limits_finish:
+ * @self: a #MctManager
+ * @result: a #GAsyncResult
+ * @error: return location for a #GError, or %NULL
+ *
+ * Finish an asynchronous operation to get the session limits for a user,
+ * started with mct_manager_get_session_limits_async().
+ *
+ * Returns: (transfer full): session limits for the queried user
+ * Since: 0.5.0
+ */
+MctSessionLimits *
+mct_manager_get_session_limits_finish (MctManager    *self,
+                                       GAsyncResult  *result,
+                                       GError       **error)
+{
+  g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }
