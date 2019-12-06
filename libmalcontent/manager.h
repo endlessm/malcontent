@@ -43,7 +43,7 @@ G_BEGIN_DECLS
 typedef enum
 {
   MCT_GET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_GET_APP_FILTER_FLAGS_INTERACTIVE,
+  MCT_GET_APP_FILTER_FLAGS_INTERACTIVE = (1 << 0),
 } MctGetAppFilterFlags;
 
 /**
@@ -60,7 +60,7 @@ typedef enum
 typedef enum
 {
   MCT_SET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_SET_APP_FILTER_FLAGS_INTERACTIVE,
+  MCT_SET_APP_FILTER_FLAGS_INTERACTIVE = (1 << 0),
 } MctSetAppFilterFlags;
 
 #define MCT_TYPE_MANAGER mct_manager_get_type ()
