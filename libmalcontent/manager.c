@@ -639,7 +639,6 @@ mct_manager_set_app_filter (MctManager            *self,
   g_autoptr(GVariant) allow_user_installation_result_variant = NULL;
   g_autoptr(GVariant) allow_system_installation_result_variant = NULL;
   g_autoptr(GError) local_error = NULL;
-  g_autoptr(GDBusConnection) connection = NULL;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
   g_return_val_if_fail (app_filter != NULL, FALSE);
