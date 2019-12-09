@@ -151,4 +151,21 @@ MctSessionLimits *mct_manager_get_session_limits_finish (MctManager             
                                                          GAsyncResult              *result,
                                                          GError                   **error);
 
+gboolean      mct_manager_set_session_limits        (MctManager                *self,
+                                                     uid_t                      user_id,
+                                                     MctSessionLimits          *session_limits,
+                                                     MctManagerSetValueFlags    flags,
+                                                     GCancellable              *cancellable,
+                                                     GError                   **error);
+void          mct_manager_set_session_limits_async  (MctManager                *self,
+                                                     uid_t                      user_id,
+                                                     MctSessionLimits          *session_limits,
+                                                     MctManagerSetValueFlags    flags,
+                                                     GCancellable              *cancellable,
+                                                     GAsyncReadyCallback        callback,
+                                                     gpointer                   user_data);
+gboolean      mct_manager_set_session_limits_finish (MctManager                *self,
+                                                     GAsyncResult              *result,
+                                                     GError                   **error);
+
 G_END_DECLS

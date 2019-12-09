@@ -189,3 +189,263 @@ out:
 
   return user_allowed_now;
 }
+
+/*
+ * Actual implementation of #MctSessionLimitsBuilder.
+ *
+ * All members are %NULL if un-initialised, cleared, or ended.
+ */
+typedef struct
+{
+  MctSessionLimitsType limit_type;
+
+  /* Which member is used is determined by @limit_type: */
+  union
+    {
+      struct
+        {
+          guint start_time;  /* seconds since midnight */
+          guint end_time;  /* seconds since midnight */
+        } daily_schedule;
+    };
+
+  /*< private >*/
+  gpointer padding[10];
+} MctSessionLimitsBuilderReal;
+
+G_STATIC_ASSERT (sizeof (MctSessionLimitsBuilderReal) ==
+                 sizeof (MctSessionLimitsBuilder));
+G_STATIC_ASSERT (__alignof__ (MctSessionLimitsBuilderReal) ==
+                 __alignof__ (MctSessionLimitsBuilder));
+
+G_DEFINE_BOXED_TYPE (MctSessionLimitsBuilder, mct_session_limits_builder,
+                     mct_session_limits_builder_copy, mct_session_limits_builder_free)
+
+/**
+ * mct_session_limits_builder_init:
+ * @builder: an uninitialised #MctSessionLimitsBuilder
+ *
+ * Initialise the given @builder so it can be used to construct a new
+ * #MctSessionLimits. @builder must have been allocated on the stack, and must
+ * not already be initialised.
+ *
+ * Construct the #MctSessionLimits by calling methods on @builder, followed by
+ * mct_session_limits_builder_end(). To abort construction, use
+ * mct_session_limits_builder_clear().
+ *
+ * Since: 0.5.0
+ */
+void
+mct_session_limits_builder_init (MctSessionLimitsBuilder *builder)
+{
+  MctSessionLimitsBuilder local_builder = MCT_SESSION_LIMITS_BUILDER_INIT ();
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+  g_return_if_fail (_builder->limit_type == MCT_SESSION_LIMITS_TYPE_NONE);
+
+  memcpy (builder, &local_builder, sizeof (local_builder));
+}
+
+/**
+ * mct_session_limits_builder_clear:
+ * @builder: an #MctSessionLimitsBuilder
+ *
+ * Clear @builder, freeing any internal state in it. This will not free the
+ * top-level storage for @builder itself, which is assumed to be allocated on
+ * the stack.
+ *
+ * If called on an already-cleared #MctSessionLimitsBuilder, this function is
+ * idempotent.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_session_limits_builder_clear (MctSessionLimitsBuilder *builder)
+{
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+
+  /* Nothing to free here for now. */
+  _builder->limit_type = MCT_SESSION_LIMITS_TYPE_NONE;
+}
+
+/**
+ * mct_session_limits_builder_new:
+ *
+ * Construct a new #MctSessionLimitsBuilder on the heap. This is intended for
+ * language bindings. The returned builder must eventually be freed with
+ * mct_session_limits_builder_free(), but can be cleared zero or more times with
+ * mct_session_limits_builder_clear() first.
+ *
+ * Returns: (transfer full): a new heap-allocated #MctSessionLimitsBuilder
+ * Since: 0.5.0
+ */
+MctSessionLimitsBuilder *
+mct_session_limits_builder_new (void)
+{
+  g_autoptr(MctSessionLimitsBuilder) builder = NULL;
+
+  builder = g_new0 (MctSessionLimitsBuilder, 1);
+  mct_session_limits_builder_init (builder);
+
+  return g_steal_pointer (&builder);
+}
+
+/**
+ * mct_session_limits_builder_copy:
+ * @builder: an #MctSessionLimitsBuilder
+ *
+ * Copy the given @builder to a newly-allocated #MctSessionLimitsBuilder on the
+ * heap. This is safe to use with cleared, stack-allocated
+ * #MctSessionLimitsBuilders.
+ *
+ * Returns: (transfer full): a copy of @builder
+ * Since: 0.5.0
+ */
+MctSessionLimitsBuilder *
+mct_session_limits_builder_copy (MctSessionLimitsBuilder *builder)
+{
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+  g_autoptr(MctSessionLimitsBuilder) copy = NULL;
+  MctSessionLimitsBuilderReal *_copy;
+
+  g_return_val_if_fail (builder != NULL, NULL);
+
+  copy = mct_session_limits_builder_new ();
+  _copy = (MctSessionLimitsBuilderReal *) copy;
+
+  mct_session_limits_builder_clear (copy);
+  _copy->limit_type = _builder->limit_type;
+
+  switch (_builder->limit_type)
+    {
+    case MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE:
+      _copy->daily_schedule.start_time = _builder->daily_schedule.start_time;
+      _copy->daily_schedule.end_time = _builder->daily_schedule.end_time;
+      break;
+    case MCT_SESSION_LIMITS_TYPE_NONE:
+    default:
+      break;
+    }
+
+  return g_steal_pointer (&copy);
+}
+
+/**
+ * mct_session_limits_builder_free:
+ * @builder: a heap-allocated #MctSessionLimitsBuilder
+ *
+ * Free an #MctSessionLimitsBuilder originally allocated using
+ * mct_session_limits_builder_new(). This must not be called on stack-allocated
+ * builders initialised using mct_session_limits_builder_init().
+ *
+ * Since: 0.5.0
+ */
+void
+mct_session_limits_builder_free (MctSessionLimitsBuilder *builder)
+{
+  g_return_if_fail (builder != NULL);
+
+  mct_session_limits_builder_clear (builder);
+  g_free (builder);
+}
+
+/**
+ * mct_session_limits_builder_end:
+ * @builder: an initialised #MctSessionLimitsBuilder
+ *
+ * Finish constructing an #MctSessionLimits with the given @builder, and return
+ * it. The #MctSessionLimitsBuilder will be cleared as if
+ * mct_session_limits_builder_clear() had been called.
+ *
+ * Returns: (transfer full): a newly constructed #MctSessionLimits
+ * Since: 0.5.0
+ */
+MctSessionLimits *
+mct_session_limits_builder_end (MctSessionLimitsBuilder *builder)
+{
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+  g_autoptr(MctSessionLimits) session_limits = NULL;
+
+  g_return_val_if_fail (_builder != NULL, NULL);
+
+  /* Build the #MctSessionLimits. */
+  session_limits = g_new0 (MctSessionLimits, 1);
+  session_limits->ref_count = 1;
+  session_limits->user_id = -1;
+  session_limits->limit_type = _builder->limit_type;
+
+  switch (_builder->limit_type)
+    {
+    case MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE:
+      session_limits->daily_start_time = _builder->daily_schedule.start_time;
+      session_limits->daily_end_time = _builder->daily_schedule.end_time;
+      break;
+    case MCT_SESSION_LIMITS_TYPE_NONE:
+    default:
+      /* Defaults: */
+      session_limits->daily_start_time = 0;
+      session_limits->daily_end_time = 24 * 60 * 60;
+      break;
+    }
+
+  mct_session_limits_builder_clear (builder);
+
+  return g_steal_pointer (&session_limits);
+}
+
+/**
+ * mct_session_limits_builder_set_none:
+ * @builder: an initialised #MctSessionLimitsBuilder
+ *
+ * Unset any session limits currently set in the @builder.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_session_limits_builder_set_none (MctSessionLimitsBuilder *builder)
+{
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+
+  /* This will need to free other limit types’ data first in future. */
+  _builder->limit_type = MCT_SESSION_LIMITS_TYPE_NONE;
+}
+
+/**
+ * mct_session_limits_builder_set_daily_schedule:
+ * @builder: an initialised #MctSessionLimitsBuilder
+ * @start_time_secs: number of seconds since midnight when the user’s session
+ *     can first start
+ * @end_time_secs: number of seconds since midnight when the user’s session can
+ *     last end
+ *
+ * Set the session limits in @builder to be a daily schedule, where sessions are
+ * allowed between @start_time_secs and @end_time_secs every day.
+ * @start_time_secs and @end_time_secs are given as offsets from the start of
+ * the day, in seconds. @end_time_secs must be greater than @start_time_secs.
+ * @end_time_secs must be at most `24 * 60 * 60`.
+ *
+ * This will overwrite any other session limits.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_session_limits_builder_set_daily_schedule (MctSessionLimitsBuilder *builder,
+                                               guint                    start_time_secs,
+                                               guint                    end_time_secs)
+{
+  MctSessionLimitsBuilderReal *_builder = (MctSessionLimitsBuilderReal *) builder;
+
+  g_return_if_fail (_builder != NULL);
+  g_return_if_fail (start_time_secs < end_time_secs);
+  g_return_if_fail (end_time_secs <= 24 * 60 * 60);
+
+  /* This will need to free other limit types’ data first in future. */
+  _builder->limit_type = MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE;
+  _builder->daily_schedule.start_time = start_time_secs;
+  _builder->daily_schedule.end_time = end_time_secs;
+}

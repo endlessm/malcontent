@@ -56,4 +56,67 @@ gboolean mct_session_limits_check_time_remaining (MctSessionLimits *limits,
                                                   guint64          *time_remaining_secs_out,
                                                   gboolean         *time_limit_enabled_out);
 
+/**
+ * MctSessionLimitsBuilder:
+ *
+ * #MctSessionLimitsBuilder is a stack-allocated mutable structure used to build
+ * an #MctSessionLimits instance. Use mct_session_limits_builder_init(), various
+ * method calls to set properties of the session limits, and then
+ * mct_session_limits_builder_end(), to construct an #MctSessionLimits.
+ *
+ * Since: 0.5.0
+ */
+typedef struct
+{
+  /*< private >*/
+  guint u0;
+  guint u1;
+  guint u2;
+  gpointer p0[10];
+} MctSessionLimitsBuilder;
+
+GType mct_session_limits_builder_get_type (void);
+
+/**
+ * MCT_SESSION_LIMITS_BUILDER_INIT:
+ *
+ * Initialise a stack-allocated #MctSessionLimitsBuilder instance at declaration
+ * time.
+ *
+ * This is typically used with g_auto():
+ * |[
+ * g_auto(MctSessionLimitsBuilder) builder = MCT_SESSION_LIMITS_BUILDER_INIT ();
+ * ]|
+ *
+ * Since: 0.5.0
+ */
+#define MCT_SESSION_LIMITS_BUILDER_INIT() \
+  { \
+    0,  /* MCT_SESSION_LIMITS_TYPE_NONE */ \
+    0, \
+    0, \
+    /* padding: */ \
+    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL } \
+  }
+
+void mct_session_limits_builder_init  (MctSessionLimitsBuilder *builder);
+void mct_session_limits_builder_clear (MctSessionLimitsBuilder *builder);
+
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (MctSessionLimitsBuilder,
+                                  mct_session_limits_builder_clear)
+
+MctSessionLimitsBuilder *mct_session_limits_builder_new  (void);
+MctSessionLimitsBuilder *mct_session_limits_builder_copy (MctSessionLimitsBuilder *builder);
+void                     mct_session_limits_builder_free (MctSessionLimitsBuilder *builder);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctSessionLimitsBuilder, mct_session_limits_builder_free)
+
+MctSessionLimits *mct_session_limits_builder_end (MctSessionLimitsBuilder *builder);
+
+void mct_session_limits_builder_set_none (MctSessionLimitsBuilder *builder);
+
+void mct_session_limits_builder_set_daily_schedule (MctSessionLimitsBuilder *builder,
+                                                    guint                    start_time_secs,
+                                                    guint                    end_time_secs);
+
 G_END_DECLS
