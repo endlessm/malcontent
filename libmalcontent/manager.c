@@ -31,6 +31,9 @@
 
 #include "libmalcontent/app-filter-private.h"
 
+
+G_DEFINE_QUARK (MctManagerError, mct_manager_error)
+
 /**
  * MctManager:
  *
@@ -298,19 +301,19 @@ bus_remote_error_matches (const GError *error,
   return g_str_equal (error_name, expected_error_name);
 }
 
-/* Convert a #GDBusError into a #MctAppFilterError. */
+/* Convert a #GDBusError into a #MctManagerError. */
 static GError *
-bus_error_to_app_filter_error (const GError *bus_error,
-                               uid_t         user_id)
+bus_error_to_manager_error (const GError *bus_error,
+                            uid_t         user_id)
 {
   if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_ACCESS_DENIED) ||
       bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.PermissionDenied"))
-    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
+    return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
                         (guint) user_id);
   else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
-    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER,
+    return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER,
                         _("User %u does not exist"), (guint) user_id);
   else
     return g_error_copy (bus_error);
@@ -346,8 +349,8 @@ accounts_find_user_by_id (GDBusConnection  *connection,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                                          user_id);
+      g_autoptr(GError) app_filter_error = bus_error_to_manager_error (local_error,
+                                                                       user_id);
       g_propagate_error (error, g_steal_pointer (&app_filter_error));
       return NULL;
     }
@@ -415,24 +418,23 @@ mct_manager_get_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = NULL;
+      g_autoptr(GError) manager_error = NULL;
 
       if (g_error_matches (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS))
         {
           /* o.fd.D.GetAll() will return InvalidArgs errors if
            * accountsservice doesn’t have the com.endlessm.ParentalControls.AppFilter
            * extension interface installed. */
-          app_filter_error = g_error_new_literal (MCT_APP_FILTER_ERROR,
-                                                  MCT_APP_FILTER_ERROR_DISABLED,
-                                                  _("App filtering is globally disabled"));
+          manager_error = g_error_new_literal (MCT_MANAGER_ERROR,
+                                               MCT_MANAGER_ERROR_DISABLED,
+                                               _("App filtering is globally disabled"));
         }
       else
         {
-          app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                            user_id);
+          manager_error = bus_error_to_manager_error (local_error, user_id);
         }
 
-      g_propagate_error (error, g_steal_pointer (&app_filter_error));
+      g_propagate_error (error, g_steal_pointer (&manager_error));
       return NULL;
     }
 
@@ -442,8 +444,8 @@ mct_manager_get_app_filter (MctManager            *self,
   if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
                          &is_whitelist, &app_list))
     {
-      g_set_error (error, MCT_APP_FILTER_ERROR,
-                   MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_PERMISSION_DENIED,
                    _("Not allowed to query app filter data for user %u"),
                    (guint) user_id);
       return NULL;
@@ -462,8 +464,8 @@ mct_manager_get_app_filter (MctManager            *self,
   if (!g_str_equal (content_rating_kind, "oars-1.0") &&
       !g_str_equal (content_rating_kind, "oars-1.1"))
     {
-      g_set_error (error, MCT_APP_FILTER_ERROR,
-                   MCT_APP_FILTER_ERROR_INVALID_DATA,
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
                    _("OARS filter for user %u has an unrecognized kind ‘%s’"),
                    (guint) user_id, content_rating_kind);
       return NULL;
@@ -528,7 +530,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * Asynchronously get a snapshot of the app filter settings for the given
  * @user_id.
  *
- * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
  * returned.
  *
  * Since: 0.3.0
@@ -676,7 +678,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -699,7 +701,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -722,7 +724,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -745,7 +747,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -786,7 +788,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  * Asynchronously set the app filter settings for the given @user_id to the
  * given @app_filter instance. This will set all fields of the app filter.
  *
- * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
  * returned. The user’s app filter settings will be left in an undefined state.
  *
  * Since: 0.3.0

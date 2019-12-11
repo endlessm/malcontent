@@ -809,7 +809,7 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER);
   g_assert_null (app_filter);
 }
 
@@ -866,7 +866,7 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
@@ -924,7 +924,7 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
@@ -1027,7 +1027,7 @@ test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_DISABLED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_DISABLED);
   g_assert_null (app_filter);
 }
 
@@ -1249,7 +1249,7 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
                                                &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER);
   g_assert_false (success);
 }
 
@@ -1286,7 +1286,7 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
                                         &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_false (success);
 }
 

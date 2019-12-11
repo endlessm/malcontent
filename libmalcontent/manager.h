@@ -25,7 +25,6 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib-object.h>
-#include <libmalcontent/app-filter.h>
 
 G_BEGIN_DECLS
 
@@ -72,6 +71,32 @@ typedef enum
 typedef MctManagerSetValueFlags MctSetAppFilterFlags;
 #define MCT_SET_APP_FILTER_FLAGS_NONE MCT_MANAGER_SET_VALUE_FLAGS_NONE
 #define MCT_SET_APP_FILTER_FLAGS_INTERACTIVE MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE
+
+/**
+ * MctManagerError:
+ * @MCT_MANAGER_ERROR_INVALID_USER: Given user ID doesn’t exist
+ * @MCT_MANAGER_ERROR_PERMISSION_DENIED: Not authorized to query properties of
+ *     the given user
+ * @MCT_MANAGER_ERROR_INVALID_DATA: The data stored in a property of the given
+ *     user is inconsistent or invalid
+ * @MCT_MANAGER_ERROR_DISABLED: Parental controls are disabled for all users
+ *
+ * Errors relating to get/set operations on an #MctManager instance.
+ *
+ * Since: 0.5.0
+ */
+typedef enum
+{
+  MCT_MANAGER_ERROR_INVALID_USER,
+  MCT_MANAGER_ERROR_PERMISSION_DENIED,
+  MCT_MANAGER_ERROR_INVALID_DATA,
+  MCT_MANAGER_ERROR_DISABLED,
+} MctManagerError;
+
+GQuark mct_manager_error_quark (void);
+#define MCT_MANAGER_ERROR mct_manager_error_quark ()
+
+#include <libmalcontent/app-filter.h>
 
 #define MCT_TYPE_MANAGER mct_manager_get_type ()
 G_DECLARE_FINAL_TYPE (MctManager, mct_manager, MCT, MANAGER, GObject)
