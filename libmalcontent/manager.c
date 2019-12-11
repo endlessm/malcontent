@@ -373,7 +373,7 @@ accounts_find_user_by_id (GDBusConnection  *connection,
 MctAppFilter *
 mct_manager_get_app_filter (MctManager            *self,
                             uid_t                  user_id,
-                            MctGetAppFilterFlags   flags,
+                            MctManagerGetValueFlags flags,
                             GCancellable          *cancellable,
                             GError               **error)
 {
@@ -394,7 +394,7 @@ mct_manager_get_app_filter (MctManager            *self,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   object_path = accounts_find_user_by_id (self->connection, user_id,
-                                          (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE),
+                                          (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return NULL;
@@ -407,7 +407,7 @@ mct_manager_get_app_filter (MctManager            *self,
                                    "GetAll",
                                    g_variant_new ("(s)", "com.endlessm.ParentalControls.AppFilter"),
                                    G_VARIANT_TYPE ("(a{sv})"),
-                                   (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -505,7 +505,7 @@ static void get_app_filter_thread_cb (GTask        *task,
 typedef struct
 {
   uid_t user_id;
-  MctGetAppFilterFlags flags;
+  MctManagerGetValueFlags flags;
 } GetAppFilterData;
 
 static void
@@ -536,7 +536,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
 void
 mct_manager_get_app_filter_async  (MctManager           *self,
                                    uid_t                 user_id,
-                                   MctGetAppFilterFlags  flags,
+                                   MctManagerGetValueFlags flags,
                                    GCancellable         *cancellable,
                                    GAsyncReadyCallback   callback,
                                    gpointer              user_data)
@@ -623,7 +623,7 @@ gboolean
 mct_manager_set_app_filter (MctManager            *self,
                             uid_t                  user_id,
                             MctAppFilter          *app_filter,
-                            MctSetAppFilterFlags   flags,
+                            MctManagerSetValueFlags flags,
                             GCancellable          *cancellable,
                             GError               **error)
 {
@@ -646,7 +646,7 @@ mct_manager_set_app_filter (MctManager            *self,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   object_path = accounts_find_user_by_id (self->connection, user_id,
-                                          (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE),
+                                          (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return FALSE;
@@ -668,7 +668,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AppFilter",
                                                   g_steal_pointer (&app_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -691,7 +691,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "OarsFilter",
                                                   g_steal_pointer (&oars_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -714,7 +714,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AllowUserInstallation",
                                                   g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -737,7 +737,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AllowSystemInstallation",
                                                   g_steal_pointer (&allow_system_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -761,7 +761,7 @@ typedef struct
 {
   uid_t user_id;
   MctAppFilter *app_filter;  /* (owned) */
-  MctSetAppFilterFlags flags;
+  MctManagerSetValueFlags flags;
 } SetAppFilterData;
 
 static void
@@ -795,7 +795,7 @@ void
 mct_manager_set_app_filter_async (MctManager           *self,
                                   uid_t                 user_id,
                                   MctAppFilter         *app_filter,
-                                  MctSetAppFilterFlags  flags,
+                                  MctManagerSetValueFlags flags,
                                   GCancellable         *cancellable,
                                   GAsyncReadyCallback   callback,
                                   gpointer              user_data)

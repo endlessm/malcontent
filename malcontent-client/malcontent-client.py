@@ -38,9 +38,9 @@ def __get_app_filter(user_id, interactive):
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
     if interactive:
-        flags = Malcontent.GetAppFilterFlags.INTERACTIVE
+        flags = Malcontent.ManagerGetValueFlags.INTERACTIVE
     else:
-        flags = Malcontent.GetAppFilterFlags.NONE
+        flags = Malcontent.ManagerGetValueFlags.NONE
 
     connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
     manager = Malcontent.Manager.new(connection)
@@ -66,9 +66,9 @@ def __set_app_filter(user_id, app_filter, interactive):
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
     if interactive:
-        flags = Malcontent.SetAppFilterFlags.INTERACTIVE
+        flags = Malcontent.ManagerSetValueFlags.INTERACTIVE
     else:
-        flags = Malcontent.SetAppFilterFlags.NONE
+        flags = Malcontent.ManagerSetValueFlags.NONE
 
     connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
     manager = Malcontent.Manager.new(connection)

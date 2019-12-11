@@ -30,38 +30,48 @@
 G_BEGIN_DECLS
 
 /**
- * MctGetAppFilterFlags:
- * @MCT_GET_APP_FILTER_FLAGS_NONE: No flags set.
- * @MCT_GET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
- *    requesting authorization.
+ * MctManagerGetValueFlags:
+ * @MCT_MANAGER_GET_VALUE_FLAGS_NONE: No flags set.
+ * @MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE: Allow interactive polkit dialogs
+ *    when requesting authorization.
  *
- * Flags to control the behaviour of mct_manager_get_app_filter() and
- * mct_manager_get_app_filter_async().
+ * Flags to control the behaviour of getter functions like
+ * mct_manager_get_app_filter() and mct_manager_get_app_filter_async().
  *
- * Since: 0.3.0
+ * Since: 0.5.0
  */
 typedef enum
 {
-  MCT_GET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_GET_APP_FILTER_FLAGS_INTERACTIVE = (1 << 0),
-} MctGetAppFilterFlags;
+  MCT_MANAGER_GET_VALUE_FLAGS_NONE = 0,
+  MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE = (1 << 0),
+} MctManagerGetValueFlags;
+
+/* FIXME: Eventually deprecate these compatibility fallbacks. */
+typedef MctManagerGetValueFlags MctGetAppFilterFlags;
+#define MCT_GET_APP_FILTER_FLAGS_NONE MCT_MANAGER_GET_VALUE_FLAGS_NONE
+#define MCT_GET_APP_FILTER_FLAGS_INTERACTIVE MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE
 
 /**
- * MctSetAppFilterFlags:
- * @MCT_SET_APP_FILTER_FLAGS_NONE: No flags set.
- * @MCT_SET_APP_FILTER_FLAGS_INTERACTIVE: Allow interactive polkit dialogs when
- *    requesting authorization.
+ * MctManagerSetValueFlags:
+ * @MCT_MANAGER_SET_VALUE_FLAGS_NONE: No flags set.
+ * @MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE: Allow interactive polkit dialogs
+ *    when requesting authorization.
  *
- * Flags to control the behaviour of mct_manager_set_app_filter() and
- * mct_manager_set_app_filter_async().
+ * Flags to control the behaviour of setter functions like
+ * mct_manager_set_app_filter() and mct_manager_set_app_filter_async().
  *
- * Since: 0.3.0
+ * Since: 0.5.0
  */
 typedef enum
 {
-  MCT_SET_APP_FILTER_FLAGS_NONE = 0,
-  MCT_SET_APP_FILTER_FLAGS_INTERACTIVE = (1 << 0),
-} MctSetAppFilterFlags;
+  MCT_MANAGER_SET_VALUE_FLAGS_NONE = 0,
+  MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE = (1 << 0),
+} MctManagerSetValueFlags;
+
+/* FIXME: Eventually deprecate these compatibility fallbacks. */
+typedef MctManagerSetValueFlags MctSetAppFilterFlags;
+#define MCT_SET_APP_FILTER_FLAGS_NONE MCT_MANAGER_SET_VALUE_FLAGS_NONE
+#define MCT_SET_APP_FILTER_FLAGS_INTERACTIVE MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE
 
 #define MCT_TYPE_MANAGER mct_manager_get_type ()
 G_DECLARE_FINAL_TYPE (MctManager, mct_manager, MCT, MANAGER, GObject)
@@ -70,12 +80,12 @@ MctManager   *mct_manager_new (GDBusConnection *connection);
 
 MctAppFilter *mct_manager_get_app_filter        (MctManager            *self,
                                                  uid_t                  user_id,
-                                                 MctGetAppFilterFlags   flags,
+                                                 MctManagerGetValueFlags flags,
                                                  GCancellable          *cancellable,
                                                  GError               **error);
 void          mct_manager_get_app_filter_async  (MctManager            *self,
                                                  uid_t                  user_id,
-                                                 MctGetAppFilterFlags   flags,
+                                                 MctManagerGetValueFlags flags,
                                                  GCancellable          *cancellable,
                                                  GAsyncReadyCallback    callback,
                                                  gpointer               user_data);
@@ -86,13 +96,13 @@ MctAppFilter *mct_manager_get_app_filter_finish (MctManager            *self,
 gboolean      mct_manager_set_app_filter        (MctManager            *self,
                                                  uid_t                  user_id,
                                                  MctAppFilter          *app_filter,
-                                                 MctSetAppFilterFlags   flags,
+                                                 MctManagerSetValueFlags flags,
                                                  GCancellable          *cancellable,
                                                  GError               **error);
 void          mct_manager_set_app_filter_async  (MctManager            *self,
                                                  uid_t                  user_id,
                                                  MctAppFilter          *app_filter,
-                                                 MctSetAppFilterFlags   flags,
+                                                 MctManagerSetValueFlags flags,
                                                  GCancellable          *cancellable,
                                                  GAsyncReadyCallback    callback,
                                                  gpointer               user_data);
