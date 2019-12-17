@@ -48,6 +48,7 @@ libglib_testing_dep = dependency(
 
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('localedir'), meson.project_name()))
 configure_file(
   output: 'config.h',
   configuration: config_h,
@@ -126,7 +127,8 @@ test_env = [
 ]
 
 subdir('accounts-service')
-subdir('malcontent-client')
 subdir('libmalcontent')
+subdir('malcontent-client')
+subdir('malcontent-control')
 subdir('pam')
 subdir('po')
