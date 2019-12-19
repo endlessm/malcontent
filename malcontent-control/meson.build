@@ -38,6 +38,25 @@ if desktop_file_validate.found()
   )
 endif
 
+appdata_file = i18n.merge_file('appdata-file',
+  input: '@0@.appdata.xml.in'.format(application_id),
+  output: '@0@.appdata.xml'.format(application_id),
+  po_dir: join_paths(meson.source_root(), 'po'),
+  install: true,
+  install_dir: join_paths(get_option('datadir'), 'metainfo'),
+)
+
+appstream_util = find_program('appstream-util', required: false)
+if appstream_util.found()
+  test(
+    'validate-appdata', appstream_util,
+    args: [
+      'validate-relax', '--nonet', appdata_file.full_path(),
+    ],
+    suite: ['malcontent-control'],
+  )
+endif
+
 # FIXME: Add icons and tests
 #subdir('icons')
 #subdir('tests')
