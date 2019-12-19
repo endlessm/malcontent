@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2019 Endless Mobile, Inc. -->
+<gresources>
+  <gresource prefix="/org/freedesktop/MalcontentControl/ui">
+    <file preprocess="xml-stripblanks">main.ui</file>
+  </gresource>
+</gresources>

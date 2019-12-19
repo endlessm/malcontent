@@ -1,11 +1,21 @@
 application_id = 'org.freedesktop.MalcontentControl'
 
+if not cc.has_function('atexit')
+  error('atexit() needed for generated GResource files')
+endif
+
+resources = gnome.compile_resources(
+  'resources',
+  'malcontent-control.gresource.xml',
+  source_dir: meson.source_root(),
+)
+
 malcontent_control = executable('malcontent-control',
   [
     'application.c',
     'application.h',
     'main.c',
-  ],
+  ] + resources,
   dependencies: [
     dependency('gio-2.0', version: '>= 2.44'),
     dependency('glib-2.0', version: '>= 2.54.2'),
@@ -52,6 +62,20 @@ if appstream_util.found()
     'validate-appdata', appstream_util,
     args: [
       'validate-relax', '--nonet', appdata_file.full_path(),
+    ],
+    suite: ['malcontent-control'],
+  )
+endif
+
+xmllint = find_program('xmllint', required: false)
+if xmllint.found()
+  gtk_prefix = dependency('gtk+-3.0').get_pkgconfig_variable('prefix')
+  test(
+    'validate-ui', xmllint,
+    args: [
+      '--nonet', '--noblanks', '--noout',
+      '--relaxng', join_paths(gtk_prefix, 'share', 'gtk-3.0', 'gtkbuilder.rng'),
+      files('main.ui'),
     ],
     suite: ['malcontent-control'],
   )

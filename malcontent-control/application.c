@@ -70,11 +70,41 @@ mct_application_constructed (GObject *object)
 }
 
 static void
+mct_application_activate (GApplication *application)
+{
+  GList *windows;  /* (element-type GtkWindow) */
+  GtkWindow *window = NULL;
+
+  windows = gtk_application_get_windows (GTK_APPLICATION (application));
+  if (windows != NULL)
+    window = windows->data;
+
+  if (window == NULL)
+    {
+      g_autoptr(GtkBuilder) builder = NULL;
+
+      builder = gtk_builder_new_from_resource ("/org/freedesktop/MalcontentControl/ui/main.ui");
+
+      gtk_builder_set_translation_domain (builder, "malcontent");
+
+      /* Set up the main window. */
+      window = GTK_WINDOW (gtk_builder_get_object (builder, "main_window"));
+      gtk_window_set_application (window, GTK_APPLICATION (application));
+      gtk_widget_show (GTK_WIDGET (window));
+    }
+
+  /* Bring the window to the front. */
+  gtk_window_present (window);
+}
+
+static void
 mct_application_class_init (MctApplicationClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GApplicationClass *application_class = G_APPLICATION_CLASS (klass);
 
   object_class->constructed = mct_application_constructed;
+  application_class->activate = mct_application_activate;
 }
 
 /**
