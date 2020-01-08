@@ -1,10 +1,10 @@
-/* cc-app-permissions.h
+/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
  *
- * Copyright 2018 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+ * Copyright © 2018, 2019, 2020 Endless Mobile, Inc.
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,29 +13,30 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * Authors:
+ *  - Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+ *  - Philip Withnall <withnall@endlessm.com>
  */
 
 #pragma once
 
 #include <act/act.h>
 #include <gtk/gtk.h>
-#include <shell/cc-panel.h>
+
 
 G_BEGIN_DECLS
 
-#define CC_TYPE_APP_PERMISSIONS (cc_app_permissions_get_type())
+#define MCT_TYPE_USER_CONTROLS (mct_user_controls_get_type())
+G_DECLARE_FINAL_TYPE (MctUserControls, mct_user_controls, MCT, USER_CONTROLS, GtkGrid)
 
-G_DECLARE_FINAL_TYPE (CcAppPermissions, cc_app_permissions, CC, APP_PERMISSIONS, GtkGrid)
+ActUser *mct_user_controls_get_user (MctUserControls *self);
+void     mct_user_controls_set_user (MctUserControls *self,
+                                     ActUser         *user);
 
-ActUser* cc_app_permissions_get_user (CcAppPermissions *self);
-void     cc_app_permissions_set_user (CcAppPermissions *self,
-                                      ActUser          *user);
-
-GPermission *cc_app_permissions_get_permission (CcAppPermissions *self);
-void         cc_app_permissions_set_permission (CcAppPermissions *self,
-                                                GPermission      *permission);
+GPermission *mct_user_controls_get_permission (MctUserControls *self);
+void         mct_user_controls_set_permission (MctUserControls *self,
+                                               GPermission     *permission);
 
 G_END_DECLS

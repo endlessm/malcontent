@@ -3,7 +3,10 @@
 accounts-service/com.endlessm.ParentalControls.policy.in
 libmalcontent/manager.c
 malcontent-control/application.c
+malcontent-control/gs-content-rating.c
 malcontent-control/main.ui
 malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in
 malcontent-control/org.freedesktop.MalcontentControl.desktop.in
+malcontent-control/user-controls.c
+malcontent-control/user-controls.ui
 pam/pam_malcontent.c

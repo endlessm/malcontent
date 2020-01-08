@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2018, 2019, 2020 Endless, Inc. -->
 <interface>
-  <template class="CcAppPermissions" parent="GtkGrid">
+  <requires lib="gtk+" version="3.12"/>
+  <template class="MctUserControls" parent="GtkGrid">
     <property name="visible">True</property>
     <property name="margin-top">18</property>
     <property name="row-spacing">6</property>
@@ -132,7 +134,7 @@
             <property name="visible">True</property>
             <property name="hexpand">True</property>
             <property name="halign">start</property>
-            <signal name="notify::active" handler="on_allow_web_browsers_switch_active_changed_cb" object="CcAppPermissions" swapped="no" />
+            <signal name="notify::active" handler="on_allow_web_browsers_switch_active_changed_cb" object="MctUserControls" swapped="no" />
           </object>
         </child>
 
@@ -185,7 +187,7 @@
             <property name="visible">True</property>
             <property name="hexpand">True</property>
             <property name="halign">start</property>
-            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="CcAppPermissions" swapped="no" />
+            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="MctUserControls" swapped="no" />
           </object>
         </child>
 
@@ -221,7 +223,7 @@
             <property name="visible">True</property>
             <property name="hexpand">True</property>
             <property name="halign">start</property>
-            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="CcAppPermissions" swapped="no" />
+            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="MctUserControls" swapped="no" />
           </object>
         </child>
 
@@ -293,4 +295,3 @@
     </widgets>
   </object>
 </interface>
-

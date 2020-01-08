@@ -1,10 +1,10 @@
-/* cc-app-permissions.c
+/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
  *
- * Copyright 2018, 2019 Endless, Inc.
+ * Copyright © 2018, 2019, 2020 Endless Mobile, Inc.
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,9 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * Authors:
+ *  - Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+ *  - Philip Withnall <withnall@endlessm.com>
  */
 
 #include <libmalcontent/malcontent.h>
@@ -26,15 +28,15 @@
 #include <strings.h>
 
 #include "gs-content-rating.h"
+#include "user-controls.h"
 
-#include "cc-app-permissions.h"
 
 #define WEB_BROWSERS_CONTENT_TYPE "x-scheme-handler/http"
 
 /* The value which we store as an age to indicate that OARS filtering is disabled. */
 static const guint32 oars_disabled_age = (guint32) -1;
 
-struct _CcAppPermissions
+struct _MctUserControls
 {
   GtkGrid     parent_instance;
 
@@ -79,11 +81,11 @@ static gint compare_app_info_cb (gconstpointer a,
 
 static void on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
                                                             GParamSpec       *pspec,
-                                                            CcAppPermissions *self);
+                                                            MctUserControls *self);
 
 static void on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
                                                             GParamSpec       *pspec,
-                                                            CcAppPermissions *self);
+                                                            MctUserControls *self);
 
 static void on_set_age_action_activated (GSimpleAction *action,
                                          GVariant      *param,
@@ -93,7 +95,7 @@ static void on_permission_allowed_cb (GObject    *obj,
                                       GParamSpec *pspec,
                                       gpointer    user_data);
 
-G_DEFINE_TYPE (CcAppPermissions, cc_app_permissions, GTK_TYPE_GRID)
+G_DEFINE_TYPE (MctUserControls, mct_user_controls, GTK_TYPE_GRID)
 
 enum
 {
@@ -165,7 +167,7 @@ app_compare_id_length_cb (gconstpointer a,
 }
 
 static void
-reload_apps (CcAppPermissions *self)
+reload_apps (MctUserControls *self)
 {
   GList *iter, *apps;
   g_autoptr(GHashTable) seen_flatpak_ids = NULL;
@@ -272,7 +274,7 @@ static void
 app_info_changed_cb (GAppInfoMonitor *monitor,
                      gpointer         user_data)
 {
-  CcAppPermissions *self = CC_APP_PERMISSIONS (user_data);
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
   reload_apps (self);
 }
@@ -288,7 +290,7 @@ get_content_rating_system (ActUser *user)
 }
 
 static void
-schedule_update_blacklisted_apps (CcAppPermissions *self)
+schedule_update_blacklisted_apps (MctUserControls *self)
 {
   if (self->blacklist_apps_source_id > 0)
     return;
@@ -299,7 +301,7 @@ schedule_update_blacklisted_apps (CcAppPermissions *self)
 }
 
 static void
-flush_update_blacklisted_apps (CcAppPermissions *self)
+flush_update_blacklisted_apps (MctUserControls *self)
 {
   if (self->blacklist_apps_source_id > 0)
     {
@@ -310,7 +312,7 @@ flush_update_blacklisted_apps (CcAppPermissions *self)
 }
 
 static void
-update_app_filter (CcAppPermissions *self)
+update_app_filter (MctUserControls *self)
 {
   g_autoptr(GError) error = NULL;
 
@@ -335,7 +337,7 @@ update_app_filter (CcAppPermissions *self)
 }
 
 static void
-update_categories_from_language (CcAppPermissions *self)
+update_categories_from_language (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
   const gchar * const * entries;
@@ -372,7 +374,7 @@ update_categories_from_language (CcAppPermissions *self)
 
 /* Returns a human-readable but untranslated string, not suitable
  * to be shown in any UI */
-static const gchar*
+static const gchar *
 oars_value_to_string (MctAppFilterOarsValue oars_value)
 {
   switch (oars_value)
@@ -387,12 +389,13 @@ oars_value_to_string (MctAppFilterOarsValue oars_value)
       return "moderate";
     case MCT_APP_FILTER_OARS_VALUE_INTENSE:
       return "intense";
+    default:
+      return "";
     }
-  return "";
 }
 
 static void
-update_oars_level (CcAppPermissions *self)
+update_oars_level (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
   const gchar *rating_age_category;
@@ -434,7 +437,7 @@ update_oars_level (CcAppPermissions *self)
 }
 
 static void
-update_allow_app_installation (CcAppPermissions *self)
+update_allow_app_installation (MctUserControls *self)
 {
   gboolean allow_system_installation;
   gboolean allow_user_installation;
@@ -490,7 +493,7 @@ update_allow_app_installation (CcAppPermissions *self)
 }
 
 static void
-update_allow_web_browsers (CcAppPermissions *self)
+update_allow_web_browsers (MctUserControls *self)
 {
   gboolean allow_web_browsers;
 
@@ -511,7 +514,7 @@ update_allow_web_browsers (CcAppPermissions *self)
 }
 
 static void
-setup_parental_control_settings (CcAppPermissions *self)
+setup_parental_control_settings (MctUserControls *self)
 {
   gboolean is_authorized;
 
@@ -540,8 +543,8 @@ setup_parental_control_settings (CcAppPermissions *self)
 
 /* Will return %NULL if @flatpak_id is not installed. */
 static gchar *
-get_flatpak_ref_for_app_id (CcAppPermissions *self,
-                            const gchar      *flatpak_id)
+get_flatpak_ref_for_app_id (MctUserControls *self,
+                            const gchar     *flatpak_id)
 {
   g_autoptr(FlatpakInstalledRef) ref = NULL;
   g_autoptr(GError) error = NULL;
@@ -588,7 +591,7 @@ blacklist_apps_cb (gpointer data)
   g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
   g_autoptr(MctAppFilter) new_filter = NULL;
   g_autoptr(GError) error = NULL;
-  CcAppPermissions *self = data;
+  MctUserControls *self = data;
   GDesktopAppInfo *app;
   GHashTableIter iter;
   gboolean allow_web_browsers;
@@ -706,7 +709,7 @@ blacklist_apps_cb (gpointer data)
 static void
 on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
                                                 GParamSpec       *pspec,
-                                                CcAppPermissions *self)
+                                                MctUserControls *self)
 {
   /* See the comment about policy in update_allow_app_installation(). */
   if (s == self->allow_user_installation_switch &&
@@ -729,7 +732,7 @@ on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
 static void
 on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
                                                 GParamSpec       *pspec,
-                                                CcAppPermissions *self)
+                                                MctUserControls *self)
 {
   /* Save the changes. */
   schedule_update_blacklisted_apps (self);
@@ -738,7 +741,7 @@ on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
 static void
 on_switch_active_changed_cb (GtkSwitch        *s,
                              GParamSpec       *pspec,
-                             CcAppPermissions *self)
+                             MctUserControls *self)
 {
   GAppInfo *app;
   gboolean allowed;
@@ -773,14 +776,14 @@ create_row_for_app_cb (gpointer item,
                        gpointer user_data)
 {
   g_autoptr(GIcon) icon = NULL;
-  CcAppPermissions *self;
+  MctUserControls *self;
   GtkWidget *box, *w;
   GAppInfo *app;
   gboolean allowed;
   const gchar *app_name;
   gint size;
 
-  self = CC_APP_PERMISSIONS (user_data);
+  self = MCT_USER_CONTROLS (user_data);
   app = item;
   app_name = g_app_info_get_name (app);
 
@@ -852,13 +855,13 @@ on_set_age_action_activated (GSimpleAction *action,
                              gpointer       user_data)
 {
   GsContentRatingSystem rating_system;
-  CcAppPermissions *self;
+  MctUserControls *self;
   const gchar * const * entries;
   const guint *ages;
   guint age;
   guint i;
 
-  self = CC_APP_PERMISSIONS (user_data);
+  self = MCT_USER_CONTROLS (user_data);
   age = g_variant_get_uint32 (param);
 
   rating_system = get_content_rating_system (self->user);
@@ -893,9 +896,9 @@ on_set_age_action_activated (GSimpleAction *action,
 /* GObject overrides */
 
 static void
-cc_app_permissions_finalize (GObject *object)
+mct_user_controls_finalize (GObject *object)
 {
-  CcAppPermissions *self = (CcAppPermissions *)object;
+  MctUserControls *self = (MctUserControls *)object;
 
   g_assert (self->blacklist_apps_source_id == 0);
 
@@ -919,27 +922,27 @@ cc_app_permissions_finalize (GObject *object)
   g_clear_object (&self->manager);
   g_clear_object (&self->app_info_monitor);
 
-  G_OBJECT_CLASS (cc_app_permissions_parent_class)->finalize (object);
+  G_OBJECT_CLASS (mct_user_controls_parent_class)->finalize (object);
 }
 
 
 static void
-cc_app_permissions_dispose (GObject *object)
+mct_user_controls_dispose (GObject *object)
 {
-  CcAppPermissions *self = (CcAppPermissions *)object;
+  MctUserControls *self = (MctUserControls *)object;
 
   flush_update_blacklisted_apps (self);
 
-  G_OBJECT_CLASS (cc_app_permissions_parent_class)->dispose (object);
+  G_OBJECT_CLASS (mct_user_controls_parent_class)->dispose (object);
 }
 
 static void
-cc_app_permissions_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
-                                 GParamSpec *pspec)
+mct_user_controls_get_property (GObject    *object,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
 {
-  CcAppPermissions *self = CC_APP_PERMISSIONS (object);
+  MctUserControls *self = MCT_USER_CONTROLS (object);
 
   switch (prop_id)
     {
@@ -957,21 +960,21 @@ cc_app_permissions_get_property (GObject    *object,
 }
 
 static void
-cc_app_permissions_set_property (GObject      *object,
-                                 guint         prop_id,
-                                 const GValue *value,
-                                 GParamSpec   *pspec)
+mct_user_controls_set_property (GObject      *object,
+                                guint         prop_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
 {
-  CcAppPermissions *self = CC_APP_PERMISSIONS (object);
+  MctUserControls *self = MCT_USER_CONTROLS (object);
 
   switch (prop_id)
     {
     case PROP_USER:
-      cc_app_permissions_set_user (self, g_value_get_object (value));
+      mct_user_controls_set_user (self, g_value_get_object (value));
       break;
 
     case PROP_PERMISSION:
-      cc_app_permissions_set_permission (self, g_value_get_object (value));
+      mct_user_controls_set_permission (self, g_value_get_object (value));
       break;
 
     default:
@@ -980,15 +983,15 @@ cc_app_permissions_set_property (GObject      *object,
 }
 
 static void
-cc_app_permissions_class_init (CcAppPermissionsClass *klass)
+mct_user_controls_class_init (MctUserControlsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = cc_app_permissions_finalize;
-  object_class->dispose = cc_app_permissions_dispose;
-  object_class->get_property = cc_app_permissions_get_property;
-  object_class->set_property = cc_app_permissions_set_property;
+  object_class->finalize = mct_user_controls_finalize;
+  object_class->dispose = mct_user_controls_dispose;
+  object_class->get_property = mct_user_controls_get_property;
+  object_class->set_property = mct_user_controls_set_property;
 
   properties[PROP_USER] = g_param_spec_object ("user",
                                                "User",
@@ -1008,22 +1011,22 @@ cc_app_permissions_class_init (CcAppPermissionsClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/user-accounts/cc-app-permissions.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentControl/ui/user-controls.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, age_menu);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, allow_system_installation_switch);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, allow_user_installation_switch);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, allow_web_browsers_switch);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, restriction_button);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, restriction_popover);
-  gtk_widget_class_bind_template_child (widget_class, CcAppPermissions, listbox);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, age_menu);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_system_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_user_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_web_browsers_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, listbox);
 
   gtk_widget_class_bind_template_callback (widget_class, on_allow_installation_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_allow_web_browsers_switch_active_changed_cb);
 }
 
 static void
-cc_app_permissions_init (CcAppPermissions *self)
+mct_user_controls_init (MctUserControls *self)
 {
   g_autoptr(GDBusConnection) system_bus = NULL;
   g_autoptr(GError) error = NULL;
@@ -1076,19 +1079,19 @@ cc_app_permissions_init (CcAppPermissions *self)
                           G_BINDING_DEFAULT);
 }
 
-ActUser*
-cc_app_permissions_get_user (CcAppPermissions *self)
+ActUser *
+mct_user_controls_get_user (MctUserControls *self)
 {
-  g_return_val_if_fail (CC_IS_APP_PERMISSIONS (self), NULL);
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
 
   return self->user;
 }
 
 void
-cc_app_permissions_set_user (CcAppPermissions *self,
-                             ActUser          *user)
+mct_user_controls_set_user (MctUserControls *self,
+                            ActUser         *user)
 {
-  g_return_if_fail (CC_IS_APP_PERMISSIONS (self));
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (ACT_IS_USER (user));
 
   /* If we have pending unsaved changes from the previous user, force them to be
@@ -1109,24 +1112,24 @@ on_permission_allowed_cb (GObject    *obj,
                           GParamSpec *pspec,
                           gpointer    user_data)
 {
-  CcAppPermissions *self = CC_APP_PERMISSIONS (user_data);
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
   setup_parental_control_settings (self);
 }
 
 GPermission *  /* (nullable) */
-cc_app_permissions_get_permission (CcAppPermissions *self)
+mct_user_controls_get_permission (MctUserControls *self)
 {
-  g_return_val_if_fail (CC_IS_APP_PERMISSIONS (self), NULL);
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
 
   return self->permission;
 }
 
 void
-cc_app_permissions_set_permission (CcAppPermissions *self,
-                                   GPermission      *permission  /* (nullable) */)
+mct_user_controls_set_permission (MctUserControls *self,
+                                  GPermission     *permission  /* (nullable) */)
 {
-  g_return_if_fail (CC_IS_APP_PERMISSIONS (self));
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (permission == NULL || G_IS_PERMISSION (permission));
 
   if (self->permission == permission)

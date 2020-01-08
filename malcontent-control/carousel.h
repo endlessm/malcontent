@@ -1,6 +1,7 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
+/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
  *
- * Copyright 2016 (c) Red Hat, Inc,
+ * Copyright © 2016 Red Hat, Inc.
+ * Copyright © 2019 Endless Mobile, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,36 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Author: Felipe Borges <felipeborges@gnome.org>
+ * Authors:
+ *  - Felipe Borges <felipeborges@gnome.org>
+ *  - Philip Withnall <withnall@endlessm.com>
  */
 
 #pragma once
 
 #include <gtk/gtk.h>
 
+
 G_BEGIN_DECLS
 
-#define CC_TYPE_CAROUSEL_ITEM (cc_carousel_item_get_type ())
+#define MCT_TYPE_CAROUSEL_ITEM (mct_carousel_item_get_type ())
+G_DECLARE_FINAL_TYPE (MctCarouselItem, mct_carousel_item, MCT, CAROUSEL_ITEM, GtkRadioButton)
 
-G_DECLARE_FINAL_TYPE (CcCarouselItem, cc_carousel_item, CC, CAROUSEL_ITEM, GtkRadioButton)
+#define MCT_TYPE_CAROUSEL (mct_carousel_get_type ())
+G_DECLARE_FINAL_TYPE (MctCarousel, mct_carousel, MCT, CAROUSEL, GtkRevealer)
 
-#define CC_TYPE_CAROUSEL (cc_carousel_get_type ())
+GtkWidget       *mct_carousel_item_new       (void);
 
-G_DECLARE_FINAL_TYPE (CcCarousel, cc_carousel, CC, CAROUSEL, GtkRevealer)
+MctCarousel     *mct_carousel_new            (void);
 
-GtkWidget       *cc_carousel_item_new    (void);
+void             mct_carousel_purge_items    (MctCarousel     *self);
 
-CcCarousel      *cc_carousel_new         (void);
+MctCarouselItem *mct_carousel_find_item      (MctCarousel     *self,
+                                              gconstpointer   data,
+                                              GCompareFunc    func);
 
-void             cc_carousel_purge_items (CcCarousel     *self);
+void             mct_carousel_select_item    (MctCarousel     *self,
+                                              MctCarouselItem *item);
 
-CcCarouselItem  *cc_carousel_find_item   (CcCarousel     *self,
-                                          gconstpointer   data,
-                                          GCompareFunc    func);
-
-void             cc_carousel_select_item (CcCarousel     *self,
-                                          CcCarouselItem *item);
-
-guint            cc_carousel_get_item_count (CcCarousel  *self);
+guint            mct_carousel_get_item_count (MctCarousel  *self);
 
 G_END_DECLS

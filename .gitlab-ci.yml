@@ -5,7 +5,7 @@ before_script:
                    libxml2-devel dbus-daemon
                    glib2-devel dbus-devel gobject-introspection-devel
                    gettext-devel polkit-devel polkit-gnome git
-                   lcov pam-devel gtk3-devel
+                   lcov pam-devel gtk3-devel accountsservice-devel flatpak-devel
   - export LANG=C.UTF-8
 
 stages:
