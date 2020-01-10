@@ -324,7 +324,7 @@ mct_carousel_add (GtkContainer *container,
   last_box_is_full = ((g_list_length (self->children) - 1) % ITEMS_PER_PAGE == 0);
   if (last_box_is_full)
     {
-      gchar *page;
+      g_autofree gchar *page = NULL;
 
       page = g_strdup_printf ("%d", MCT_CAROUSEL_ITEM (widget)->page);
       self->last_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -366,8 +366,24 @@ mct_carousel_new (void)
 }
 
 static void
+mct_carousel_dispose (GObject *object)
+{
+  MctCarousel *self = MCT_CAROUSEL (object);
+
+  g_clear_object (&self->provider);
+  if (self->children != NULL)
+    {
+      g_list_free (self->children);
+      self->children = NULL;
+    }
+
+  G_OBJECT_CLASS (mct_carousel_parent_class)->dispose (object);
+}
+
+static void
 mct_carousel_class_init (MctCarouselClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
@@ -381,6 +397,8 @@ mct_carousel_class_init (MctCarouselClass *klass)
 
   gtk_widget_class_bind_template_callback (wclass, mct_carousel_goto_previous_page);
   gtk_widget_class_bind_template_callback (wclass, mct_carousel_goto_next_page);
+
+  object_class->dispose = mct_carousel_dispose;
 
   container_class->add = mct_carousel_add;
 
