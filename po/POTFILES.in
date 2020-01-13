@@ -1,5 +1,5 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-accounts-service/com.endlessm.ParentalControls.policy
+accounts-service/com.endlessm.ParentalControls.policy.in
 libmalcontent/manager.c
 pam/pam_malcontent.c
