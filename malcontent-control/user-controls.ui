@@ -18,6 +18,9 @@
         <attributes>
           <attribute name="weight" value="bold" />
         </attributes>
+        <accessibility>
+          <relation target="listbox" type="label-for"/>
+        </accessibility>
       </object>
       <packing>
         <property name="top-attach">0</property>
@@ -36,6 +39,9 @@
         <attributes>
           <attribute name="scale" value="0.83333" />
         </attributes>
+        <accessibility>
+          <relation target="listbox" type="description-for"/>
+        </accessibility>
         <style>
           <class name="dim-label" />
         </style>
@@ -81,6 +87,9 @@
         <attributes>
           <attribute name="weight" value="bold" />
         </attributes>
+        <accessibility>
+          <relation target="allow_web_browsers_switch" type="label-for"/>
+        </accessibility>
       </object>
       <packing>
         <property name="top-attach">3</property>
@@ -100,6 +109,9 @@
         <attributes>
           <attribute name="scale" value="0.83333" />
         </attributes>
+        <accessibility>
+          <relation target="allow_web_browsers_switch" type="description-for"/>
+        </accessibility>
         <style>
           <class name="dim-label" />
         </style>
@@ -126,6 +138,9 @@
             <style>
               <class name="dim-label" />
             </style>
+            <accessibility>
+              <relation target="allow_web_browsers_switch" type="label-for"/>
+            </accessibility>
           </object>
         </child>
 
@@ -179,6 +194,9 @@
             <style>
               <class name="dim-label" />
             </style>
+            <accessibility>
+              <relation target="allow_user_installation_switch" type="label-for"/>
+            </accessibility>
           </object>
         </child>
 
@@ -215,6 +233,9 @@
             <style>
               <class name="dim-label" />
             </style>
+            <accessibility>
+              <relation target="allow_system_installation_switch" type="label-for"/>
+            </accessibility>
           </object>
         </child>
 
@@ -251,6 +272,10 @@
             <style>
               <class name="dim-label" />
             </style>
+            <accessibility>
+              <relation target="restriction_button" type="label-for"/>
+              <relation target="restriction_button" type="flows-to"/>
+            </accessibility>
           </object>
         </child>
 
@@ -274,7 +299,12 @@
 
   </template>
 
-  <object class="GtkPopoverMenu" id="restriction_popover" />
+  <object class="GtkPopoverMenu" id="restriction_popover">
+    <accessibility>
+      <relation target="restriction_button" type="popup-for"/>
+    </accessibility>
+  </object>
+
   <menu id="age_menu" />
 
   <object class="GtkSizeGroup">

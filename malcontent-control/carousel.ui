@@ -43,6 +43,11 @@
                         <property name="can_focus">False</property>
                         <property name="icon-size">4</property>
                         <property name="icon_name">go-previous-symbolic</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject">
+                            <property name="accessible-name" translatable="yes">Previous Page</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <signal name="clicked" handler="mct_carousel_goto_previous_page" object="MctCarousel" swapped="no"/>
@@ -64,6 +69,11 @@
                         <property name="can_focus">False</property>
                         <property name="icon-size">4</property>
                         <property name="icon_name">go-next-symbolic</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject">
+                            <property name="accessible-name" translatable="yes">Next Page</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <signal name="clicked" handler="mct_carousel_goto_next_page" object="MctCarousel" swapped="no"/>
