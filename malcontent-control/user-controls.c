@@ -329,9 +329,26 @@ update_app_filter (MctUserControls *self)
 
   if (error)
     {
-      g_warning ("Error retrieving app filter for user '%s': %s",
-                  act_user_get_user_name (self->user),
-                  error->message);
+      /* It's expected that a non-admin user can't read another user's parental
+       * controls info unless the panel has been unlocked; ignore such an
+       * error.
+       */
+      if (act_user_get_uid (self->user) != getuid () &&
+          self->permission != NULL &&
+          !g_permission_get_allowed (self->permission) &&
+          g_error_matches (error, MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED))
+        {
+          g_clear_error (&error);
+          g_debug ("Not enough permissions to retrieve app filter for user '%s'",
+                   act_user_get_user_name (self->user));
+        }
+      else
+        {
+          g_warning ("Error retrieving app filter for user '%s': %s",
+                     act_user_get_user_name (self->user),
+                     error->message);
+        }
+
       return;
     }
 
