@@ -305,9 +305,11 @@ flush_update_blacklisted_apps (MctUserControls *self)
 {
   if (self->blacklist_apps_source_id > 0)
     {
-      blacklist_apps_cb (self);
+      /* Remove the timer and forcefully call the timer callback. */
       g_source_remove (self->blacklist_apps_source_id);
       self->blacklist_apps_source_id = 0;
+
+      blacklist_apps_cb (self);
     }
 }
 
