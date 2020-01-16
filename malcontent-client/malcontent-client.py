@@ -409,7 +409,7 @@ def main():
     subparsers = parser.add_subparsers(metavar='command',
                                        help='command to run (default: '
                                             '‘get-app-filter’)')
-    parser.set_defaults(function=command_get_app_filter)
+    parser.set_defaults(function=command_get_app_filter, user='')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='output no informational messages')
     parser.set_defaults(quiet=False)
