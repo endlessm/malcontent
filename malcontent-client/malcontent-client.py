@@ -279,9 +279,10 @@ def command_oars_section(user, section, quiet=False, interactive=True):
         section, user_id, __oars_value_to_string(value)))
 
 
-def command_set(user, allow_user_installation=True,
-                allow_system_installation=False, app_filter_args=None,
-                quiet=False, interactive=True):
+def command_set_app_filter(user, allow_user_installation=True,
+                           allow_system_installation=False,
+                           app_filter_args=None, quiet=False,
+                           interactive=True):
     """Set the app filter for the given user."""
     user_id = __lookup_user_id_or_error(user)
     builder = Malcontent.AppFilterBuilder.new()
@@ -399,40 +400,43 @@ def main():
                                           'user)')
     parser_oars_section.add_argument('section', help='OARS section to get')
 
-    # ‘set’ command
-    parser_set = subparsers.add_parser('set', parents=[common_parser],
-                                       help='set current parental controls '
-                                            'settings')
-    parser_set.set_defaults(function=command_set)
-    parser_set.add_argument('user', default='', nargs='?',
-                            help='user ID or username to set the app filter '
-                                 'for (default: current user)')
-    parser_set.add_argument('--allow-user-installation',
-                            dest='allow_user_installation',
-                            action='store_true',
-                            help='allow installation to the user flatpak '
-                                 'repo in general')
-    parser_set.add_argument('--disallow-user-installation',
-                            dest='allow_user_installation',
-                            action='store_false',
-                            help='unconditionally disallow installation to '
-                                 'the user flatpak repo')
-    parser_set.add_argument('--allow-system-installation',
-                            dest='allow_system_installation',
-                            action='store_true',
-                            help='allow installation to the system flatpak '
-                                 'repo in general')
-    parser_set.add_argument('--disallow-system-installation',
-                            dest='allow_system_installation',
-                            action='store_false',
-                            help='unconditionally disallow installation to '
-                                 'the system flatpak repo')
-    parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths, content types or flatpak refs to '
-                                 'blacklist and OARS section=value '
-                                 'pairs to store')
-    parser_set.set_defaults(allow_user_installation=True,
-                            allow_system_installation=False)
+    # ‘set-app-filter’ command
+    parser_set_app_filter = \
+        subparsers.add_parser('set-app-filter', parents=[common_parser],
+                              help='set current app filter settings')
+    parser_set_app_filter.set_defaults(function=command_set_app_filter)
+    parser_set_app_filter.add_argument('user', default='', nargs='?',
+                                       help='user ID or username to set the '
+                                            'app filter for (default: current '
+                                            'user)')
+    parser_set_app_filter.add_argument('--allow-user-installation',
+                                       dest='allow_user_installation',
+                                       action='store_true',
+                                       help='allow installation to the user '
+                                            'flatpak repo in general')
+    parser_set_app_filter.add_argument('--disallow-user-installation',
+                                       dest='allow_user_installation',
+                                       action='store_false',
+                                       help='unconditionally disallow '
+                                            'installation to the user flatpak '
+                                            'repo')
+    parser_set_app_filter.add_argument('--allow-system-installation',
+                                       dest='allow_system_installation',
+                                       action='store_true',
+                                       help='allow installation to the system '
+                                            'flatpak repo in general')
+    parser_set_app_filter.add_argument('--disallow-system-installation',
+                                       dest='allow_system_installation',
+                                       action='store_false',
+                                       help='unconditionally disallow '
+                                            'installation to the system '
+                                            'flatpak repo')
+    parser_set_app_filter.add_argument('app_filter_args', nargs='*',
+                                       help='paths, content types or flatpak '
+                                            'refs to blacklist and OARS '
+                                            'section=value pairs to store')
+    parser_set_app_filter.set_defaults(allow_user_installation=True,
+                                       allow_system_installation=False)
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()
