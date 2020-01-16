@@ -88,26 +88,31 @@ def __set_app_filter_or_error(user_id, app_filter, interactive):
         raise SystemExit(EXIT_PERMISSION_DENIED)
 
 
-def __lookup_user_id(user):
-    """Convert a command-line specified username or ID into a user ID. If
-    `user` is empty, use the current user ID.
+def __lookup_user_id(user_id_or_username):
+    """Convert a command-line specified username or ID into a
+    (user ID, username) tuple, looking up the component which isn’t specified.
+    If `user_id_or_username` is empty, use the current user ID.
 
     Raise KeyError if lookup fails."""
-    if user == '':
-        return os.getuid()
-    elif user.isdigit():
-        return int(user)
+    if user_id_or_username == '':
+        user_id = os.getuid()
+        return (user_id, pwd.getpwuid(user_id).pw_name)
+    elif user_id_or_username.isdigit():
+        user_id = int(user_id_or_username)
+        return (user_id, pwd.getpwuid(user_id).pw_name)
     else:
-        return pwd.getpwnam(user).pw_uid
+        username = user_id_or_username
+        return (pwd.getpwnam(username).pw_uid, username)
 
 
-def __lookup_user_id_or_error(user):
+def __lookup_user_id_or_error(user_id_or_username):
     """Wrapper around __lookup_user_id() which prints an error and raises
     SystemExit, rather than an internal exception."""
     try:
-        return __lookup_user_id(user)
+        return __lookup_user_id(user_id_or_username)
     except KeyError:
-        print('Error getting ID for username {}'.format(user), file=sys.stderr)
+        print('Error getting ID for username {}'.format(user_id_or_username),
+              file=sys.stderr)
         raise SystemExit(EXIT_INVALID_OPTION)
 
 
@@ -140,10 +145,10 @@ def __oars_value_from_string(value_str):
 
 def command_get_app_filter(user, quiet=False, interactive=True):
     """Get the app filter for the given user."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    print('App filter for user {} retrieved:'.format(user_id))
+    print('App filter for user {} retrieved:'.format(username))
 
     sections = app_filter.get_oars_sections()
     for section in sections:
@@ -166,9 +171,9 @@ def command_get_app_filter(user, quiet=False, interactive=True):
 def command_monitor(user, quiet=False, interactive=True):
     """Monitor app filter changes for the given user."""
     if user == '':
-        filter_user_id = 0
+        (filter_user_id, filter_username) = (0, '')
     else:
-        filter_user_id = __lookup_user_id_or_error(user)
+        (filter_user_id, filter_username) = __lookup_user_id_or_error(user)
     apply_filter = (user != '')
 
     def _on_app_filter_changed(manager, changed_user_id):
@@ -181,7 +186,7 @@ def command_monitor(user, quiet=False, interactive=True):
 
     if apply_filter:
         print('Monitoring app filter changes for '
-              'user ID {}'.format(filter_user_id))
+              'user {}'.format(filter_username))
     else:
         print('Monitoring app filter changes for all users')
 
@@ -216,7 +221,7 @@ def is_valid_content_type(arg):
 def command_check_app_filter(user, arg, quiet=False, interactive=True):
     """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
     is_maybe_flatpak_id = arg.startswith('app/') and arg.count('/') < 3
@@ -259,24 +264,24 @@ def command_check_app_filter(user, arg, quiet=False, interactive=True):
     if is_allowed:
         if not quiet:
             print('{} {} is allowed by app filter for user {}'.format(
-                noun, arg, user_id))
+                noun, arg, username))
         return
     else:
         if not quiet:
             print('{} {} is not allowed by app filter for user {}'.format(
-                noun, arg, user_id))
+                noun, arg, username))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
 def command_oars_section(user, section, quiet=False, interactive=True):
     """Get the value of the given OARS section for the given user, according
     to their OARS filter."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
     value = app_filter.get_oars_value(section)
     print('OARS section ‘{}’ for user {} has value ‘{}’'.format(
-        section, user_id, __oars_value_to_string(value)))
+        section, username, __oars_value_to_string(value)))
 
 
 def command_set_app_filter(user, allow_user_installation=True,
@@ -284,7 +289,7 @@ def command_set_app_filter(user, allow_user_installation=True,
                            app_filter_args=None, quiet=False,
                            interactive=True):
     """Set the app filter for the given user."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     builder = Malcontent.AppFilterBuilder.new()
     builder.set_allow_user_installation(allow_user_installation)
     builder.set_allow_system_installation(allow_system_installation)
@@ -328,7 +333,7 @@ def command_set_app_filter(user, allow_user_installation=True,
     __set_app_filter_or_error(user_id, app_filter, interactive)
 
     if not quiet:
-        print('App filter for user {} set'.format(user_id))
+        print('App filter for user {} set'.format(username))
 
 
 def main():
