@@ -30,6 +30,25 @@ EXIT_SUCCESS = 0
 EXIT_INVALID_OPTION = 1
 EXIT_PERMISSION_DENIED = 2
 EXIT_PATH_NOT_ALLOWED = 3
+EXIT_DISABLED = 4
+EXIT_FAILED = 5
+
+
+def __manager_error_to_exit_code(error):
+    if error.matches(Malcontent.manager_error_quark(),
+                     Malcontent.ManagerError.INVALID_USER):
+        return EXIT_INVALID_OPTION
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.PERMISSION_DENIED):
+        return EXIT_PERMISSION_DENIED
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.INVALID_DATA):
+        return EXIT_INVALID_OPTION
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.DISABLED):
+        return EXIT_DISABLED
+
+    return EXIT_FAILED
 
 
 def __get_app_filter(user_id, interactive):
@@ -57,7 +76,7 @@ def __get_app_filter_or_error(user_id, interactive):
     except GLib.Error as e:
         print('Error getting app filter for user {}: {}'.format(
             user_id, e.message), file=sys.stderr)
-        raise SystemExit(EXIT_PERMISSION_DENIED)
+        raise SystemExit(__manager_error_to_exit_code(e))
 
 
 def __set_app_filter(user_id, app_filter, interactive):
@@ -85,7 +104,7 @@ def __set_app_filter_or_error(user_id, app_filter, interactive):
     except GLib.Error as e:
         print('Error setting app filter for user {}: {}'.format(
             user_id, e.message), file=sys.stderr)
-        raise SystemExit(EXIT_PERMISSION_DENIED)
+        raise SystemExit(__manager_error_to_exit_code(e))
 
 
 def __lookup_user_id(user_id_or_username):
