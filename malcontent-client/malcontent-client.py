@@ -213,7 +213,7 @@ def is_valid_content_type(arg):
             parts[0] != '' and parts[1] != '')
 
 
-def command_check(user, arg, quiet=False, interactive=True):
+def command_check_app_filter(user, arg, quiet=False, interactive=True):
     """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
     user_id = __lookup_user_id_or_error(user)
@@ -375,18 +375,19 @@ def main():
                                 help='user ID or username to monitor the app '
                                      'filter for (default: all users)')
 
-    # ‘check’ command
-    parser_check = subparsers.add_parser('check', parents=[common_parser],
-                                         help='check whether a path, content '
-                                              'type or flatpak ref is '
-                                              'allowed by app filter')
-    parser_check.set_defaults(function=command_check)
-    parser_check.add_argument('user', default='', nargs='?',
-                              help='user ID or username to get the app filter '
-                                   'for (default: current user)')
-    parser_check.add_argument('arg',
-                              help='path to a program, content type or '
-                                   'flatpak ref to check')
+    # ‘check-app-filter’ command
+    parser_check_app_filter = \
+        subparsers.add_parser('check-app-filter', parents=[common_parser],
+                              help='check whether a path, content type or '
+                                   'flatpak ref is allowed by app filter')
+    parser_check_app_filter.set_defaults(function=command_check_app_filter)
+    parser_check_app_filter.add_argument('user', default='', nargs='?',
+                                         help='user ID or username to get the '
+                                              'app filter for (default: '
+                                              'current user)')
+    parser_check_app_filter.add_argument('arg',
+                                         help='path to a program, content '
+                                              'type or flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
