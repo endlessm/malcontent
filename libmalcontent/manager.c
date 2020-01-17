@@ -457,10 +457,10 @@ mct_manager_get_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = NULL;
+      g_autoptr(GError) manager_error = NULL;
 
-      app_filter_error = bus_error_to_app_filter_error (local_error, user_id);
-      g_propagate_error (error, g_steal_pointer (&app_filter_error));
+      manager_error = bus_error_to_manager_error (local_error, user_id);
+      g_propagate_error (error, g_steal_pointer (&manager_error));
       return NULL;
     }
 
