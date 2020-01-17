@@ -12,6 +12,7 @@ Build-Depends:
  libdbus-1-dev,
  libgirepository1.0-dev (>= 1.30.0),
  libglib2.0-dev (>= 2.54.2),
+ libpam0g-dev,
  meson,
  policykit-1,
  python3-gi,
@@ -27,6 +28,18 @@ Conflicts: eos-parental-controls-data
 Replaces: eos-parental-controls-data
 Description: Parental Controls - architecture independent files
  This package contains the architecture-independent data files.
+
+Package: malcontent-pam
+Section: misc
+Architecture: any
+Multi-arch: same
+Depends:
+ malcontent-data (= ${source:Version}),
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Parental Controls PAM Module
+ This package contains a PAM module which prevents logins for users who have
+ exceeded their allowed computer time.
 
 Package: malcontent-tools
 Section: misc
