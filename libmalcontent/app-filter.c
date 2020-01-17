@@ -33,7 +33,12 @@
 #include "libmalcontent/app-filter-private.h"
 
 
-G_DEFINE_QUARK (MctAppFilterError, mct_app_filter_error)
+/* FIXME: Eventually deprecate these compatibility fallbacks. */
+GQuark
+mct_app_filter_error_quark (void)
+{
+  return mct_manager_error_quark ();
+}
 
 /* struct _MctAppFilter is defined in app-filter-private.h */
 

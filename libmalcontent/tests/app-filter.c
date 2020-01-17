@@ -625,7 +625,7 @@ test_app_filter_bus_get (BusFixture    *fixture,
 
       mct_manager_get_app_filter_async (fixture->manager,
                                         fixture->valid_uid,
-                                        MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                        MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                         async_result_cb, &result);
 
       while (result == NULL)
@@ -636,7 +636,7 @@ test_app_filter_bus_get (BusFixture    *fixture,
     {
       app_filter = mct_manager_get_app_filter (fixture->manager,
                                                fixture->valid_uid,
-                                               MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                               MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                                &local_error);
     }
 
@@ -682,7 +682,7 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
 
   app_filter = mct_manager_get_app_filter (fixture->manager,
                                            fixture->valid_uid,
-                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                            &local_error);
 
   g_assert_no_error (local_error);
@@ -738,7 +738,7 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
 
   app_filter = mct_manager_get_app_filter (fixture->manager,
                                            fixture->valid_uid,
-                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                            &local_error);
 
   g_assert_no_error (local_error);
@@ -787,7 +787,7 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
 
   app_filter = mct_manager_get_app_filter (fixture->manager,
                                            fixture->valid_uid,
-                                           MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                           MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                            &local_error);
 
   g_assert_no_error (local_error);
@@ -863,7 +863,7 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
 
   mct_manager_get_app_filter_async (fixture->manager,
                                     fixture->missing_uid,
-                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
@@ -887,7 +887,7 @@ test_app_filter_bus_get_error_invalid_user (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER);
   g_assert_null (app_filter);
 }
 
@@ -909,7 +909,7 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
 
   mct_manager_get_app_filter_async (fixture->manager,
                                     fixture->valid_uid,
-                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
@@ -944,7 +944,7 @@ test_app_filter_bus_get_error_permission_denied (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
@@ -967,7 +967,7 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
 
   mct_manager_get_app_filter_async (fixture->manager,
                                     fixture->valid_uid,
-                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
@@ -1018,7 +1018,7 @@ test_app_filter_bus_get_error_permission_denied_missing (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_null (app_filter);
 }
 
@@ -1037,7 +1037,7 @@ test_app_filter_bus_get_error_unknown (BusFixture    *fixture,
 
   mct_manager_get_app_filter_async (fixture->manager,
                                     fixture->valid_uid,
-                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call and return a bogus error. */
@@ -1085,7 +1085,7 @@ test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
 
   mct_manager_get_app_filter_async (fixture->manager,
                                     fixture->valid_uid,
-                                    MCT_GET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_GET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call. */
@@ -1121,7 +1121,7 @@ test_app_filter_bus_get_error_disabled (BusFixture    *fixture,
                                                   &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_DISABLED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_DISABLED);
   g_assert_null (app_filter);
 }
 
@@ -1278,7 +1278,7 @@ test_app_filter_bus_set (BusFixture    *fixture,
 
       mct_manager_set_app_filter_async (fixture->manager,
                                         fixture->valid_uid, app_filter,
-                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                         async_result_cb, &result);
 
       while (result == NULL)
@@ -1290,7 +1290,7 @@ test_app_filter_bus_set (BusFixture    *fixture,
     {
       success = mct_manager_set_app_filter (fixture->manager,
                                             fixture->valid_uid, app_filter,
-                                            MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                            MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                             &local_error);
     }
 
@@ -1319,7 +1319,7 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
 
   mct_manager_set_app_filter_async (fixture->manager,
                                     fixture->missing_uid, app_filter,
-                                    MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                    MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                     async_result_cb, &result);
 
   /* Handle the FindUserById() call and claim the user doesn’t exist. */
@@ -1343,7 +1343,7 @@ test_app_filter_bus_set_error_invalid_user (BusFixture    *fixture,
                                                &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER);
   g_assert_false (success);
 }
 
@@ -1376,11 +1376,11 @@ test_app_filter_bus_set_error_permission_denied (BusFixture    *fixture,
 
   success = mct_manager_set_app_filter (fixture->manager,
                                         fixture->valid_uid, app_filter,
-                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                         &local_error);
 
   g_assert_error (local_error,
-                  MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED);
+                  MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED);
   g_assert_false (success);
 }
 
@@ -1414,7 +1414,7 @@ test_app_filter_bus_set_error_unknown (BusFixture    *fixture,
 
   success = mct_manager_set_app_filter (fixture->manager,
                                         fixture->valid_uid, app_filter,
-                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                         &local_error);
 
   g_assert_error (local_error, G_IO_ERROR, G_IO_ERROR_DBUS_ERROR);
@@ -1457,7 +1457,7 @@ test_app_filter_bus_set_error_invalid_property (BusFixture    *fixture,
 
   success = mct_manager_set_app_filter (fixture->manager,
                                         fixture->valid_uid, app_filter,
-                                        MCT_SET_APP_FILTER_FLAGS_NONE, NULL,
+                                        MCT_MANAGER_SET_VALUE_FLAGS_NONE, NULL,
                                         &local_error);
 
   g_assert_error (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS);
