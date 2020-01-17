@@ -13,17 +13,24 @@ gnome = import('gnome')
 i18n = import('i18n')
 pkgconfig = import('pkgconfig')
 
-meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlink.sh')
+meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlink.py')
 po_dir = join_paths(meson.source_root(), 'po')
 
 prefix = get_option('prefix')
 bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
+libdir = join_paths(prefix, get_option('libdir'))
 libexecdir = join_paths(prefix, get_option('libexecdir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
 # See https://gitlab.freedesktop.org/accountsservice/accountsservice/merge_requests/16
 accountsserviceinterfacesdir = join_paths(datadir, 'accountsservice', 'interfaces')
+
+# FIXME: pam.pc doesn’t exist
+pamlibdir = get_option('pamlibdir')
+if pamlibdir == ''
+  pamlibdir = join_paths(prefix, libdir.split('/')[-1], 'security')
+endif
 
 dbus = dependency('dbus-1')
 dbusinterfacesdir = dbus.get_pkgconfig_variable('interfaces_dir',
@@ -121,3 +128,4 @@ test_env = [
 subdir('accounts-service')
 subdir('malcontent-client')
 subdir('libmalcontent')
+subdir('pam')

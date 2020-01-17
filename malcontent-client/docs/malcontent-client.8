@@ -10,9 +10,9 @@ malcontent\-client — Parental Controls Access Utility
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .\"
-\fBmalcontent\-client get [\-q] [\-n] [\fPUSER\fB]
+\fBmalcontent\-client get\-app\-filter [\-q] [\-n] [\fPUSER\fB]
 .PP
-\fBmalcontent\-client check [\-q] [\-n] [\fPUSER\fB] \fPARG\fB
+\fBmalcontent\-client check\-app\-filter [\-q] [\-n] [\fPUSER\fB] \fPARG\fB
 .\"
 .SH DESCRIPTION
 .IX Header "DESCRIPTION"
@@ -25,10 +25,13 @@ controls.
 It communicates with accounts-service, which stores parental controls data.
 .PP
 Its first argument is a command to run. Currently, the only supported commands
-are \fBget\fP and \fBcheck\fP.
+are \fBget\-app\-filter\fP and \fBcheck\-app\-filter\fP.
+.PP
+The command line API and output format are unstable and likely to change in
+future versions of \fBmalcontent\-client\fP.
 .\"
-.SH \fBget\fP OPTIONS
-.IX Header "get OPTIONS"
+.SH \fBget\-app\-filter\fP OPTIONS
+.IX Header "get\-app\-filter OPTIONS"
 .\"
 .IP "\fBUSER\fP"
 Username or ID of the user to get the app filter for. If not specified, the
@@ -43,8 +46,8 @@ Do not allow interactive authorization with polkit. If this is needed to
 complete the operation, the operation will fail. (Default: Allow interactive
 authorization.)
 .\"
-.SH \fBcheck\fP OPTIONS
-.IX Header "check OPTIONS"
+.SH \fBcheck\-app\-filter\fP OPTIONS
+.IX Header "check\-app\-filter OPTIONS"
 .\"
 .IP "\fBUSER\fP"
 Username or ID of the user to get the app filter for. If not specified, the
@@ -85,8 +88,8 @@ encounters problems.
 .IP "0" 4
 .IX Item "0"
 No problems occurred. The utility ran and successfully queried the app filter.
-If running the \fBcheck\fP command, the given path, content type or flatpak ref
-was allowed for the given user.
+If running the \fBcheck\-app\-filter\fP command, the given path, content type or
+flatpak ref was allowed for the given user.
 .\"
 .IP "1" 4
 .IX Item "1"
@@ -99,8 +102,17 @@ The current user was not authorized to query the app filter for the given user.
 .\"
 .IP "3" 4
 .IX Item "3"
-If running the \fBcheck\fP command, the given path, content type or flatpak ref
-was \fInot\fP allowed for the given user.
+If running the \fBcheck\-app\-filter\fP command, the given path, content type or
+flatpak ref was \fInot\fP allowed for the given user.
+.\"
+.IP "4" 4
+.IX Item "4"
+Malcontent is disabled at the system level, and hence parental controls are
+not enabled or enforced.
+.\"
+.IP "5" 4
+.IX Item "5"
+An operation failed and no more specific error information is available.
 .\"
 .SH BUGS
 .IX Header "BUGS"
