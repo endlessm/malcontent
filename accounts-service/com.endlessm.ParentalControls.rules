@@ -23,7 +23,9 @@ polkit.addRule(function(action, subject) {
     /* Allow administrators to read parental controls (for any account) without
      * needing an additional polkit authorisation dialogue. */
     if ((action.id == "com.endlessm.ParentalControls.AppFilter.ReadOwn" ||
-         action.id == "com.endlessm.ParentalControls.AppFilter.ReadAny") &&
+         action.id == "com.endlessm.ParentalControls.AppFilter.ReadAny" ||
+         action.id == "com.endlessm.ParentalControls.SessionLimits.ReadOwn" ||
+         action.id == "com.endlessm.ParentalControls.SessionLimits.ReadAny") &&
         subject.active && subject.local &&
         subject.isInGroup("sudo")) {
             return polkit.Result.YES;

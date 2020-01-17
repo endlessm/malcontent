@@ -1,5 +1,4 @@
-/* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*-
- *
+/*
  * Copyright © 2019 Endless Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,8 +19,8 @@
  *  - Philip Withnall <withnall@endlessm.com>
  */
 
-#pragma once
-
-#include <libmalcontent/app-filter.h>
-#include <libmalcontent/manager.h>
-#include <libmalcontent/session-limits.h>
+{
+global:
+  pam_sm_acct_mgmt;
+local: *;
+};

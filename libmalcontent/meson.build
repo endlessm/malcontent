@@ -3,14 +3,17 @@ libmalcontent_api_name = 'malcontent-' + libmalcontent_api_version
 libmalcontent_sources = [
   'app-filter.c',
   'manager.c',
+  'session-limits.c',
 ]
 libmalcontent_headers = [
   'app-filter.h',
   'malcontent.h',
   'manager.h',
+  'session-limits.h',
 ]
 libmalcontent_private_headers = [
   'app-filter-private.h',
+  'session-limits-private.h',
 ]
 
 libmalcontent_public_deps = [

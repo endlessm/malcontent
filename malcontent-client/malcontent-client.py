@@ -17,6 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 import argparse
+import datetime
 import os
 import pwd
 import sys
@@ -30,6 +31,25 @@ EXIT_SUCCESS = 0
 EXIT_INVALID_OPTION = 1
 EXIT_PERMISSION_DENIED = 2
 EXIT_PATH_NOT_ALLOWED = 3
+EXIT_DISABLED = 4
+EXIT_FAILED = 5
+
+
+def __manager_error_to_exit_code(error):
+    if error.matches(Malcontent.manager_error_quark(),
+                     Malcontent.ManagerError.INVALID_USER):
+        return EXIT_INVALID_OPTION
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.PERMISSION_DENIED):
+        return EXIT_PERMISSION_DENIED
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.INVALID_DATA):
+        return EXIT_INVALID_OPTION
+    elif error.matches(Malcontent.manager_error_quark(),
+                       Malcontent.ManagerError.DISABLED):
+        return EXIT_DISABLED
+
+    return EXIT_FAILED
 
 
 def __get_app_filter(user_id, interactive):
@@ -38,9 +58,9 @@ def __get_app_filter(user_id, interactive):
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
     if interactive:
-        flags = Malcontent.GetAppFilterFlags.INTERACTIVE
+        flags = Malcontent.ManagerGetValueFlags.INTERACTIVE
     else:
-        flags = Malcontent.GetAppFilterFlags.NONE
+        flags = Malcontent.ManagerGetValueFlags.NONE
 
     connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
     manager = Malcontent.Manager.new(connection)
@@ -57,7 +77,35 @@ def __get_app_filter_or_error(user_id, interactive):
     except GLib.Error as e:
         print('Error getting app filter for user {}: {}'.format(
             user_id, e.message), file=sys.stderr)
-        raise SystemExit(EXIT_PERMISSION_DENIED)
+        raise SystemExit(__manager_error_to_exit_code(e))
+
+
+def __get_session_limits(user_id, interactive):
+    """Get the session limits for `user_id` off the bus.
+
+    If `interactive` is `True`, interactive polkit authorisation dialogues will
+    be allowed. An exception will be raised on failure."""
+    if interactive:
+        flags = Malcontent.ManagerGetValueFlags.INTERACTIVE
+    else:
+        flags = Malcontent.ManagerGetValueFlags.NONE
+
+    connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+    manager = Malcontent.Manager.new(connection)
+    return manager.get_session_limits(
+        user_id=user_id,
+        flags=flags, cancellable=None)
+
+
+def __get_session_limits_or_error(user_id, interactive):
+    """Wrapper around __get_session_limits() which prints an error and raises
+    SystemExit, rather than an internal exception."""
+    try:
+        return __get_session_limits(user_id, interactive)
+    except GLib.Error as e:
+        print('Error getting session limits for user {}: {}'.format(
+            user_id, e.message), file=sys.stderr)
+        raise SystemExit(__manager_error_to_exit_code(e))
 
 
 def __set_app_filter(user_id, app_filter, interactive):
@@ -66,9 +114,9 @@ def __set_app_filter(user_id, app_filter, interactive):
     If `interactive` is `True`, interactive polkit authorisation dialogues will
     be allowed. An exception will be raised on failure."""
     if interactive:
-        flags = Malcontent.GetAppFilterFlags.INTERACTIVE
+        flags = Malcontent.ManagerSetValueFlags.INTERACTIVE
     else:
-        flags = Malcontent.GetAppFilterFlags.NONE
+        flags = Malcontent.ManagerSetValueFlags.NONE
 
     connection = Gio.bus_get_sync(Gio.BusType.SYSTEM)
     manager = Malcontent.Manager.new(connection)
@@ -85,29 +133,34 @@ def __set_app_filter_or_error(user_id, app_filter, interactive):
     except GLib.Error as e:
         print('Error setting app filter for user {}: {}'.format(
             user_id, e.message), file=sys.stderr)
-        raise SystemExit(EXIT_PERMISSION_DENIED)
+        raise SystemExit(__manager_error_to_exit_code(e))
 
 
-def __lookup_user_id(user):
-    """Convert a command-line specified username or ID into a user ID. If
-    `user` is empty, use the current user ID.
+def __lookup_user_id(user_id_or_username):
+    """Convert a command-line specified username or ID into a
+    (user ID, username) tuple, looking up the component which isn’t specified.
+    If `user_id_or_username` is empty, use the current user ID.
 
     Raise KeyError if lookup fails."""
-    if user == '':
-        return os.getuid()
-    elif user.isdigit():
-        return int(user)
+    if user_id_or_username == '':
+        user_id = os.getuid()
+        return (user_id, pwd.getpwuid(user_id).pw_name)
+    elif user_id_or_username.isdigit():
+        user_id = int(user_id_or_username)
+        return (user_id, pwd.getpwuid(user_id).pw_name)
     else:
-        return pwd.getpwnam(user).pw_uid
+        username = user_id_or_username
+        return (pwd.getpwnam(username).pw_uid, username)
 
 
-def __lookup_user_id_or_error(user):
+def __lookup_user_id_or_error(user_id_or_username):
     """Wrapper around __lookup_user_id() which prints an error and raises
     SystemExit, rather than an internal exception."""
     try:
-        return __lookup_user_id(user)
+        return __lookup_user_id(user_id_or_username)
     except KeyError:
-        print('Error getting ID for username {}'.format(user), file=sys.stderr)
+        print('Error getting ID for username {}'.format(user_id_or_username),
+              file=sys.stderr)
         raise SystemExit(EXIT_INVALID_OPTION)
 
 
@@ -138,12 +191,12 @@ def __oars_value_from_string(value_str):
     raise KeyError('Unknown OARS value ‘{}’'.format(value_str))
 
 
-def command_get(user, quiet=False, interactive=True):
+def command_get_app_filter(user, quiet=False, interactive=True):
     """Get the app filter for the given user."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
-    print('App filter for user {} retrieved:'.format(user_id))
+    print('App filter for user {} retrieved:'.format(username))
 
     sections = app_filter.get_oars_sections()
     for section in sections:
@@ -163,12 +216,30 @@ def command_get(user, quiet=False, interactive=True):
         print('App installation is disallowed to system repository')
 
 
+def command_get_session_limits(user, now=None, quiet=False, interactive=True):
+    """Get the session limits for the given user."""
+    (user_id, username) = __lookup_user_id_or_error(user)
+    session_limits = __get_session_limits_or_error(user_id, interactive)
+
+    (user_allowed_now, time_remaining_secs, time_limit_enabled) = \
+        session_limits.check_time_remaining(now.timestamp() * GLib.USEC_PER_SEC)
+
+    if not time_limit_enabled:
+        print('Session limits are not enabled for user {}'.format(username))
+    elif user_allowed_now:
+        print('Session limits are enabled for user {}, and they have {} '
+              'seconds remaining'.format(username, time_remaining_secs))
+    else:
+        print('Session limits are enabled for user {}, and they have no time '
+              'remaining'.format(username))
+
+
 def command_monitor(user, quiet=False, interactive=True):
     """Monitor app filter changes for the given user."""
     if user == '':
-        filter_user_id = 0
+        (filter_user_id, filter_username) = (0, '')
     else:
-        filter_user_id = __lookup_user_id_or_error(user)
+        (filter_user_id, filter_username) = __lookup_user_id_or_error(user)
     apply_filter = (user != '')
 
     def _on_app_filter_changed(manager, changed_user_id):
@@ -181,7 +252,7 @@ def command_monitor(user, quiet=False, interactive=True):
 
     if apply_filter:
         print('Monitoring app filter changes for '
-              'user ID {}'.format(filter_user_id))
+              'user {}'.format(filter_username))
     else:
         print('Monitoring app filter changes for all users')
 
@@ -213,10 +284,10 @@ def is_valid_content_type(arg):
             parts[0] != '' and parts[1] != '')
 
 
-def command_check(user, arg, quiet=False, interactive=True):
+def command_check_app_filter(user, arg, quiet=False, interactive=True):
     """Check the given path, content type or flatpak ref is runnable by the
     given user, according to their app filter."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
     is_maybe_flatpak_id = arg.startswith('app/') and arg.count('/') < 3
@@ -259,31 +330,32 @@ def command_check(user, arg, quiet=False, interactive=True):
     if is_allowed:
         if not quiet:
             print('{} {} is allowed by app filter for user {}'.format(
-                noun, arg, user_id))
+                noun, arg, username))
         return
     else:
         if not quiet:
             print('{} {} is not allowed by app filter for user {}'.format(
-                noun, arg, user_id))
+                noun, arg, username))
         raise SystemExit(EXIT_PATH_NOT_ALLOWED)
 
 
 def command_oars_section(user, section, quiet=False, interactive=True):
     """Get the value of the given OARS section for the given user, according
     to their OARS filter."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     app_filter = __get_app_filter_or_error(user_id, interactive)
 
     value = app_filter.get_oars_value(section)
     print('OARS section ‘{}’ for user {} has value ‘{}’'.format(
-        section, user_id, __oars_value_to_string(value)))
+        section, username, __oars_value_to_string(value)))
 
 
-def command_set(user, allow_user_installation=True,
-                allow_system_installation=False, app_filter_args=None,
-                quiet=False, interactive=True):
+def command_set_app_filter(user, allow_user_installation=True,
+                           allow_system_installation=False,
+                           app_filter_args=None, quiet=False,
+                           interactive=True):
     """Set the app filter for the given user."""
-    user_id = __lookup_user_id_or_error(user)
+    (user_id, username) = __lookup_user_id_or_error(user)
     builder = Malcontent.AppFilterBuilder.new()
     builder.set_allow_user_installation(allow_user_installation)
     builder.set_allow_system_installation(allow_system_installation)
@@ -327,7 +399,7 @@ def command_set(user, allow_user_installation=True,
     __set_app_filter_or_error(user_id, app_filter, interactive)
 
     if not quiet:
-        print('App filter for user {} set'.format(user_id))
+        print('App filter for user {} set'.format(username))
 
 
 def main():
@@ -335,8 +407,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Query and update parental controls.')
     subparsers = parser.add_subparsers(metavar='command',
-                                       help='command to run (default: ‘get’)')
-    parser.set_defaults(function=command_get)
+                                       help='command to run (default: '
+                                            '‘get-app-filter’)')
+    parser.set_defaults(function=command_get_app_filter, user='')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='output no informational messages')
     parser.set_defaults(quiet=False)
@@ -353,14 +426,34 @@ def main():
                        help='opposite of --no-interactive')
     common_parser.set_defaults(interactive=True)
 
-    # ‘get’ command
-    parser_get = subparsers.add_parser('get', parents=[common_parser],
-                                       help='get current parental controls '
-                                            'settings')
-    parser_get.set_defaults(function=command_get)
-    parser_get.add_argument('user', default='', nargs='?',
-                            help='user ID or username to get the app filter '
-                                 'for (default: current user)')
+    # ‘get-app-filter’ command
+    parser_get_app_filter = \
+        subparsers.add_parser('get-app-filter',
+                              parents=[common_parser],
+                              help='get current app filter settings')
+    parser_get_app_filter.set_defaults(function=command_get_app_filter)
+    parser_get_app_filter.add_argument('user', default='', nargs='?',
+                                       help='user ID or username to get the '
+                                       'app filter for (default: current '
+                                       'user)')
+
+    # ‘get-session-limits’ command
+    parser_get_session_limits = \
+        subparsers.add_parser('get-session-limits',
+                              parents=[common_parser],
+                              help='get current session limit settings')
+    parser_get_session_limits.set_defaults(function=command_get_session_limits)
+    parser_get_session_limits.add_argument('user', default='', nargs='?',
+                                           help='user ID or username to get '
+                                           'the session limits for (default: '
+                                           'current user)')
+    parser_get_session_limits.add_argument(
+        '--now',
+        metavar='yyyy-mm-ddThh:mm:ssZ',
+        type=lambda d: datetime.datetime.strptime(d, '%Y-%m-%dT%H:%M:%S%z'),
+        default=datetime.datetime.now(),
+        help='date/time to use as the value for ‘now’ (default: wall clock '
+             'time)')
 
     # ‘monitor’ command
     parser_monitor = subparsers.add_parser('monitor',
@@ -371,18 +464,19 @@ def main():
                                 help='user ID or username to monitor the app '
                                      'filter for (default: all users)')
 
-    # ‘check’ command
-    parser_check = subparsers.add_parser('check', parents=[common_parser],
-                                         help='check whether a path, content '
-                                              'type or flatpak ref is '
-                                              'allowed by app filter')
-    parser_check.set_defaults(function=command_check)
-    parser_check.add_argument('user', default='', nargs='?',
-                              help='user ID or username to get the app filter '
-                                   'for (default: current user)')
-    parser_check.add_argument('arg',
-                              help='path to a program, content type or '
-                                   'flatpak ref to check')
+    # ‘check-app-filter’ command
+    parser_check_app_filter = \
+        subparsers.add_parser('check-app-filter', parents=[common_parser],
+                              help='check whether a path, content type or '
+                                   'flatpak ref is allowed by app filter')
+    parser_check_app_filter.set_defaults(function=command_check_app_filter)
+    parser_check_app_filter.add_argument('user', default='', nargs='?',
+                                         help='user ID or username to get the '
+                                              'app filter for (default: '
+                                              'current user)')
+    parser_check_app_filter.add_argument('arg',
+                                         help='path to a program, content '
+                                              'type or flatpak ref to check')
 
     # ‘oars-section’ command
     parser_oars_section = subparsers.add_parser('oars-section',
@@ -396,40 +490,43 @@ def main():
                                           'user)')
     parser_oars_section.add_argument('section', help='OARS section to get')
 
-    # ‘set’ command
-    parser_set = subparsers.add_parser('set', parents=[common_parser],
-                                       help='set current parental controls '
-                                            'settings')
-    parser_set.set_defaults(function=command_set)
-    parser_set.add_argument('user', default='', nargs='?',
-                            help='user ID or username to get the app filter '
-                                 'for (default: current user)')
-    parser_set.add_argument('--allow-user-installation',
-                            dest='allow_user_installation',
-                            action='store_true',
-                            help='allow installation to the user flatpak '
-                                 'repo in general')
-    parser_set.add_argument('--disallow-user-installation',
-                            dest='allow_user_installation',
-                            action='store_false',
-                            help='unconditionally disallow installation to '
-                                 'the user flatpak repo')
-    parser_set.add_argument('--allow-system-installation',
-                            dest='allow_system_installation',
-                            action='store_true',
-                            help='allow installation to the system flatpak '
-                                 'repo in general')
-    parser_set.add_argument('--disallow-system-installation',
-                            dest='allow_system_installation',
-                            action='store_false',
-                            help='unconditionally disallow installation to '
-                                 'the system flatpak repo')
-    parser_set.add_argument('app_filter_args', nargs='*',
-                            help='paths, content types or flatpak refs to '
-                                 'blacklist and OARS section=value '
-                                 'pairs to store')
-    parser_set.set_defaults(allow_user_installation=True,
-                            allow_system_installation=False)
+    # ‘set-app-filter’ command
+    parser_set_app_filter = \
+        subparsers.add_parser('set-app-filter', parents=[common_parser],
+                              help='set current app filter settings')
+    parser_set_app_filter.set_defaults(function=command_set_app_filter)
+    parser_set_app_filter.add_argument('user', default='', nargs='?',
+                                       help='user ID or username to set the '
+                                            'app filter for (default: current '
+                                            'user)')
+    parser_set_app_filter.add_argument('--allow-user-installation',
+                                       dest='allow_user_installation',
+                                       action='store_true',
+                                       help='allow installation to the user '
+                                            'flatpak repo in general')
+    parser_set_app_filter.add_argument('--disallow-user-installation',
+                                       dest='allow_user_installation',
+                                       action='store_false',
+                                       help='unconditionally disallow '
+                                            'installation to the user flatpak '
+                                            'repo')
+    parser_set_app_filter.add_argument('--allow-system-installation',
+                                       dest='allow_system_installation',
+                                       action='store_true',
+                                       help='allow installation to the system '
+                                            'flatpak repo in general')
+    parser_set_app_filter.add_argument('--disallow-system-installation',
+                                       dest='allow_system_installation',
+                                       action='store_false',
+                                       help='unconditionally disallow '
+                                            'installation to the system '
+                                            'flatpak repo')
+    parser_set_app_filter.add_argument('app_filter_args', nargs='*',
+                                       help='paths, content types or flatpak '
+                                            'refs to blacklist and OARS '
+                                            'section=value pairs to store')
+    parser_set_app_filter.set_defaults(allow_user_installation=True,
+                                       allow_system_installation=False)
 
     # Parse the command line arguments and run the subcommand.
     args = parser.parse_args()

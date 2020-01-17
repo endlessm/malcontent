@@ -22,6 +22,41 @@
 
 #pragma once
 
-#include <libmalcontent/app-filter.h>
-#include <libmalcontent/manager.h>
+#include <gio/gio.h>
+#include <glib.h>
+#include <glib-object.h>
 #include <libmalcontent/session-limits.h>
+
+G_BEGIN_DECLS
+
+/**
+ * MctSessionLimitsType:
+ * @MCT_SESSION_LIMITS_TYPE_NONE: No session limits are imposed.
+ * @MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE: Sessions are limited to between a
+ *     pair of given times each day.
+ *
+ * Types of session limit which can be imposed on an account. Additional types
+ * may be added in future.
+ *
+ * Since: 0.5.0
+ */
+typedef enum
+{
+  /* these values are used in the com.endlessm.ParentalControls.SessionLimits
+   * D-Bus interface, so must not be changed */
+  MCT_SESSION_LIMITS_TYPE_NONE = 0,
+  MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE = 1,
+} MctSessionLimitsType;
+
+struct _MctSessionLimits
+{
+  gint ref_count;
+
+  uid_t user_id;
+
+  MctSessionLimitsType limit_type;
+  guint daily_start_time;  /* seconds since midnight */
+  guint daily_end_time;  /* seconds since midnight */
+};
+
+G_END_DECLS

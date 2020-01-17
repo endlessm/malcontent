@@ -28,8 +28,13 @@
 #include <gio/gio.h>
 #include <libmalcontent/app-filter.h>
 #include <libmalcontent/manager.h>
+#include <libmalcontent/session-limits.h>
 
 #include "libmalcontent/app-filter-private.h"
+#include "libmalcontent/session-limits-private.h"
+
+
+G_DEFINE_QUARK (MctManagerError, mct_manager_error)
 
 /**
  * MctManager:
@@ -298,19 +303,19 @@ bus_remote_error_matches (const GError *error,
   return g_str_equal (error_name, expected_error_name);
 }
 
-/* Convert a #GDBusError into a #MctAppFilter error. */
+/* Convert a #GDBusError into a #MctManagerError. */
 static GError *
-bus_error_to_app_filter_error (const GError *bus_error,
-                               uid_t         user_id)
+bus_error_to_manager_error (const GError *bus_error,
+                            uid_t         user_id)
 {
   if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_ACCESS_DENIED) ||
       bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.PermissionDenied"))
-    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
+    return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED,
                         _("Not allowed to query app filter data for user %u"),
                         (guint) user_id);
   else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
-    return g_error_new (MCT_APP_FILTER_ERROR, MCT_APP_FILTER_ERROR_INVALID_USER,
+    return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER,
                         _("User %u does not exist"), (guint) user_id);
   else
     return g_error_copy (bus_error);
@@ -346,8 +351,8 @@ accounts_find_user_by_id (GDBusConnection  *connection,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                                          user_id);
+      g_autoptr(GError) app_filter_error = bus_error_to_manager_error (local_error,
+                                                                       user_id);
       g_propagate_error (error, g_steal_pointer (&app_filter_error));
       return NULL;
     }
@@ -373,7 +378,7 @@ accounts_find_user_by_id (GDBusConnection  *connection,
 MctAppFilter *
 mct_manager_get_app_filter (MctManager            *self,
                             uid_t                  user_id,
-                            MctGetAppFilterFlags   flags,
+                            MctManagerGetValueFlags flags,
                             GCancellable          *cancellable,
                             GError               **error)
 {
@@ -394,7 +399,7 @@ mct_manager_get_app_filter (MctManager            *self,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   object_path = accounts_find_user_by_id (self->connection, user_id,
-                                          (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE),
+                                          (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return NULL;
@@ -407,7 +412,7 @@ mct_manager_get_app_filter (MctManager            *self,
                                    "GetAll",
                                    g_variant_new ("(s)", "com.endlessm.ParentalControls.AppFilter"),
                                    G_VARIANT_TYPE ("(a{sv})"),
-                                   (flags & MCT_GET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -415,24 +420,23 @@ mct_manager_get_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_autoptr(GError) app_filter_error = NULL;
+      g_autoptr(GError) manager_error = NULL;
 
       if (g_error_matches (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS))
         {
           /* o.fd.D.GetAll() will return InvalidArgs errors if
            * accountsservice doesn’t have the com.endlessm.ParentalControls.AppFilter
            * extension interface installed. */
-          app_filter_error = g_error_new_literal (MCT_APP_FILTER_ERROR,
-                                                  MCT_APP_FILTER_ERROR_DISABLED,
-                                                  _("App filtering is globally disabled"));
+          manager_error = g_error_new_literal (MCT_MANAGER_ERROR,
+                                               MCT_MANAGER_ERROR_DISABLED,
+                                               _("App filtering is globally disabled"));
         }
       else
         {
-          app_filter_error = bus_error_to_app_filter_error (local_error,
-                                                            user_id);
+          manager_error = bus_error_to_manager_error (local_error, user_id);
         }
 
-      g_propagate_error (error, g_steal_pointer (&app_filter_error));
+      g_propagate_error (error, g_steal_pointer (&manager_error));
       return NULL;
     }
 
@@ -442,8 +446,8 @@ mct_manager_get_app_filter (MctManager            *self,
   if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
                          &is_whitelist, &app_list))
     {
-      g_set_error (error, MCT_APP_FILTER_ERROR,
-                   MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_PERMISSION_DENIED,
                    _("Not allowed to query app filter data for user %u"),
                    (guint) user_id);
       return NULL;
@@ -462,8 +466,8 @@ mct_manager_get_app_filter (MctManager            *self,
   if (!g_str_equal (content_rating_kind, "oars-1.0") &&
       !g_str_equal (content_rating_kind, "oars-1.1"))
     {
-      g_set_error (error, MCT_APP_FILTER_ERROR,
-                   MCT_APP_FILTER_ERROR_INVALID_DATA,
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
                    _("OARS filter for user %u has an unrecognized kind ‘%s’"),
                    (guint) user_id, content_rating_kind);
       return NULL;
@@ -505,7 +509,7 @@ static void get_app_filter_thread_cb (GTask        *task,
 typedef struct
 {
   uid_t user_id;
-  MctGetAppFilterFlags flags;
+  MctManagerGetValueFlags flags;
 } GetAppFilterData;
 
 static void
@@ -528,7 +532,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
  * Asynchronously get a snapshot of the app filter settings for the given
  * @user_id.
  *
- * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
  * returned.
  *
  * Since: 0.3.0
@@ -536,7 +540,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetAppFilterData, get_app_filter_data_free)
 void
 mct_manager_get_app_filter_async  (MctManager           *self,
                                    uid_t                 user_id,
-                                   MctGetAppFilterFlags  flags,
+                                   MctManagerGetValueFlags flags,
                                    GCancellable         *cancellable,
                                    GAsyncReadyCallback   callback,
                                    gpointer              user_data)
@@ -623,7 +627,7 @@ gboolean
 mct_manager_set_app_filter (MctManager            *self,
                             uid_t                  user_id,
                             MctAppFilter          *app_filter,
-                            MctSetAppFilterFlags   flags,
+                            MctManagerSetValueFlags flags,
                             GCancellable          *cancellable,
                             GError               **error)
 {
@@ -637,7 +641,6 @@ mct_manager_set_app_filter (MctManager            *self,
   g_autoptr(GVariant) allow_user_installation_result_variant = NULL;
   g_autoptr(GVariant) allow_system_installation_result_variant = NULL;
   g_autoptr(GError) local_error = NULL;
-  g_autoptr(GDBusConnection) connection = NULL;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
   g_return_val_if_fail (app_filter != NULL, FALSE);
@@ -646,7 +649,7 @@ mct_manager_set_app_filter (MctManager            *self,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   object_path = accounts_find_user_by_id (self->connection, user_id,
-                                          (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE),
+                                          (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE),
                                           cancellable, error);
   if (object_path == NULL)
     return FALSE;
@@ -668,7 +671,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AppFilter",
                                                   g_steal_pointer (&app_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -676,7 +679,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -691,7 +694,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "OarsFilter",
                                                   g_steal_pointer (&oars_filter_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -699,7 +702,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -714,7 +717,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AllowUserInstallation",
                                                   g_steal_pointer (&allow_user_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -722,7 +725,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -737,7 +740,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                                   "AllowSystemInstallation",
                                                   g_steal_pointer (&allow_system_installation_variant)),
                                    G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_SET_APP_FILTER_FLAGS_INTERACTIVE)
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
                                      : G_DBUS_CALL_FLAGS_NONE,
                                    -1,  /* timeout, ms */
@@ -745,7 +748,7 @@ mct_manager_set_app_filter (MctManager            *self,
                                    &local_error);
   if (local_error != NULL)
     {
-      g_propagate_error (error, bus_error_to_app_filter_error (local_error, user_id));
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
       return FALSE;
     }
 
@@ -761,7 +764,7 @@ typedef struct
 {
   uid_t user_id;
   MctAppFilter *app_filter;  /* (owned) */
-  MctSetAppFilterFlags flags;
+  MctManagerSetValueFlags flags;
 } SetAppFilterData;
 
 static void
@@ -786,7 +789,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetAppFilterData, set_app_filter_data_free)
  * Asynchronously set the app filter settings for the given @user_id to the
  * given @app_filter instance. This will set all fields of the app filter.
  *
- * On failure, an #MctAppFilterError, a #GDBusError or a #GIOError will be
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
  * returned. The user’s app filter settings will be left in an undefined state.
  *
  * Since: 0.3.0
@@ -795,7 +798,7 @@ void
 mct_manager_set_app_filter_async (MctManager           *self,
                                   uid_t                 user_id,
                                   MctAppFilter         *app_filter,
-                                  MctSetAppFilterFlags  flags,
+                                  MctManagerSetValueFlags flags,
                                   GCancellable         *cancellable,
                                   GAsyncReadyCallback   callback,
                                   gpointer              user_data)
@@ -858,6 +861,471 @@ gboolean
 mct_manager_set_app_filter_finish (MctManager    *self,
                                    GAsyncResult  *result,
                                    GError       **error)
+{
+  g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
+  g_return_val_if_fail (g_task_is_valid (result, self), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+/**
+ * mct_manager_get_session_limits:
+ * @self: a #MctManager
+ * @user_id: ID of the user to query, typically coming from getuid()
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @error: return location for a #GError, or %NULL
+ *
+ * Synchronous version of mct_manager_get_session_limits_async().
+ *
+ * Returns: (transfer full): session limits for the queried user
+ * Since: 0.5.0
+ */
+MctSessionLimits *
+mct_manager_get_session_limits (MctManager                *self,
+                                uid_t                      user_id,
+                                MctManagerGetValueFlags    flags,
+                                GCancellable              *cancellable,
+                                GError                   **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) result_variant = NULL;
+  g_autoptr(GVariant) properties = NULL;
+  g_autoptr(GError) local_error = NULL;
+  g_autoptr(MctSessionLimits) session_limits = NULL;
+  guint32 limit_type;
+  guint32 daily_start_time, daily_end_time;
+
+  g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  object_path = accounts_find_user_by_id (self->connection, user_id,
+                                          (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE),
+                                          cancellable, error);
+  if (object_path == NULL)
+    return NULL;
+
+  result_variant =
+      g_dbus_connection_call_sync (self->connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "GetAll",
+                                   g_variant_new ("(s)", "com.endlessm.ParentalControls.SessionLimits"),
+                                   G_VARIANT_TYPE ("(a{sv})"),
+                                   (flags & MCT_MANAGER_GET_VALUE_FLAGS_INTERACTIVE)
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_autoptr(GError) manager_error = NULL;
+
+      if (g_error_matches (local_error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS))
+        {
+          /* o.fd.D.GetAll() will return InvalidArgs errors if
+           * accountsservice doesn’t have the com.endlessm.ParentalControls.SessionLimits
+           * extension interface installed. */
+          manager_error = g_error_new_literal (MCT_MANAGER_ERROR,
+                                               MCT_MANAGER_ERROR_DISABLED,
+                                               _("Session limits are globally disabled"));
+        }
+      else
+        {
+          manager_error = bus_error_to_manager_error (local_error, user_id);
+        }
+
+      g_propagate_error (error, g_steal_pointer (&manager_error));
+      return NULL;
+    }
+
+  /* Extract the properties we care about. They may be silently omitted from the
+   * results if we don’t have permission to access them. */
+  properties = g_variant_get_child_value (result_variant, 0);
+  if (!g_variant_lookup (properties, "LimitType", "u",
+                         &limit_type))
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_PERMISSION_DENIED,
+                   _("Not allowed to query session limits data for user %u"),
+                   (guint) user_id);
+      return NULL;
+    }
+
+  /* Check that the limit type is something we support. */
+  G_STATIC_ASSERT (sizeof (limit_type) >= sizeof (MctSessionLimitsType));
+
+  if ((guint) limit_type > MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has an unrecognized type ‘%u’"),
+                   (guint) user_id, limit_type);
+      return NULL;
+    }
+
+  if (!g_variant_lookup (properties, "DailySchedule", "(uu)",
+                         &daily_start_time, &daily_end_time))
+    {
+      /* Default value. */
+      daily_start_time = 0;
+      daily_end_time = 24 * 60 * 60;
+    }
+
+  if (daily_start_time >= daily_end_time ||
+      daily_end_time > 24 * 60 * 60)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has invalid daily schedule %u–%u"),
+                   (guint) user_id, daily_start_time, daily_end_time);
+      return NULL;
+    }
+
+  /* Success. Create an #MctSessionLimits object to contain the results. */
+  session_limits = g_new0 (MctSessionLimits, 1);
+  session_limits->ref_count = 1;
+  session_limits->user_id = user_id;
+  session_limits->limit_type = limit_type;
+  session_limits->daily_start_time = daily_start_time;
+  session_limits->daily_end_time = daily_end_time;
+
+  return g_steal_pointer (&session_limits);
+}
+
+static void get_session_limits_thread_cb (GTask        *task,
+                                          gpointer      source_object,
+                                          gpointer      task_data,
+                                          GCancellable *cancellable);
+
+typedef struct
+{
+  uid_t user_id;
+  MctManagerGetValueFlags flags;
+} GetSessionLimitsData;
+
+static void
+get_session_limits_data_free (GetSessionLimitsData *data)
+{
+  g_free (data);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GetSessionLimitsData, get_session_limits_data_free)
+
+/**
+ * mct_manager_get_session_limits_async:
+ * @self: a #MctManager
+ * @user_id: ID of the user to query, typically coming from getuid()
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: a #GAsyncReadyCallback
+ * @user_data: user data to pass to @callback
+ *
+ * Asynchronously get a snapshot of the session limit settings for the given
+ * @user_id.
+ *
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
+ * returned via mct_manager_get_session_limits_finish().
+ *
+ * Since: 0.5.0
+ */
+void
+mct_manager_get_session_limits_async  (MctManager               *self,
+                                       uid_t                     user_id,
+                                       MctManagerGetValueFlags   flags,
+                                       GCancellable             *cancellable,
+                                       GAsyncReadyCallback       callback,
+                                       gpointer                  user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(GetSessionLimitsData) data = NULL;
+
+  g_return_if_fail (MCT_IS_MANAGER (self));
+  g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, mct_manager_get_session_limits_async);
+
+  data = g_new0 (GetSessionLimitsData, 1);
+  data->user_id = user_id;
+  data->flags = flags;
+  g_task_set_task_data (task, g_steal_pointer (&data),
+                        (GDestroyNotify) get_session_limits_data_free);
+
+  g_task_run_in_thread (task, get_session_limits_thread_cb);
+}
+
+static void
+get_session_limits_thread_cb (GTask        *task,
+                              gpointer      source_object,
+                              gpointer      task_data,
+                              GCancellable *cancellable)
+{
+  g_autoptr(MctSessionLimits) limits = NULL;
+  MctManager *manager = MCT_MANAGER (source_object);
+  GetSessionLimitsData *data = task_data;
+  g_autoptr(GError) local_error = NULL;
+
+  limits = mct_manager_get_session_limits (manager, data->user_id,
+                                           data->flags,
+                                           cancellable, &local_error);
+
+  if (local_error != NULL)
+    g_task_return_error (task, g_steal_pointer (&local_error));
+  else
+    g_task_return_pointer (task, g_steal_pointer (&limits),
+                           (GDestroyNotify) mct_session_limits_unref);
+}
+
+/**
+ * mct_manager_get_session_limits_finish:
+ * @self: a #MctManager
+ * @result: a #GAsyncResult
+ * @error: return location for a #GError, or %NULL
+ *
+ * Finish an asynchronous operation to get the session limits for a user,
+ * started with mct_manager_get_session_limits_async().
+ *
+ * Returns: (transfer full): session limits for the queried user
+ * Since: 0.5.0
+ */
+MctSessionLimits *
+mct_manager_get_session_limits_finish (MctManager    *self,
+                                       GAsyncResult  *result,
+                                       GError       **error)
+{
+  g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+/**
+ * mct_manager_set_session_limits:
+ * @self: a #MctManager
+ * @user_id: ID of the user to set the limits for, typically coming from getuid()
+ * @session_limits: (transfer none): the session limits to set for the user
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @error: return location for a #GError, or %NULL
+ *
+ * Synchronous version of mct_manager_set_session_limits_async().
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ * Since: 0.5.0
+ */
+gboolean
+mct_manager_set_session_limits (MctManager                *self,
+                                uid_t                      user_id,
+                                MctSessionLimits          *session_limits,
+                                MctManagerSetValueFlags    flags,
+                                GCancellable              *cancellable,
+                                GError                   **error)
+{
+  g_autofree gchar *object_path = NULL;
+  g_autoptr(GVariant) limit_variant = NULL;
+  const gchar *limit_property_name = NULL;
+  g_autoptr(GVariant) limit_type_variant = NULL;
+  g_autoptr(GVariant) limit_result_variant = NULL;
+  g_autoptr(GVariant) limit_type_result_variant = NULL;
+  g_autoptr(GError) local_error = NULL;
+
+  g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
+  g_return_val_if_fail (session_limits != NULL, FALSE);
+  g_return_val_if_fail (session_limits->ref_count >= 1, FALSE);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  object_path = accounts_find_user_by_id (self->connection, user_id,
+                                          (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE),
+                                          cancellable, error);
+  if (object_path == NULL)
+    return FALSE;
+
+  switch (session_limits->limit_type)
+    {
+    case MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE:
+      limit_variant = g_variant_new ("(uu)",
+                                     session_limits->daily_start_time,
+                                     session_limits->daily_end_time);
+      limit_property_name = "DailySchedule";
+      break;
+    case MCT_SESSION_LIMITS_TYPE_NONE:
+      limit_variant = NULL;
+      limit_property_name = NULL;
+      break;
+    default:
+      g_assert_not_reached ();
+    }
+
+  limit_type_variant = g_variant_new_uint32 (session_limits->limit_type);
+
+  if (limit_property_name != NULL)
+    {
+      /* Change the details of the new limit first, so that all the properties are
+       * correct by the time the limit type is changed over. */
+      limit_result_variant =
+          g_dbus_connection_call_sync (self->connection,
+                                       "org.freedesktop.Accounts",
+                                       object_path,
+                                       "org.freedesktop.DBus.Properties",
+                                       "Set",
+                                       g_variant_new ("(ssv)",
+                                                      "com.endlessm.ParentalControls.SessionLimits",
+                                                      limit_property_name,
+                                                      g_steal_pointer (&limit_variant)),
+                                       G_VARIANT_TYPE ("()"),
+                                       (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
+                                         ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                         : G_DBUS_CALL_FLAGS_NONE,
+                                       -1,  /* timeout, ms */
+                                       cancellable,
+                                       &local_error);
+      if (local_error != NULL)
+        {
+          g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
+          return FALSE;
+        }
+    }
+
+  limit_type_result_variant =
+      g_dbus_connection_call_sync (self->connection,
+                                   "org.freedesktop.Accounts",
+                                   object_path,
+                                   "org.freedesktop.DBus.Properties",
+                                   "Set",
+                                   g_variant_new ("(ssv)",
+                                                  "com.endlessm.ParentalControls.SessionLimits",
+                                                  "LimitType",
+                                                  g_steal_pointer (&limit_type_variant)),
+                                   G_VARIANT_TYPE ("()"),
+                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
+                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                     : G_DBUS_CALL_FLAGS_NONE,
+                                   -1,  /* timeout, ms */
+                                   cancellable,
+                                   &local_error);
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+static void set_session_limits_thread_cb (GTask        *task,
+                                          gpointer      source_object,
+                                          gpointer      task_data,
+                                          GCancellable *cancellable);
+
+typedef struct
+{
+  uid_t user_id;
+  MctSessionLimits *session_limits;  /* (owned) */
+  MctManagerSetValueFlags flags;
+} SetSessionLimitsData;
+
+static void
+set_session_limits_data_free (SetSessionLimitsData *data)
+{
+  mct_session_limits_unref (data->session_limits);
+  g_free (data);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SetSessionLimitsData, set_session_limits_data_free)
+
+/**
+ * mct_manager_set_session_limits_async:
+ * @self: a #MctManager
+ * @user_id: ID of the user to set the limits for, typically coming from getuid()
+ * @session_limits: (transfer none): the session limits to set for the user
+ * @flags: flags to affect the behaviour of the call
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: a #GAsyncReadyCallback
+ * @user_data: user data to pass to @callback
+ *
+ * Asynchronously set the session limits settings for the given @user_id to the
+ * given @session_limits instance.
+ *
+ * On failure, an #MctManagerError, a #GDBusError or a #GIOError will be
+ * returned via mct_manager_set_session_limits_finish(). The user’s session
+ * limits settings will be left in an undefined state.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_manager_set_session_limits_async (MctManager               *self,
+                                      uid_t                     user_id,
+                                      MctSessionLimits         *session_limits,
+                                      MctManagerSetValueFlags   flags,
+                                      GCancellable             *cancellable,
+                                      GAsyncReadyCallback       callback,
+                                      gpointer                  user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(SetSessionLimitsData) data = NULL;
+
+  g_return_if_fail (MCT_IS_MANAGER (self));
+  g_return_if_fail (session_limits != NULL);
+  g_return_if_fail (session_limits->ref_count >= 1);
+  g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, mct_manager_set_session_limits_async);
+
+  data = g_new0 (SetSessionLimitsData, 1);
+  data->user_id = user_id;
+  data->session_limits = mct_session_limits_ref (session_limits);
+  data->flags = flags;
+  g_task_set_task_data (task, g_steal_pointer (&data),
+                        (GDestroyNotify) set_session_limits_data_free);
+
+  g_task_run_in_thread (task, set_session_limits_thread_cb);
+}
+
+static void
+set_session_limits_thread_cb (GTask        *task,
+                              gpointer      source_object,
+                              gpointer      task_data,
+                              GCancellable *cancellable)
+{
+  gboolean success;
+  MctManager *manager = MCT_MANAGER (source_object);
+  SetSessionLimitsData *data = task_data;
+  g_autoptr(GError) local_error = NULL;
+
+  success = mct_manager_set_session_limits (manager, data->user_id,
+                                            data->session_limits, data->flags,
+                                            cancellable, &local_error);
+
+  if (local_error != NULL)
+    g_task_return_error (task, g_steal_pointer (&local_error));
+  else
+    g_task_return_boolean (task, success);
+}
+
+/**
+ * mct_manager_set_session_limits_finish:
+ * @self: a #MctManager
+ * @result: a #GAsyncResult
+ * @error: return location for a #GError, or %NULL
+ *
+ * Finish an asynchronous operation to set the session limits for a user,
+ * started with mct_manager_set_session_limits_async().
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ * Since: 0.5.0
+ */
+gboolean
+mct_manager_set_session_limits_finish (MctManager    *self,
+                                       GAsyncResult  *result,
+                                       GError       **error)
 {
   g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
   g_return_val_if_fail (g_task_is_valid (result, self), FALSE);

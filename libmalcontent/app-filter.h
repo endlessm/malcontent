@@ -30,31 +30,6 @@
 G_BEGIN_DECLS
 
 /**
- * MctAppFilterError:
- * @MCT_APP_FILTER_ERROR_INVALID_USER: Given user ID doesn’t exist
- * @MCT_APP_FILTER_ERROR_PERMISSION_DENIED: Not authorized to query the app
- *    filter for the given user
- * @MCT_APP_FILTER_ERROR_INVALID_DATA: The data stored in the app filter for
- *    a user is inconsistent or invalid
- * @MCT_APP_FILTER_ERROR_DISABLED: App filtering is disabled for all users (Since: 0.3.0)
- *
- * Errors relating to #MctAppFilter instances, which can be returned by
- * mct_manager_get_app_filter_async() (for example).
- *
- * Since: 0.2.0
- */
-typedef enum
-{
-  MCT_APP_FILTER_ERROR_INVALID_USER,
-  MCT_APP_FILTER_ERROR_PERMISSION_DENIED,
-  MCT_APP_FILTER_ERROR_INVALID_DATA,
-  MCT_APP_FILTER_ERROR_DISABLED,
-} MctAppFilterError;
-
-GQuark mct_app_filter_error_quark (void);
-#define MCT_APP_FILTER_ERROR mct_app_filter_error_quark ()
-
-/**
  * MctAppFilterOarsValue:
  * @MCT_APP_FILTER_OARS_VALUE_UNKNOWN: Unknown value for the given
  *    section.
@@ -196,5 +171,17 @@ void mct_app_filter_builder_set_allow_user_installation   (MctAppFilterBuilder *
                                                            gboolean             allow_user_installation);
 void mct_app_filter_builder_set_allow_system_installation (MctAppFilterBuilder *builder,
                                                            gboolean             allow_system_installation);
+
+#include <libmalcontent/manager.h>
+
+/* FIXME: Eventually deprecate these compatibility fallbacks. */
+typedef MctManagerError MctAppFilterError;
+#define MCT_APP_FILTER_ERROR_INVALID_USER MCT_MANAGER_ERROR_INVALID_USER
+#define MCT_APP_FILTER_ERROR_PERMISSION_DENIED MCT_MANAGER_ERROR_PERMISSION_DENIED
+#define MCT_APP_FILTER_ERROR_INVALID_DATA MCT_MANAGER_ERROR_INVALID_DATA
+#define MCT_APP_FILTER_ERROR_DISABLED MCT_MANAGER_ERROR_DISABLED
+
+GQuark mct_app_filter_error_quark (void);
+#define MCT_APP_FILTER_ERROR mct_app_filter_error_quark ()
 
 G_END_DECLS
