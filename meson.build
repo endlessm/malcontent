@@ -29,7 +29,7 @@ accountsserviceinterfacesdir = join_paths(datadir, 'accountsservice', 'interface
 # FIXME: pam.pc doesn’t exist
 pamlibdir = get_option('pamlibdir')
 if pamlibdir == ''
-  pamlibdir = join_paths(prefix, libdir.split('/')[-1], 'security')
+  pamlibdir = join_paths(libdir, 'security')
 endif
 
 dbus = dependency('dbus-1')
