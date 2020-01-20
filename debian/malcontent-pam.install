@@ -1,1 +1,1 @@
-usr/lib/security/pam_malcontent.so
+usr/lib/*/security/pam_malcontent.so
