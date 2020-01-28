@@ -179,6 +179,46 @@ mct_application_class_init (MctApplicationClass *klass)
 }
 
 static void
+update_main_stack (MctApplication *self)
+{
+  gboolean is_user_manager_loaded;
+  const gchar *new_page_name, *old_page_name;
+  GtkWidget *new_focus_widget;
+
+  /* The implementation of #ActUserManager guarantees that once is-loaded is
+   * true, it is never reset to false. */
+  g_object_get (self->user_manager, "is-loaded", &is_user_manager_loaded, NULL);
+
+  /* Handle any loading errors. */
+  if (is_user_manager_loaded && act_user_manager_no_service (self->user_manager))
+    {
+      gtk_label_set_label (self->error_title,
+                           _("Failed to load user data from the system"));
+      gtk_label_set_label (self->error_message,
+                           _("Please make sure that the AccountsService is installed and enabled."));
+
+      new_page_name = "error";
+      new_focus_widget = NULL;
+    }
+  else if (is_user_manager_loaded)
+    {
+      new_page_name = "controls";
+      new_focus_widget = GTK_WIDGET (self->user_selector);
+    }
+  else
+    {
+      new_page_name = "loading";
+      new_focus_widget = NULL;
+    }
+
+  old_page_name = gtk_stack_get_visible_child_name (self->main_stack);
+  gtk_stack_set_visible_child_name (self->main_stack, new_page_name);
+
+  if (new_focus_widget != NULL && !g_str_equal (old_page_name, new_page_name))
+    gtk_widget_grab_focus (new_focus_widget);
+}
+
+static void
 user_selector_notify_user_cb (GObject    *obj,
                               GParamSpec *pspec,
                               gpointer    user_data)
@@ -198,34 +238,8 @@ user_manager_notify_is_loaded_cb (GObject    *obj,
                                   gpointer    user_data)
 {
   MctApplication *self = MCT_APPLICATION (user_data);
-  ActUserManager *user_manager = ACT_USER_MANAGER (obj);
-  gboolean is_loaded;
-  const gchar *new_page_name;
 
-  /* The implementation of #ActUserManager guarantees that once is-loaded is
-   * true, it is never reset to false. */
-  g_object_get (user_manager, "is-loaded", &is_loaded, NULL);
-
-  /* Handle any loading errors. */
-  if (is_loaded && act_user_manager_no_service (user_manager))
-    {
-      gtk_label_set_label (self->error_title,
-                           _("Failed to load user data from the system"));
-      gtk_label_set_label (self->error_message,
-                           _("Please make sure that the AccountsService is installed and enabled."));
-
-      new_page_name = "error";
-    }
-  else if (is_loaded)
-    {
-      new_page_name = "controls";
-    }
-  else
-    {
-      new_page_name = "loading";
-    }
-
-  gtk_stack_set_visible_child_name (self->main_stack, new_page_name);
+  update_main_stack (self);
 }
 
 /**

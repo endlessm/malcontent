@@ -7,6 +7,10 @@ malcontent-control/gs-content-rating.c
 malcontent-control/main.ui
 malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in
 malcontent-control/org.freedesktop.MalcontentControl.desktop.in
+malcontent-control/restrict-applications-dialog.c
+malcontent-control/restrict-applications-dialog.ui
+malcontent-control/restrict-applications-selector.c
+malcontent-control/restrict-applications-selector.ui
 malcontent-control/user-controls.c
 malcontent-control/user-controls.ui
 pam/pam_malcontent.c
