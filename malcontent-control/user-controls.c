@@ -833,6 +833,7 @@ on_permission_allowed_cb (GObject    *obj,
 {
   MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
+  update_app_filter (self);
   setup_parental_control_settings (self);
 }
 
@@ -872,6 +873,7 @@ mct_user_controls_set_permission (MctUserControls *self,
     }
 
   /* Handle changes. */
+  update_app_filter (self);
   setup_parental_control_settings (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PERMISSION]);
