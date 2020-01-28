@@ -53,7 +53,7 @@ struct _MctUserControls
 
   GSimpleActionGroup *action_group; /* (owned) */
 
-  ActUser    *user; /* (owned) */
+  ActUser    *user; /* (owned) (nullable) */
 
   GPermission *permission;  /* (owned) (nullable) */
   gulong permission_allowed_id;
@@ -1111,7 +1111,7 @@ mct_user_controls_set_user (MctUserControls *self,
                             ActUser         *user)
 {
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
-  g_return_if_fail (ACT_IS_USER (user));
+  g_return_if_fail (user == NULL || ACT_IS_USER (user));
 
   /* If we have pending unsaved changes from the previous user, force them to be
    * saved first. */
