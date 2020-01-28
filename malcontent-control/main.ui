@@ -17,6 +17,7 @@
               <object class="MctUserSelector" id="user_selector">
                 <property name="visible">True</property>
                 <property name="user-manager">user_manager</property>
+                <property name="show-administrators">False</property>
                 <accessibility>
                   <relation target="user_controls" type="controller-for"/>
                 </accessibility>
