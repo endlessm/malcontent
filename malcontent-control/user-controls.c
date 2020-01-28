@@ -323,7 +323,7 @@ update_app_filter (MctUserControls *self)
   /* FIXME: make it asynchronous */
   self->filter = mct_manager_get_app_filter (self->manager,
                                              act_user_get_uid (self->user),
-                                             MCT_GET_APP_FILTER_FLAGS_NONE,
+                                             MCT_MANAGER_GET_VALUE_FLAGS_NONE,
                                              self->cancellable,
                                              &error);
 
@@ -712,7 +712,7 @@ blacklist_apps_cb (gpointer data)
   mct_manager_set_app_filter (self->manager,
                               act_user_get_uid (self->user),
                               new_filter,
-                              MCT_GET_APP_FILTER_FLAGS_INTERACTIVE,
+                              MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE,
                               self->cancellable,
                               &error);
 
