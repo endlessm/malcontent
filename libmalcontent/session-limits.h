@@ -44,6 +44,7 @@ G_BEGIN_DECLS
  */
 typedef struct _MctSessionLimits MctSessionLimits;
 GType mct_session_limits_get_type (void);
+#define MCT_TYPE_SESSION_LIMITS mct_session_limits_get_type ()
 
 MctSessionLimits *mct_session_limits_ref   (MctSessionLimits *limits);
 void              mct_session_limits_unref (MctSessionLimits *limits);
