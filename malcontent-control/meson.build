@@ -37,6 +37,7 @@ malcontent_control = executable('malcontent-control',
     dependency('gobject-2.0', version: '>= 2.54'),
     dependency('gtk+-3.0'),
     dependency('flatpak'),
+    dependency('polkit-gobject-1'),
     libmalcontent_dep,
   ],
   include_directories: root_inc,
@@ -99,6 +100,24 @@ if xmllint.found()
         'user-controls.ui',
         'user-selector.ui',
       ),
+    ],
+    suite: ['malcontent-control'],
+  )
+endif
+
+policy_file = i18n.merge_file('policy-file',
+  input: '@0@.policy.in'.format(application_id),
+  output: '@0@.policy'.format(application_id),
+  po_dir: join_paths(meson.source_root(), 'po'),
+  install: true,
+  install_dir: join_paths(get_option('datadir'), 'polkit-1', 'actions'),
+)
+if xmllint.found()
+  test(
+    'validate-policy', xmllint,
+    args: [
+      '--nonet', '--noblanks', '--noout',
+      policy_file,
     ],
     suite: ['malcontent-control'],
   )
