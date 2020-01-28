@@ -9,12 +9,12 @@
     <property name="column-spacing">12</property>
     <property name="valign">start</property>
 
-    <!-- Restricted Apps -->
+    <!-- Application Usage Restrictions -->
     <child>
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="xalign">0.0</property>
-        <property name="label" translatable="yes">Restrict Apps</property>
+        <property name="label" translatable="yes">Application Usage Restrictions</property>
         <attributes>
           <attribute name="weight" value="bold" />
         </attributes>
@@ -214,13 +214,13 @@
       </packing>
     </child>
 
-    <!-- App Center Restrictions -->
+    <!-- Software Installation Restrictions -->
     <child>
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="margin-top">12</property>
         <property name="xalign">0.0</property>
-        <property name="label" translatable="yes">App Center Restrictions</property>
+        <property name="label" translatable="yes">Software Installation Restrictions</property>
         <attributes>
           <attribute name="weight" value="bold" />
         </attributes>
