@@ -46,6 +46,8 @@ static void permission_new_cb (GObject      *source_object,
 static void permission_notify_allowed_cb (GObject    *obj,
                                           GParamSpec *pspec,
                                           gpointer    user_data);
+static void user_accounts_panel_button_clicked_cb (GtkButton *button,
+                                                   gpointer   user_data);
 
 
 /**
@@ -73,6 +75,7 @@ struct _MctApplication
   GtkLabel *error_title;
   GtkLabel *error_message;
   GtkLockButton *lock_button;
+  GtkButton *user_accounts_panel_button;
 };
 
 G_DEFINE_TYPE (MctApplication, mct_application, GTK_TYPE_APPLICATION)
@@ -177,10 +180,14 @@ mct_application_activate (GApplication *application)
       self->error_title = GTK_LABEL (gtk_builder_get_object (builder, "error_title"));
       self->error_message = GTK_LABEL (gtk_builder_get_object (builder, "error_message"));
       self->lock_button = GTK_LOCK_BUTTON (gtk_builder_get_object (builder, "lock_button"));
+      self->user_accounts_panel_button = GTK_BUTTON (gtk_builder_get_object (builder, "user_accounts_panel_button"));
 
       /* Connect signals. */
       g_signal_connect_object (self->user_selector, "notify::user",
                                G_CALLBACK (user_selector_notify_user_cb),
+                               self, 0  /* flags */);
+      g_signal_connect_object (self->user_accounts_panel_button, "clicked",
+                               G_CALLBACK (user_accounts_panel_button_clicked_cb),
                                self, 0  /* flags */);
       g_signal_connect (self->user_manager, "notify::is-loaded",
                         G_CALLBACK (user_manager_notify_is_loaded_cb), self);
@@ -215,12 +222,14 @@ update_main_stack (MctApplication *self)
   gboolean is_user_manager_loaded, is_permission_loaded, has_permission;
   const gchar *new_page_name, *old_page_name;
   GtkWidget *new_focus_widget;
+  ActUser *selected_user;
 
   /* The implementation of #ActUserManager guarantees that once is-loaded is
    * true, it is never reset to false. */
   g_object_get (self->user_manager, "is-loaded", &is_user_manager_loaded, NULL);
   is_permission_loaded = (self->permission != NULL || self->permission_error != NULL);
   has_permission = (self->permission != NULL && g_permission_get_allowed (self->permission));
+  selected_user = mct_user_selector_get_user (self->user_selector);
 
   /* Handle any loading errors (including those from getting the permission). */
   if ((is_user_manager_loaded && act_user_manager_no_service (self->user_manager)) ||
@@ -234,6 +243,11 @@ update_main_stack (MctApplication *self)
       new_page_name = "error";
       new_focus_widget = NULL;
     }
+  else if (is_user_manager_loaded && selected_user == NULL)
+    {
+      new_page_name = "no-other-users";
+      new_focus_widget = GTK_WIDGET (self->user_accounts_panel_button);
+    }
   else if (is_permission_loaded && !has_permission)
     {
       gtk_lock_button_set_permission (self->lock_button, self->permission);
@@ -244,6 +258,8 @@ update_main_stack (MctApplication *self)
     }
   else if (is_permission_loaded && is_user_manager_loaded)
     {
+      mct_user_controls_set_user (self->user_controls, selected_user);
+
       new_page_name = "controls";
       new_focus_widget = GTK_WIDGET (self->user_selector);
     }
@@ -265,13 +281,9 @@ user_selector_notify_user_cb (GObject    *obj,
                               GParamSpec *pspec,
                               gpointer    user_data)
 {
-  MctUserSelector *selector = MCT_USER_SELECTOR (obj);
   MctApplication *self = MCT_APPLICATION (user_data);
-  ActUser *user;
 
-  user = mct_user_selector_get_user (selector);
-
-  mct_user_controls_set_user (self->user_controls, user);
+  update_main_stack (self);
 }
 
 static void
@@ -321,6 +333,20 @@ permission_notify_allowed_cb (GObject    *obj,
   MctApplication *self = MCT_APPLICATION (user_data);
 
   update_main_stack (self);
+}
+
+static void
+user_accounts_panel_button_clicked_cb (GtkButton *button,
+                                       gpointer   user_data)
+{
+  g_autoptr(GError) local_error = NULL;
+
+  if (!g_spawn_command_line_async ("gnome-control-center user-accounts", &local_error))
+    {
+      g_warning ("Error opening GNOME Control Center: %s",
+                 local_error->message);
+      return;
+    }
 }
 
 /**
