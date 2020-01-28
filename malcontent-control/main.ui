@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="default-width">500</property>
-    <property name="default-height">700</property>
+    <property name="default-height">600</property>
     <child>
       <object class="GtkStack" id="main_stack">
         <property name="visible">True</property>
@@ -30,7 +30,7 @@
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
                 <property name="hscrollbar-policy">never</property>
-                <property name="min-content-height">450</property>
+                <property name="min-content-height">350</property>
                 <child>
                   <object class="MctUserControls" id="user_controls">
                     <property name="visible">True</property>
