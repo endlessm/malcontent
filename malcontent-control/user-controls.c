@@ -62,6 +62,7 @@ struct _MctUserControls
   guint         selected_age; /* @oars_disabled_age to disable OARS */
 
   guint         blacklist_apps_source_id;
+  gboolean      flushed_on_dispose;
 };
 
 static gboolean blacklist_apps_cb (gpointer data);
@@ -650,6 +651,9 @@ mct_user_controls_finalize (GObject *object)
   g_clear_pointer (&self->filter, mct_app_filter_unref);
   g_clear_object (&self->manager);
 
+  /* Hopefully we don’t have data loss. */
+  g_assert (self->flushed_on_dispose);
+
   G_OBJECT_CLASS (mct_user_controls_parent_class)->finalize (object);
 }
 
@@ -659,7 +663,13 @@ mct_user_controls_dispose (GObject *object)
 {
   MctUserControls *self = (MctUserControls *)object;
 
-  flush_update_blacklisted_apps (self);
+  /* Since GTK calls g_object_run_dispose(), dispose() may be called multiple
+   * times. We definitely want to save any unsaved changes, but don’t need to
+   * do it multiple times, and after the first g_object_run_dispose() call,
+   * none of our child widgets are still around to extract data from anyway. */
+  if (!self->flushed_on_dispose)
+    flush_update_blacklisted_apps (self);
+  self->flushed_on_dispose = TRUE;
 
   G_OBJECT_CLASS (mct_user_controls_parent_class)->dispose (object);
 }
