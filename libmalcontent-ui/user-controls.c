@@ -749,7 +749,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentControl/ui/user-controls.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/user-controls.ui");
 
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, age_menu);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_system_installation_switch);

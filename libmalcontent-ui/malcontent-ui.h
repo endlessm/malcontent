@@ -22,3 +22,6 @@
 
 #pragma once
 
+#include <libmalcontent-ui/restrict-applications-dialog.h>
+#include <libmalcontent-ui/restrict-applications-selector.h>
+#include <libmalcontent-ui/user-controls.h>

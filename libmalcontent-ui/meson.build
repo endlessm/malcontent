@@ -12,11 +12,19 @@ resources = gnome.compile_resources(
 )
 
 libmalcontent_ui_sources = [
+  'gs-content-rating.c',
+  'restrict-applications-dialog.c',
+  'restrict-applications-selector.c',
+  'user-controls.c',
 ] + resources
 libmalcontent_ui_headers = [
   'malcontent-ui.h',
+  'restrict-applications-dialog.h',
+  'restrict-applications-selector.h',
+  'user-controls.h',
 ]
 libmalcontent_ui_private_headers = [
+  'gs-content-rating.h',
 ]
 
 libmalcontent_ui_public_deps = [
@@ -83,6 +91,9 @@ if xmllint.found()
       '--nonet', '--noblanks', '--noout',
       '--relaxng', join_paths(gtk_prefix, 'share', 'gtk-3.0', 'gtkbuilder.rng'),
       files(
+        'restrict-applications-dialog.ui',
+        'restrict-applications-selector.ui',
+        'user-controls.ui',
       ),
     ],
     suite: ['libmalcontent-ui'],
