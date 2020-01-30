@@ -128,6 +128,7 @@ test_env = [
 
 subdir('accounts-service')
 subdir('libmalcontent')
+subdir('libmalcontent-ui')
 subdir('malcontent-client')
 subdir('malcontent-control')
 subdir('pam')

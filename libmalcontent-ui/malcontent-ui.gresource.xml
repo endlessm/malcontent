@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2020 Endless Mobile, Inc. -->
+<gresources>
+  <gresource prefix="/org/freedesktop/MalcontentUi/ui">
+  </gresource>
+</gresources>
