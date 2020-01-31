@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2018, 2019, 2020 Endless, Inc. -->
+<interface>
+  <requires lib="gtk+" version="3.12"/>
+  <template class="MctUserControls" parent="GtkGrid">
+    <property name="visible">True</property>
+    <property name="margin-top">18</property>
+    <property name="row-spacing">6</property>
+    <property name="column-spacing">12</property>
+    <property name="valign">start</property>
+
+    <!-- Restricted Apps -->
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="xalign">0.0</property>
+        <property name="label" translatable="yes">Restrict Apps</property>
+        <attributes>
+          <attribute name="weight" value="bold" />
+        </attributes>
+        <accessibility>
+          <relation target="listbox" type="label-for"/>
+        </accessibility>
+      </object>
+      <packing>
+        <property name="top-attach">0</property>
+        <property name="left-attach">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="xalign">0.0</property>
+        <property name="label" translatable="yes">Prevent this user from opening some apps by turning them off below.</property>
+        <property name="wrap">True</property>
+        <property name="use-underline">True</property>
+        <property name="mnemonic-widget">listbox</property>
+        <attributes>
+          <attribute name="scale" value="0.83333" />
+        </attributes>
+        <accessibility>
+          <relation target="listbox" type="description-for"/>
+        </accessibility>
+        <style>
+          <class name="dim-label" />
+        </style>
+      </object>
+      <packing>
+        <property name="top-attach">1</property>
+        <property name="left-attach">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hexpand">True</property>
+        <property name="hscrollbar-policy">never</property>
+        <property name="min-content-height">100</property>
+        <property name="max-content-height">400</property>
+        <property name="propagate-natural-height">True</property>
+        <property name="shadow-type">etched-in</property>
+
+        <!-- Restricted Apps Listbox -->
+        <child>
+          <object class="GtkListBox" id="listbox">
+            <property name="visible">True</property>
+            <property name="selection-mode">none</property>
+          </object>
+        </child>
+
+      </object>
+      <packing>
+        <property name="top-attach">2</property>
+        <property name="left-attach">0</property>
+        <property name="width">2</property>
+      </packing>
+    </child>
+
+    <!-- Restricted Web Browsers -->
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="xalign">0.0</property>
+        <property name="label" translatable="yes">Restrict Web Browsers</property>
+        <attributes>
+          <attribute name="weight" value="bold" />
+        </attributes>
+        <accessibility>
+          <relation target="allow_web_browsers_switch" type="label-for"/>
+        </accessibility>
+      </object>
+      <packing>
+        <property name="top-attach">3</property>
+        <property name="left-attach">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="xalign">0.0</property>
+        <property name="label" translatable="yes">Prevent this user from running web browsers by turning them off below. Note that if the computer is connected to the internet, limited web content may still be available in other applications.</property>
+        <property name="wrap">True</property>
+        <property name="max-width-chars">55</property>
+        <property name="use-underline">True</property>
+        <property name="mnemonic-widget">allow_web_browsers_switch</property>
+        <attributes>
+          <attribute name="scale" value="0.83333" />
+        </attributes>
+        <accessibility>
+          <relation target="allow_web_browsers_switch" type="description-for"/>
+        </accessibility>
+        <style>
+          <class name="dim-label" />
+        </style>
+      </object>
+      <packing>
+        <property name="top-attach">4</property>
+        <property name="left-attach">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="spacing">12</property>
+
+        <child>
+          <object class="GtkLabel" id="browsers_label">
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+            <property name="label" translatable="yes">Web _Browsers</property>
+            <property name="wrap">True</property>
+            <property name="use-underline">True</property>
+            <property name="mnemonic-widget">allow_web_browsers_switch</property>
+            <style>
+              <class name="dim-label" />
+            </style>
+            <accessibility>
+              <relation target="allow_web_browsers_switch" type="label-for"/>
+            </accessibility>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkSwitch" id="allow_web_browsers_switch">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="halign">start</property>
+            <signal name="notify::active" handler="on_allow_web_browsers_switch_active_changed_cb" object="MctUserControls" swapped="no" />
+          </object>
+        </child>
+
+      </object>
+      <packing>
+        <property name="top-attach">5</property>
+        <property name="left-attach">0</property>
+        <property name="width">2</property>
+      </packing>
+    </child>
+
+    <!-- App Center Restrictions -->
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="margin-top">12</property>
+        <property name="xalign">0.0</property>
+        <property name="label" translatable="yes">App Center Restrictions</property>
+        <attributes>
+          <attribute name="weight" value="bold" />
+        </attributes>
+      </object>
+      <packing>
+        <property name="top-attach">6</property>
+        <property name="left-attach">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="spacing">12</property>
+
+        <child>
+          <object class="GtkLabel" id="user_installation_label">
+            <property name="visible" bind-source="allow_user_installation_switch" bind-property="visible" bind-flags="default|sync-create" />
+            <property name="xalign">1.0</property>
+            <property name="label" translatable="yes">App _Installation</property>
+            <property name="wrap">True</property>
+            <property name="use-underline">True</property>
+            <property name="mnemonic-widget">allow_user_installation_switch</property>
+            <style>
+              <class name="dim-label" />
+            </style>
+            <accessibility>
+              <relation target="allow_user_installation_switch" type="label-for"/>
+            </accessibility>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkSwitch" id="allow_user_installation_switch">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="halign">start</property>
+            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="MctUserControls" swapped="no" />
+          </object>
+        </child>
+
+      </object>
+      <packing>
+        <property name="top-attach">7</property>
+        <property name="left-attach">0</property>
+        <property name="width">2</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="spacing">12</property>
+
+        <child>
+          <object class="GtkLabel" id="system_installation_label">
+            <property name="visible" bind-source="allow_system_installation_switch" bind-property="visible" bind-flags="default|sync-create" />
+            <property name="xalign">1.0</property>
+            <property name="label" translatable="yes">Install Apps for All _Users</property>
+            <property name="wrap">True</property>
+            <property name="use-underline">True</property>
+            <property name="mnemonic-widget">allow_system_installation_switch</property>
+            <style>
+              <class name="dim-label" />
+            </style>
+            <accessibility>
+              <relation target="allow_system_installation_switch" type="label-for"/>
+            </accessibility>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkSwitch" id="allow_system_installation_switch">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="halign">start</property>
+            <signal name="notify::active" handler="on_allow_installation_switch_active_changed_cb" object="MctUserControls" swapped="no" />
+          </object>
+        </child>
+
+      </object>
+      <packing>
+        <property name="top-attach">8</property>
+        <property name="left-attach">0</property>
+        <property name="width">2</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="spacing">12</property>
+
+        <child>
+          <object class="GtkLabel" id="app_restriction_label">
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+            <property name="label" translatable="yes">Show Apps _Suitable For</property>
+            <property name="wrap">True</property>
+            <property name="use-underline">True</property>
+            <property name="mnemonic-widget">restriction_button</property>
+            <style>
+              <class name="dim-label" />
+            </style>
+            <accessibility>
+              <relation target="restriction_button" type="label-for"/>
+              <relation target="restriction_button" type="flows-to"/>
+            </accessibility>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkMenuButton" id="restriction_button">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="halign">start</property>
+            <property name="popover">restriction_popover</property>
+            <property name="width-request">200</property>
+          </object>
+        </child>
+
+      </object>
+      <packing>
+        <property name="top-attach">9</property>
+        <property name="left-attach">0</property>
+        <property name="width">2</property>
+      </packing>
+    </child>
+
+  </template>
+
+  <object class="GtkPopoverMenu" id="restriction_popover">
+    <accessibility>
+      <relation target="restriction_button" type="popup-for"/>
+    </accessibility>
+  </object>
+
+  <menu id="age_menu" />
+
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="restriction_button" />
+      <widget name="restriction_popover" />
+    </widgets>
+  </object>
+
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="browsers_label" />
+      <widget name="app_restriction_label" />
+      <widget name="user_installation_label" />
+      <widget name="system_installation_label" />
+    </widgets>
+  </object>
+</interface>

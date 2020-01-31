@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2019, 2020 Endless Mobile, Inc. -->
+<interface>
+  <requires lib="gtk+" version="3.12"/>
+  <object class="GtkApplicationWindow" id="main_window">
+    <property name="default-width">500</property>
+    <property name="default-height">700</property>
+    <child>
+      <object class="GtkStack" id="main_stack">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="border_width">0</property>
+            <child>
+              <object class="MctUserSelector" id="user_selector">
+                <property name="visible">True</property>
+                <property name="user-manager">user_manager</property>
+                <accessibility>
+                  <relation target="user_controls" type="controller-for"/>
+                </accessibility>
+              </object>
+              <packing>
+                <property name="fill">False</property>
+                <property name="expand">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="min-content-height">450</property>
+                <child>
+                  <object class="MctUserControls" id="user_controls">
+                    <property name="visible">True</property>
+                    <property name="margin">12</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="name">controls</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <child type="center">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Loading…</property>
+                <attributes>
+                  <attribute name="scale" value="1.4"/>
+                </attributes>
+                <child internal-child="accessible">
+                  <object class="AtkObject">
+                    <property name="AtkObject::accessible-role">static</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">loading</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <child type="center">
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkLabel" id="error_title">
+                    <property name="visible">True</property>
+                    <property name="label"></property>
+                    <attributes>
+                      <attribute name="scale" value="1.4"/>
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="error_message">
+                    <property name="visible">True</property>
+                    <property name="label"></property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child internal-child="accessible">
+              <object class="AtkObject">
+                <property name="AtkObject::accessible-role">alert</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">error</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
