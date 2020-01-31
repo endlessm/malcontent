@@ -1,6 +1,6 @@
 project('malcontent', 'c',
   version : '0.4.0',
-  meson_version : '>= 0.47.0',
+  meson_version : '>= 0.49.0',
   license: 'LGPLv2.1+',
   default_options : [
     'buildtype=debugoptimized',
