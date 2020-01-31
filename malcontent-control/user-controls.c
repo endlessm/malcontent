@@ -110,7 +110,7 @@ static const GActionEntry actions[] = {
 };
 
 /* FIXME: Factor this out and rely on code from libappstream-glib or gnome-software
- * to do it. See: https://phabricator.endlessm.com/T24986 */
+ * to do it. See: https://gitlab.freedesktop.org/pwithnall/malcontent/issues/7 */
 static const gchar * const oars_categories[] =
 {
   "violence-cartoon",
