@@ -11,12 +11,14 @@ being too violent.
 It provides an
 [accounts-service](https://gitlab.freedesktop.org/accountsservice/accountsservice)
 vendor extension for storing an app filter to
-restrict the child’s access to certain applications; and a simple library for
-accessing and applying the app filter. This results in the policy being stored
-in `/var/lib/AccountsService/users/${user}`, which is a key file readable and
-writable only by the accounts-service daemon. Access to the data is mediated
-through accounts-service’s D-Bus interface, which libmalcontent is a client
-library for.
+restrict the child’s access to certain applications; a simple library for
+accessing and applying the app filter; and a UI program (`malcontent-control`)
+for viewing and changing the parental controls settings on users.
+
+The parental controls policy is stored in `/var/lib/AccountsService/users/${user}`,
+which is a key file readable and writable only by the accounts-service daemon.
+Access to the data is mediated through accounts-service’s D-Bus interface, which
+libmalcontent is a client library for.
 
 All the library APIs are currently unstable and are likely to change wildly.
 
@@ -74,15 +76,26 @@ $ flatpak run org.freedesktop.Bustle
 error: Running app/org.freedesktop.Bustle/x86_64/stable is not allowed by the policy set by your administrator
 ```
 
+Development
+-----------
+
+When developing malcontent, you should be able to run an uninstalled version of
+`malcontent-client` or `malcontent-control`, as long as the polkit files from
+`accounts-service/` and `malcontent-control/org.freedesktop.MalcontentControl.policy.in`
+have been installed system-wide (typically under `/usr/share/polkit-1`) where
+your system copy of polkitd can find them.
+
 Dependencies
 ------------
 
  * accounts-service
  * dbus-daemon
+ * flatpak
  * gio-2.0 ≥ 2.60
  * gio-unix-2.0 ≥ 2.60
  * glib-2.0 ≥ 2.60
  * gobject-2.0 ≥ 2.60
+ * gtk+-3.0
  * polkit-gobject-1
 
 Licensing
