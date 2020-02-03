@@ -148,9 +148,9 @@ mct_application_activate (GApplication *application)
       self->error_message = GTK_LABEL (gtk_builder_get_object (builder, "error_message"));
 
       /* Connect signals. */
-      g_signal_connect (self->user_selector, "notify::user",
-                        G_CALLBACK (user_selector_notify_user_cb),
-                        self);
+      g_signal_connect_object (self->user_selector, "notify::user",
+                               G_CALLBACK (user_selector_notify_user_cb),
+                               self, 0  /* flags */);
       g_signal_connect (self->user_manager, "notify::is-loaded",
                         G_CALLBACK (user_manager_notify_is_loaded_cb), self);
 
