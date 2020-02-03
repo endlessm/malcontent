@@ -478,9 +478,14 @@ static void
 app_info_changed_cb (GAppInfoMonitor *monitor,
                      gpointer         user_data)
 {
+  /* FIXME: We should update the list of apps here, but we can’t call
+   * reload_apps() because that will dump and reload the entire list, losing
+   * any changes the user has already made to the set of switches. We need
+   * something more fine-grained.
   MctRestrictApplicationsSelector *self = MCT_RESTRICT_APPLICATIONS_SELECTOR (user_data);
 
   reload_apps (self);
+   */
 }
 
 /* Will return %NULL if @flatpak_id is not installed. */
