@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="default-width">500</property>
-    <property name="default-height">700</property>
+    <property name="default-height">600</property>
     <child>
       <object class="GtkStack" id="main_stack">
         <property name="visible">True</property>
@@ -17,6 +17,7 @@
               <object class="MctUserSelector" id="user_selector">
                 <property name="visible">True</property>
                 <property name="user-manager">user_manager</property>
+                <property name="show-administrators">False</property>
                 <accessibility>
                   <relation target="user_controls" type="controller-for"/>
                 </accessibility>
@@ -30,7 +31,7 @@
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
                 <property name="hscrollbar-policy">never</property>
-                <property name="min-content-height">450</property>
+                <property name="min-content-height">350</property>
                 <child>
                   <object class="MctUserControls" id="user_controls">
                     <property name="visible">True</property>
@@ -45,6 +46,121 @@
           </object>
           <packing>
             <property name="name">controls</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <child type="center">
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <property name="margin">18</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Permission Required</property>
+                    <attributes>
+                      <attribute name="scale" value="1.4"/>
+                    </attributes>
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Permission is required to view and change parental controls settings for other users.</property>
+                    <property name="wrap">True</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLockButton" id="lock_button">
+                    <property name="visible">True</property>
+                    <property name="halign">center</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="can-focus">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">unlock</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <child type="center">
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <property name="margin">18</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">No Child Users Configured</property>
+                    <attributes>
+                      <attribute name="scale" value="1.4"/>
+                    </attributes>
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">No child users are currently set up on the system. Create one before setting up their parental controls.</property>
+                    <property name="wrap">True</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="user_accounts_panel_button">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Create _Child User</property>
+                    <property name="halign">center</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="use-underline">True</property>
+                    <property name="can-focus">True</property>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">no-other-users</property>
           </packing>
         </child>
 

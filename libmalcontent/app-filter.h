@@ -70,6 +70,7 @@ typedef enum
  */
 typedef struct _MctAppFilter MctAppFilter;
 GType mct_app_filter_get_type (void);
+#define MCT_TYPE_APP_FILTER mct_app_filter_get_type ()
 
 MctAppFilter *mct_app_filter_ref   (MctAppFilter *filter);
 void          mct_app_filter_unref (MctAppFilter *filter);

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright © 2019 Endless Mobile, Inc. -->
+<!-- Copyright © 2019 2020 Endless Mobile, Inc. -->
 <gresources>
   <gresource prefix="/org/freedesktop/MalcontentControl/ui">
     <file>carousel.css</file>
     <file preprocess="xml-stripblanks">carousel.ui</file>
     <file preprocess="xml-stripblanks">main.ui</file>
+    <file preprocess="xml-stripblanks">restrict-applications-dialog.ui</file>
+    <file preprocess="xml-stripblanks">restrict-applications-selector.ui</file>
     <file preprocess="xml-stripblanks">user-controls.ui</file>
     <file preprocess="xml-stripblanks">user-selector.ui</file>
   </gresource>

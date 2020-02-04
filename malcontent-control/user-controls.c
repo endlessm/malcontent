@@ -28,6 +28,7 @@
 #include <strings.h>
 
 #include "gs-content-rating.h"
+#include "restrict-applications-dialog.h"
 #include "user-controls.h"
 
 
@@ -44,12 +45,9 @@ struct _MctUserControls
   GtkSwitch  *allow_system_installation_switch;
   GtkSwitch  *allow_user_installation_switch;
   GtkSwitch  *allow_web_browsers_switch;
-  GtkListBox *listbox;
   GtkButton  *restriction_button;
   GtkPopover *restriction_popover;
-
-  FlatpakInstallation *system_installation; /* (owned) */
-  FlatpakInstallation *user_installation; /* (owned) */
+  MctRestrictApplicationsDialog *restrict_applications_dialog;
 
   GSimpleActionGroup *action_group; /* (owned) */
 
@@ -58,26 +56,16 @@ struct _MctUserControls
   GPermission *permission;  /* (owned) (nullable) */
   gulong permission_allowed_id;
 
-  GAppInfoMonitor *app_info_monitor;  /* (owned) */
-
-  GHashTable *blacklisted_apps; /* (owned) */
-  GListStore *apps; /* (owned) */
-
   GCancellable *cancellable; /* (owned) */
   MctManager   *manager; /* (owned) */
   MctAppFilter *filter; /* (owned) */
   guint         selected_age; /* @oars_disabled_age to disable OARS */
 
   guint         blacklist_apps_source_id;
+  gboolean      flushed_on_dispose;
 };
 
 static gboolean blacklist_apps_cb (gpointer data);
-static void app_info_changed_cb (GAppInfoMonitor *monitor,
-                                 gpointer         user_data);
-
-static gint compare_app_info_cb (gconstpointer a,
-                                 gconstpointer b,
-                                 gpointer      user_data);
 
 static void on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
                                                             GParamSpec       *pspec,
@@ -86,6 +74,17 @@ static void on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
 static void on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
                                                             GParamSpec       *pspec,
                                                             MctUserControls *self);
+
+static void on_restrict_applications_button_clicked_cb (GtkButton *button,
+                                                        gpointer   user_data);
+
+static gboolean on_restrict_applications_dialog_delete_event_cb (GtkWidget *widget,
+                                                                 GdkEvent  *event,
+                                                                 gpointer   user_data);
+
+static void on_restrict_applications_dialog_response_cb (GtkDialog *dialog,
+                                                         gint       response_id,
+                                                         gpointer   user_data);
 
 static void on_set_age_action_activated (GSimpleAction *action,
                                          GVariant      *param,
@@ -111,7 +110,7 @@ static const GActionEntry actions[] = {
 };
 
 /* FIXME: Factor this out and rely on code from libappstream-glib or gnome-software
- * to do it. See: https://phabricator.endlessm.com/T24986 */
+ * to do it. See: https://gitlab.freedesktop.org/pwithnall/malcontent/issues/7 */
 static const gchar * const oars_categories[] =
 {
   "violence-cartoon",
@@ -145,139 +144,6 @@ static const gchar * const oars_categories[] =
 };
 
 /* Auxiliary methods */
-
-static gint
-app_compare_id_length_cb (gconstpointer a,
-                          gconstpointer b)
-{
-  GAppInfo *info_a = (GAppInfo *) a, *info_b = (GAppInfo *) b;
-  const gchar *id_a, *id_b;
-
-  id_a = g_app_info_get_id (info_a);
-  id_b = g_app_info_get_id (info_b);
-
-  if (id_a == NULL && id_b == NULL)
-    return 0;
-  else if (id_a == NULL)
-    return -1;
-  else if (id_b == NULL)
-    return 1;
-
-  return strlen (id_a) - strlen (id_b);
-}
-
-static void
-reload_apps (MctUserControls *self)
-{
-  GList *iter, *apps;
-  g_autoptr(GHashTable) seen_flatpak_ids = NULL;
-  g_autoptr(GHashTable) seen_executables = NULL;
-
-  apps = g_app_info_get_all ();
-
-  /* Sort the apps by increasing length of #GAppInfo ID. When coupled with the
-   * deduplication of flatpak IDs and executable paths, below, this should ensure that we
-   * pick the ‘base’ app out of any set with matching prefixes and identical app IDs (in
-   * case of flatpak apps) or executables (for non-flatpak apps), and show only that.
-   *
-   * This is designed to avoid listing all the components of LibreOffice for example,
-   * which all share an app ID and hence have the same entry in the parental controls
-   * app filter. */
-  apps = g_list_sort (apps, app_compare_id_length_cb);
-  seen_flatpak_ids = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-  seen_executables = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-  g_list_store_remove_all (self->apps);
-
-  for (iter = apps; iter; iter = iter->next)
-    {
-      GAppInfo *app;
-      const gchar *app_name;
-      const gchar * const *supported_types;
-
-      app = iter->data;
-      app_name = g_app_info_get_name (app);
-
-      supported_types = g_app_info_get_supported_types (app);
-
-      if (!G_IS_DESKTOP_APP_INFO (app) ||
-          !g_app_info_should_show (app) ||
-          app_name[0] == '\0' ||
-          /* Endless' link apps have the "eos-link" prefix, and should be ignored too */
-          g_str_has_prefix (g_app_info_get_id (app), "eos-link") ||
-          /* FIXME: Only list flatpak apps and apps with X-Parental-Controls
-           * key set for now; we really need a system-wide MAC to be able to
-           * reliably support blacklisting system programs. See
-           * https://phabricator.endlessm.com/T25080. */
-          (!g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Flatpak") &&
-           !g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Parental-Controls")) ||
-          /* Web browsers are special cased */
-          (supported_types && g_strv_contains (supported_types, WEB_BROWSERS_CONTENT_TYPE)))
-        {
-          continue;
-        }
-
-      if (g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Flatpak"))
-        {
-          g_autofree gchar *flatpak_id = NULL;
-
-          flatpak_id = g_desktop_app_info_get_string (G_DESKTOP_APP_INFO (app), "X-Flatpak");
-          g_debug ("Processing app ‘%s’ (Exec=%s, X-Flatpak=%s)",
-                   g_app_info_get_id (app),
-                   g_app_info_get_executable (app),
-                   flatpak_id);
-
-          /* Have we seen this flatpak ID before? */
-          if (!g_hash_table_add (seen_flatpak_ids, g_steal_pointer (&flatpak_id)))
-            {
-              g_debug (" → Skipping ‘%s’ due to seeing its flatpak ID already",
-                       g_app_info_get_id (app));
-              continue;
-            }
-        }
-      else if (g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Parental-Controls"))
-        {
-          g_autofree gchar *parental_controls_type = NULL;
-          g_autofree gchar *executable = NULL;
-
-          parental_controls_type = g_desktop_app_info_get_string (G_DESKTOP_APP_INFO (app),
-                                                                  "X-Parental-Controls");
-          /* Ignore X-Parental-Controls=none */
-          if (g_strcmp0 (parental_controls_type, "none") == 0)
-            continue;
-
-          executable = g_strdup (g_app_info_get_executable (app));
-          g_debug ("Processing app ‘%s’ (Exec=%s, X-Parental-Controls=%s)",
-                   g_app_info_get_id (app),
-                   executable,
-                   parental_controls_type);
-
-          /* Have we seen this executable before? */
-          if (!g_hash_table_add (seen_executables, g_steal_pointer (&executable)))
-            {
-              g_debug (" → Skipping ‘%s’ due to seeing its executable already",
-                       g_app_info_get_id (app));
-              continue;
-            }
-        }
-
-      g_list_store_insert_sorted (self->apps,
-                                  app,
-                                  compare_app_info_cb,
-                                  self);
-    }
-
-  g_list_free_full (apps, g_object_unref);
-}
-
-static void
-app_info_changed_cb (GAppInfoMonitor *monitor,
-                     gpointer         user_data)
-{
-  MctUserControls *self = MCT_USER_CONTROLS (user_data);
-
-  reload_apps (self);
-}
 
 static GsContentRatingSystem
 get_content_rating_system (ActUser *user)
@@ -320,6 +186,18 @@ update_app_filter (MctUserControls *self)
 
   g_clear_pointer (&self->filter, mct_app_filter_unref);
 
+  if (self->user == NULL)
+    return;
+
+  /* FIXME: It’s expected that, unless authorised already, a user cannot read
+   * another user’s app filter. accounts-service currently (incorrectly) ignores
+   * the missing ‘interactive’ flag and prompts the user for permission if so,
+   * so don’t query at all in that case. */
+  if (act_user_get_uid (self->user) != getuid () &&
+      (self->permission == NULL ||
+       !g_permission_get_allowed (self->permission)))
+    return;
+
   /* FIXME: make it asynchronous */
   self->filter = mct_manager_get_app_filter (self->manager,
                                              act_user_get_uid (self->user),
@@ -329,26 +207,9 @@ update_app_filter (MctUserControls *self)
 
   if (error)
     {
-      /* It's expected that a non-admin user can't read another user's parental
-       * controls info unless the panel has been unlocked; ignore such an
-       * error.
-       */
-      if (act_user_get_uid (self->user) != getuid () &&
-          self->permission != NULL &&
-          !g_permission_get_allowed (self->permission) &&
-          g_error_matches (error, MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED))
-        {
-          g_clear_error (&error);
-          g_debug ("Not enough permissions to retrieve app filter for user '%s'",
-                   act_user_get_user_name (self->user));
-        }
-      else
-        {
-          g_warning ("Error retrieving app filter for user '%s': %s",
-                     act_user_get_user_name (self->user),
-                     error->message);
-        }
-
+      g_warning ("Error retrieving app filter for user '%s': %s",
+                 act_user_get_user_name (self->user),
+                 error->message);
       return;
     }
 
@@ -377,7 +238,7 @@ update_categories_from_language (MctUserControls *self)
   g_menu_remove_all (self->age_menu);
 
   disabled_action = g_strdup_printf ("permissions.set-age(uint32 %u)", oars_disabled_age);
-  g_menu_append (self->age_menu, _("No Restriction"), disabled_action);
+  g_menu_append (self->age_menu, _("All Ages"), disabled_action);
 
   for (i = 0; entries[i] != NULL; i++)
     {
@@ -450,7 +311,7 @@ update_oars_level (MctUserControls *self)
 
   /* Unrestricted? */
   if (rating_age_category == NULL || all_categories_unset)
-    rating_age_category = _("No Restriction");
+    rating_age_category = _("All Ages");
 
   gtk_button_set_label (self->restriction_button, rating_age_category);
 }
@@ -547,59 +408,14 @@ setup_parental_control_settings (MctUserControls *self)
   if (self->permission != NULL)
     is_authorized = g_permission_get_allowed (G_PERMISSION (self->permission));
   else
-    is_authorized = TRUE;
+    is_authorized = FALSE;
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), is_authorized);
-
-  g_hash_table_remove_all (self->blacklisted_apps);
 
   update_oars_level (self);
   update_categories_from_language (self);
   update_allow_app_installation (self);
   update_allow_web_browsers (self);
-  reload_apps (self);
-}
-
-/* Will return %NULL if @flatpak_id is not installed. */
-static gchar *
-get_flatpak_ref_for_app_id (MctUserControls *self,
-                            const gchar     *flatpak_id)
-{
-  g_autoptr(FlatpakInstalledRef) ref = NULL;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (self->system_installation != NULL);
-  g_assert (self->user_installation != NULL);
-
-  ref = flatpak_installation_get_current_installed_app (self->user_installation,
-                                                        flatpak_id,
-                                                        self->cancellable,
-                                                        &error);
-
-  if (error &&
-      !g_error_matches (error, FLATPAK_ERROR, FLATPAK_ERROR_NOT_INSTALLED))
-    {
-      g_warning ("Error searching for Flatpak ref: %s", error->message);
-      return NULL;
-    }
-
-  g_clear_error (&error);
-
-  if (!ref || !flatpak_installed_ref_get_is_current (ref))
-    {
-      ref = flatpak_installation_get_current_installed_app (self->system_installation,
-                                                            flatpak_id,
-                                                            self->cancellable,
-                                                            &error);
-      if (error)
-        {
-          if (!g_error_matches (error, FLATPAK_ERROR, FLATPAK_ERROR_NOT_INSTALLED))
-            g_warning ("Error searching for Flatpak ref: %s", error->message);
-          return NULL;
-        }
-    }
-
-  return flatpak_ref_format_ref (FLATPAK_REF (ref));
 }
 
 /* Callbacks */
@@ -611,8 +427,6 @@ blacklist_apps_cb (gpointer data)
   g_autoptr(MctAppFilter) new_filter = NULL;
   g_autoptr(GError) error = NULL;
   MctUserControls *self = data;
-  GDesktopAppInfo *app;
-  GHashTableIter iter;
   gboolean allow_web_browsers;
   gsize i;
 
@@ -624,43 +438,7 @@ blacklist_apps_cb (gpointer data)
 
   g_debug ("\t → Blacklisting apps");
 
-  g_hash_table_iter_init (&iter, self->blacklisted_apps);
-  while (g_hash_table_iter_next (&iter, (gpointer) &app, NULL))
-    {
-      g_autofree gchar *flatpak_id = NULL;
-
-      flatpak_id = g_desktop_app_info_get_string (app, "X-Flatpak");
-      if (flatpak_id)
-        flatpak_id = g_strstrip (flatpak_id);
-
-      if (flatpak_id)
-        {
-          g_autofree gchar *flatpak_ref = get_flatpak_ref_for_app_id (self, flatpak_id);
-
-          if (!flatpak_ref)
-            {
-              g_warning ("Skipping blacklisting Flatpak ID ‘%s’ due to it not being installed", flatpak_id);
-              continue;
-            }
-
-          g_debug ("\t\t → Blacklisting Flatpak ref: %s", flatpak_ref);
-          mct_app_filter_builder_blacklist_flatpak_ref (&builder, flatpak_ref);
-        }
-      else
-        {
-          const gchar *executable = g_app_info_get_executable (G_APP_INFO (app));
-          g_autofree gchar *path = g_find_program_in_path (executable);
-
-          if (!path)
-            {
-              g_warning ("Skipping blacklisting executable ‘%s’ due to it not being found", executable);
-              continue;
-            }
-
-          g_debug ("\t\t → Blacklisting path: %s", path);
-          mct_app_filter_builder_blacklist_path (&builder, path);
-        }
-    }
+  mct_restrict_applications_dialog_build_app_filter (self->restrict_applications_dialog, &builder);
 
   /* Maturity level */
 
@@ -758,114 +536,51 @@ on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
 }
 
 static void
-on_switch_active_changed_cb (GtkSwitch        *s,
-                             GParamSpec       *pspec,
-                             MctUserControls *self)
+on_restrict_applications_button_clicked_cb (GtkButton *button,
+                                            gpointer   user_data)
 {
-  GAppInfo *app;
-  gboolean allowed;
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
+  GtkWidget *toplevel;
 
-  app = g_object_get_data (G_OBJECT (s), "GAppInfo");
-  allowed = gtk_switch_get_active (s);
+  /* Show the restrict applications dialogue modally, making sure to update its
+   * state first. */
+  toplevel = gtk_widget_get_toplevel (GTK_WIDGET (self));
+  if (GTK_IS_WINDOW (toplevel))
+    gtk_window_set_transient_for (GTK_WINDOW (self->restrict_applications_dialog),
+                                  GTK_WINDOW (toplevel));
 
-  if (allowed)
-    {
-      gboolean removed;
+  mct_restrict_applications_dialog_set_user (self->restrict_applications_dialog, self->user);
+  mct_restrict_applications_dialog_set_app_filter (self->restrict_applications_dialog, self->filter);
 
-      g_debug ("Removing '%s' from blacklisted apps", g_app_info_get_id (app));
+  gtk_widget_show (GTK_WIDGET (self->restrict_applications_dialog));
+}
 
-      removed = g_hash_table_remove (self->blacklisted_apps, app);
-      g_assert (removed);
-    }
-  else
-    {
-      gboolean added;
+static gboolean
+on_restrict_applications_dialog_delete_event_cb (GtkWidget *widget,
+                                                 GdkEvent  *event,
+                                                 gpointer   user_data)
+{
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
-      g_debug ("Blacklisting '%s'", g_app_info_get_id (app));
+  /* When the ‘Restrict Applications’ dialogue is closed, don’t destroy it,
+   * since it contains the app filter settings which we’ll want to reuse next
+   * time the dialogue is shown or the app filter is saved. */
+  gtk_widget_hide (GTK_WIDGET (self->restrict_applications_dialog));
 
-      added = g_hash_table_add (self->blacklisted_apps, g_object_ref (app));
-      g_assert (added);
-    }
-
+  /* Schedule an update to the saved state. */
   schedule_update_blacklisted_apps (self);
+
+  return TRUE;
 }
 
-static GtkWidget *
-create_row_for_app_cb (gpointer item,
-                       gpointer user_data)
+static void
+on_restrict_applications_dialog_response_cb (GtkDialog *dialog,
+                                             gint       response_id,
+                                             gpointer   user_data)
 {
-  g_autoptr(GIcon) icon = NULL;
-  MctUserControls *self;
-  GtkWidget *box, *w;
-  GAppInfo *app;
-  gboolean allowed;
-  const gchar *app_name;
-  gint size;
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
-  self = MCT_USER_CONTROLS (user_data);
-  app = item;
-  app_name = g_app_info_get_name (app);
-
-  g_assert (G_IS_DESKTOP_APP_INFO (app));
-
-  icon = g_app_info_get_icon (app);
-  if (icon == NULL)
-    icon = g_themed_icon_new ("application-x-executable");
-  else
-    g_object_ref (icon);
-
-  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_container_set_border_width (GTK_CONTAINER (box), 12);
-  gtk_widget_set_margin_end (box, 12);
-
-  /* Icon */
-  w = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_DIALOG);
-  gtk_icon_size_lookup (GTK_ICON_SIZE_DND, &size, NULL);
-  gtk_image_set_pixel_size (GTK_IMAGE (w), size);
-  gtk_container_add (GTK_CONTAINER (box), w);
-
-  /* App name label */
-  w = g_object_new (GTK_TYPE_LABEL,
-                    "label", app_name,
-                    "hexpand", TRUE,
-                    "xalign", 0.0,
-                    NULL);
-  gtk_container_add (GTK_CONTAINER (box), w);
-
-  /* Switch */
-  w = g_object_new (GTK_TYPE_SWITCH,
-                    "valign", GTK_ALIGN_CENTER,
-                    NULL);
-  gtk_container_add (GTK_CONTAINER (box), w);
-
-  gtk_widget_show_all (box);
-
-  /* Fetch status from AccountService */
-  allowed = mct_app_filter_is_appinfo_allowed (self->filter, app);
-
-  gtk_switch_set_active (GTK_SWITCH (w), allowed);
-  g_object_set_data_full (G_OBJECT (w), "GAppInfo", g_object_ref (app), g_object_unref);
-
-  if (allowed)
-    g_hash_table_remove (self->blacklisted_apps, app);
-  else if (!allowed)
-    g_hash_table_add (self->blacklisted_apps, g_object_ref (app));
-
-  g_signal_connect (w, "notify::active", G_CALLBACK (on_switch_active_changed_cb), self);
-
-  return box;
-}
-
-static gint
-compare_app_info_cb (gconstpointer a,
-                     gconstpointer b,
-                     gpointer      user_data)
-{
-  GAppInfo *app_a = (GAppInfo*) a;
-  GAppInfo *app_b = (GAppInfo*) b;
-
-  return g_utf8_collate (g_app_info_get_display_name (app_a),
-                         g_app_info_get_display_name (app_b));
+  on_restrict_applications_dialog_delete_event_cb (GTK_WIDGET (dialog), NULL, self);
 }
 
 static void
@@ -889,7 +604,7 @@ on_set_age_action_activated (GSimpleAction *action,
 
   /* Update the button */
   if (age == oars_disabled_age)
-    gtk_button_set_label (self->restriction_button, _("No Restriction"));
+    gtk_button_set_label (self->restriction_button, _("All Ages"));
 
   for (i = 0; age != oars_disabled_age && entries[i] != NULL; i++)
     {
@@ -923,11 +638,8 @@ mct_user_controls_finalize (GObject *object)
 
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->action_group);
-  g_clear_object (&self->apps);
   g_clear_object (&self->cancellable);
-  g_clear_object (&self->system_installation);
   g_clear_object (&self->user);
-  g_clear_object (&self->user_installation);
 
   if (self->permission != NULL && self->permission_allowed_id != 0)
     {
@@ -936,10 +648,11 @@ mct_user_controls_finalize (GObject *object)
     }
   g_clear_object (&self->permission);
 
-  g_clear_pointer (&self->blacklisted_apps, g_hash_table_unref);
   g_clear_pointer (&self->filter, mct_app_filter_unref);
   g_clear_object (&self->manager);
-  g_clear_object (&self->app_info_monitor);
+
+  /* Hopefully we don’t have data loss. */
+  g_assert (self->flushed_on_dispose);
 
   G_OBJECT_CLASS (mct_user_controls_parent_class)->finalize (object);
 }
@@ -950,7 +663,13 @@ mct_user_controls_dispose (GObject *object)
 {
   MctUserControls *self = (MctUserControls *)object;
 
-  flush_update_blacklisted_apps (self);
+  /* Since GTK calls g_object_run_dispose(), dispose() may be called multiple
+   * times. We definitely want to save any unsaved changes, but don’t need to
+   * do it multiple times, and after the first g_object_run_dispose() call,
+   * none of our child widgets are still around to extract data from anyway. */
+  if (!self->flushed_on_dispose)
+    flush_update_blacklisted_apps (self);
+  self->flushed_on_dispose = TRUE;
 
   G_OBJECT_CLASS (mct_user_controls_parent_class)->dispose (object);
 }
@@ -1038,10 +757,13 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_web_browsers_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, listbox);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
 
   gtk_widget_class_bind_template_callback (widget_class, on_allow_installation_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_allow_web_browsers_switch_active_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_delete_event_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_response_cb);
 }
 
 static void
@@ -1050,11 +772,12 @@ mct_user_controls_init (MctUserControls *self)
   g_autoptr(GDBusConnection) system_bus = NULL;
   g_autoptr(GError) error = NULL;
 
+  /* Ensure the types used in the UI are registered. */
+  g_type_ensure (MCT_TYPE_RESTRICT_APPLICATIONS_DIALOG);
+
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->selected_age = (guint) -1;
-  self->system_installation = flatpak_installation_new_system (NULL, NULL);
-  self->user_installation = flatpak_installation_new_user (NULL, NULL);
 
   self->cancellable = g_cancellable_new ();
 
@@ -1079,19 +802,6 @@ mct_user_controls_init (MctUserControls *self)
                                   G_ACTION_GROUP (self->action_group));
 
   gtk_popover_bind_model (self->restriction_popover, G_MENU_MODEL (self->age_menu), NULL);
-  self->blacklisted_apps = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-
-  self->apps = g_list_store_new (G_TYPE_APP_INFO);
-
-  self->app_info_monitor = g_app_info_monitor_get ();
-  g_signal_connect_object (self->app_info_monitor, "changed",
-                           (GCallback) app_info_changed_cb, self, 0);
-
-  gtk_list_box_bind_model (self->listbox,
-                           G_LIST_MODEL (self->apps),
-                           create_row_for_app_cb,
-                           self,
-                           NULL);
 
   g_object_bind_property (self->allow_user_installation_switch, "active",
                           self->allow_system_installation_switch, "sensitive",
@@ -1133,6 +843,7 @@ on_permission_allowed_cb (GObject    *obj,
 {
   MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
+  update_app_filter (self);
   setup_parental_control_settings (self);
 }
 
@@ -1172,6 +883,7 @@ mct_user_controls_set_permission (MctUserControls *self,
     }
 
   /* Handle changes. */
+  update_app_filter (self);
   setup_parental_control_settings (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PERMISSION]);

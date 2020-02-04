@@ -97,12 +97,13 @@ mct_carousel_item_get_x (MctCarouselItem *item,
   widget = GTK_WIDGET (item);
 
   width = gtk_widget_get_allocated_width (widget);
-  gtk_widget_translate_coordinates (widget,
-                                    parent,
-                                    width / 2,
-                                    0,
-                                    &dest_x,
-                                    NULL);
+  if (!gtk_widget_translate_coordinates (widget,
+                                         parent,
+                                         width / 2,
+                                         0,
+                                         &dest_x,
+                                         NULL))
+    return 0;
 
   return CLAMP (dest_x - ARROW_SIZE,
                 0,

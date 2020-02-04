@@ -63,6 +63,7 @@ struct _MctUserSelector
 
   ActUserManager *user_manager;  /* (owned) */
   ActUser *user;  /* (owned) */
+  gboolean show_administrators;
 };
 
 G_DEFINE_TYPE (MctUserSelector, mct_user_selector, GTK_TYPE_BOX)
@@ -71,9 +72,10 @@ typedef enum
 {
   PROP_USER = 1,
   PROP_USER_MANAGER,
+  PROP_SHOW_ADMINISTRATORS,
 } MctUserSelectorProperty;
 
-static GParamSpec *properties[PROP_USER_MANAGER + 1];
+static GParamSpec *properties[PROP_SHOW_ADMINISTRATORS + 1];
 
 static void
 mct_user_selector_constructed (GObject *obj)
@@ -117,6 +119,10 @@ mct_user_selector_get_property (GObject    *object,
       g_value_set_object (value, self->user_manager);
       break;
 
+    case PROP_SHOW_ADMINISTRATORS:
+      g_value_set_boolean (value, self->show_administrators);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -140,6 +146,11 @@ mct_user_selector_set_property (GObject      *object,
     case PROP_USER_MANAGER:
       g_assert (self->user_manager == NULL);
       self->user_manager = g_value_dup_object (value);
+      break;
+
+    case PROP_SHOW_ADMINISTRATORS:
+      self->show_administrators = g_value_get_boolean (value);
+      reload_users (self, NULL);
       break;
 
     default:
@@ -211,6 +222,21 @@ mct_user_selector_class_init (MctUserSelectorClass *klass)
                            G_PARAM_STATIC_STRINGS |
                            G_PARAM_EXPLICIT_NOTIFY);
 
+  /**
+   * MctUserSelector:show-administrators:
+   *
+   * Whether to show administrators in the list, or hide them.
+   *
+   * Since: 0.5.0
+   */
+  properties[PROP_SHOW_ADMINISTRATORS] =
+      g_param_spec_boolean ("show-administrators",
+                            "Show Administrators?",
+                            "Whether to show administrators in the list, or hide them.",
+                            TRUE,
+                            G_PARAM_READWRITE |
+                            G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, G_N_ELEMENTS (properties), properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentControl/ui/user-selector.ui");
@@ -223,6 +249,8 @@ mct_user_selector_class_init (MctUserSelectorClass *klass)
 static void
 mct_user_selector_init (MctUserSelector *self)
 {
+  self->show_administrators = TRUE;
+
   /* Ensure the types used in the UI are registered. */
   g_type_ensure (MCT_TYPE_CAROUSEL);
 
@@ -351,6 +379,14 @@ reload_users (MctUserSelector *self,
   for (l = list; l; l = l->next)
     {
       user = l->data;
+
+      if (act_user_get_account_type (user) == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR &&
+          !self->show_administrators)
+        {
+          g_debug ("Ignoring administrator %s", get_real_or_user_name (user));
+          continue;
+        }
+
       g_debug ("Adding user %s", get_real_or_user_name (user));
       user_added_cb (self->user_manager, user, self);
     }
@@ -410,7 +446,9 @@ user_added_cb (ActUserManager *user_manager,
   MctUserSelector *self = MCT_USER_SELECTOR (user_data);
   GtkWidget *item, *widget;
 
-  if (act_user_is_system_account (user))
+  if (act_user_is_system_account (user) ||
+      (act_user_get_account_type (user) == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR &&
+       !self->show_administrators))
     return;
 
   g_debug ("User added: %u %s", (guint) act_user_get_uid (user), get_real_or_user_name (user));
