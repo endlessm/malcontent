@@ -1,6 +1,6 @@
 project('malcontent', 'c',
-  version : '0.4.0',
-  meson_version : '>= 0.47.0',
+  version : '0.5.0',
+  meson_version : '>= 0.49.0',
   license: 'LGPLv2.1+',
   default_options : [
     'buildtype=debugoptimized',
@@ -128,6 +128,7 @@ test_env = [
 
 subdir('accounts-service')
 subdir('libmalcontent')
+subdir('libmalcontent-ui')
 subdir('malcontent-client')
 subdir('malcontent-control')
 subdir('pam')

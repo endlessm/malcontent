@@ -46,15 +46,14 @@ install_headers(libmalcontent_headers,
   subdir: libmalcontent_include_subdir,
 )
 
-pkgconfig.generate(
-  libraries: [ libmalcontent ],
+pkgconfig.generate(libmalcontent,
   subdirs: libmalcontent_api_name,
   version: meson.project_version(),
   name: 'libmalcontent',
   filebase: libmalcontent_api_name,
   description: 'Library providing access to parental control settings.',
-  requires: libmalcontent_public_deps,
-  requires_private: libmalcontent_private_deps,
+  libraries: libmalcontent_public_deps,
+  libraries_private: libmalcontent_private_deps,
 )
 
 gnome.generate_gir(libmalcontent,

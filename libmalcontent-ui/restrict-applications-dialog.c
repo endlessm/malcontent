@@ -186,7 +186,7 @@ mct_restrict_applications_dialog_class_init (MctRestrictApplicationsDialogClass 
 
   g_object_class_install_properties (object_class, G_N_ELEMENTS (properties), properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentControl/ui/restrict-applications-dialog.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/restrict-applications-dialog.ui");
 
   gtk_widget_class_bind_template_child (widget_class, MctRestrictApplicationsDialog, selector);
   gtk_widget_class_bind_template_child (widget_class, MctRestrictApplicationsDialog, description);

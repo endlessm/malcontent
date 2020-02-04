@@ -209,7 +209,7 @@ mct_restrict_applications_selector_class_init (MctRestrictApplicationsSelectorCl
                     g_cclosure_marshal_VOID__VOID,
                     G_TYPE_NONE, 0);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentControl/ui/restrict-applications-selector.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/restrict-applications-selector.ui");
 
   gtk_widget_class_bind_template_child (widget_class, MctRestrictApplicationsSelector, listbox);
 }

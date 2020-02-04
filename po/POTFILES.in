@@ -2,16 +2,16 @@
 # Please keep this file sorted alphabetically.
 accounts-service/com.endlessm.ParentalControls.policy.in
 libmalcontent/manager.c
+libmalcontent-ui/gs-content-rating.c
+libmalcontent-ui/restrict-applications-dialog.c
+libmalcontent-ui/restrict-applications-dialog.ui
+libmalcontent-ui/restrict-applications-selector.c
+libmalcontent-ui/restrict-applications-selector.ui
+libmalcontent-ui/user-controls.c
+libmalcontent-ui/user-controls.ui
 malcontent-control/application.c
-malcontent-control/gs-content-rating.c
 malcontent-control/main.ui
 malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in
 malcontent-control/org.freedesktop.MalcontentControl.desktop.in
 malcontent-control/org.freedesktop.MalcontentControl.policy.in
-malcontent-control/restrict-applications-dialog.c
-malcontent-control/restrict-applications-dialog.ui
-malcontent-control/restrict-applications-selector.c
-malcontent-control/restrict-applications-selector.ui
-malcontent-control/user-controls.c
-malcontent-control/user-controls.ui
 pam/pam_malcontent.c

@@ -27,10 +27,10 @@
 #include <glib/gi18n-lib.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
+#include <libmalcontent-ui/malcontent-ui.h>
 #include <polkit/polkit.h>
 
 #include "application.h"
-#include "user-controls.h"
 #include "user-selector.h"
 
 
