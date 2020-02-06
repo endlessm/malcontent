@@ -24,6 +24,7 @@
 
 #include <act/act.h>
 #include <gtk/gtk.h>
+#include <libmalcontent/malcontent.h>
 
 
 G_BEGIN_DECLS
@@ -38,5 +39,8 @@ void     mct_user_controls_set_user (MctUserControls *self,
 GPermission *mct_user_controls_get_permission (MctUserControls *self);
 void         mct_user_controls_set_permission (MctUserControls *self,
                                                GPermission     *permission);
+
+void mct_user_controls_build_app_filter (MctUserControls     *self,
+                                         MctAppFilterBuilder *builder);
 
 G_END_DECLS

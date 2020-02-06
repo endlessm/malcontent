@@ -444,63 +444,10 @@ blacklist_apps_cb (gpointer data)
   g_autoptr(MctAppFilter) new_filter = NULL;
   g_autoptr(GError) error = NULL;
   MctUserControls *self = data;
-  gboolean allow_web_browsers;
-  gsize i;
 
   self->blacklist_apps_source_id = 0;
 
-  g_debug ("Building parental controls settings…");
-
-  /* Blacklist */
-
-  g_debug ("\t → Blacklisting apps");
-
-  mct_restrict_applications_dialog_build_app_filter (self->restrict_applications_dialog, &builder);
-
-  /* Maturity level */
-
-  g_debug ("\t → Maturity level");
-
-  if (self->selected_age == oars_disabled_age)
-    g_debug ("\t\t → Disabled");
-
-  for (i = 0; self->selected_age != oars_disabled_age && oars_categories[i] != NULL; i++)
-    {
-      MctAppFilterOarsValue oars_value;
-      const gchar *oars_category;
-
-      oars_category = oars_categories[i];
-      oars_value = as_content_rating_id_csm_age_to_value (oars_category, self->selected_age);
-
-      g_debug ("\t\t → %s: %s", oars_category, oars_value_to_string (oars_value));
-
-      mct_app_filter_builder_set_oars_value (&builder, oars_category, oars_value);
-    }
-
-  /* Web browsers */
-  allow_web_browsers = gtk_switch_get_active (self->allow_web_browsers_switch);
-
-  g_debug ("\t → %s web browsers", allow_web_browsers ? "Enabling" : "Disabling");
-
-  if (!allow_web_browsers)
-    mct_app_filter_builder_blacklist_content_type (&builder, WEB_BROWSERS_CONTENT_TYPE);
-
-  /* App installation */
-  if (act_user_get_account_type (self->user) != ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
-    {
-      gboolean allow_system_installation;
-      gboolean allow_user_installation;
-
-      allow_system_installation = gtk_switch_get_active (self->allow_system_installation_switch);
-      allow_user_installation = gtk_switch_get_active (self->allow_user_installation_switch);
-
-      g_debug ("\t → %s system installation", allow_system_installation ? "Enabling" : "Disabling");
-      g_debug ("\t → %s user installation", allow_user_installation ? "Enabling" : "Disabling");
-
-      mct_app_filter_builder_set_allow_user_installation (&builder, allow_user_installation);
-      mct_app_filter_builder_set_allow_system_installation (&builder, allow_system_installation);
-    }
-
+  mct_user_controls_build_app_filter (self, &builder);
   new_filter = mct_app_filter_builder_end (&builder);
 
   /* FIXME: should become asynchronous */
@@ -904,4 +851,77 @@ mct_user_controls_set_permission (MctUserControls *self,
   setup_parental_control_settings (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PERMISSION]);
+}
+
+/**
+ * mct_user_controls_build_app_filter:
+ * @self: an #MctUserControls
+ * @builder: an existing #MctAppFilterBuilder to modify
+ *
+ * Get the app filter settings currently configured in the user controls, by
+ * modifying the given @builder. This can be used to save the settings manually.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_user_controls_build_app_filter (MctUserControls     *self,
+                                    MctAppFilterBuilder *builder)
+{
+  gboolean allow_web_browsers;
+  gsize i;
+
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
+  g_return_if_fail (builder != NULL);
+
+  g_debug ("Building parental controls settings…");
+
+  /* Blacklist */
+
+  g_debug ("\t → Blacklisting apps");
+
+  mct_restrict_applications_dialog_build_app_filter (self->restrict_applications_dialog, builder);
+
+  /* Maturity level */
+
+  g_debug ("\t → Maturity level");
+
+  if (self->selected_age == oars_disabled_age)
+    g_debug ("\t\t → Disabled");
+
+  for (i = 0; self->selected_age != oars_disabled_age && oars_categories[i] != NULL; i++)
+    {
+      MctAppFilterOarsValue oars_value;
+      const gchar *oars_category;
+
+      oars_category = oars_categories[i];
+      oars_value = as_content_rating_id_csm_age_to_value (oars_category, self->selected_age);
+
+      g_debug ("\t\t → %s: %s", oars_category, oars_value_to_string (oars_value));
+
+      mct_app_filter_builder_set_oars_value (builder, oars_category, oars_value);
+    }
+
+  /* Web browsers */
+  allow_web_browsers = gtk_switch_get_active (self->allow_web_browsers_switch);
+
+  g_debug ("\t → %s web browsers", allow_web_browsers ? "Enabling" : "Disabling");
+
+  if (!allow_web_browsers)
+    mct_app_filter_builder_blacklist_content_type (builder, WEB_BROWSERS_CONTENT_TYPE);
+
+  /* App installation */
+  if (self->user_account_type != ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
+    {
+      gboolean allow_system_installation;
+      gboolean allow_user_installation;
+
+      allow_system_installation = gtk_switch_get_active (self->allow_system_installation_switch);
+      allow_user_installation = gtk_switch_get_active (self->allow_user_installation_switch);
+
+      g_debug ("\t → %s system installation", allow_system_installation ? "Enabling" : "Disabling");
+      g_debug ("\t → %s user installation", allow_user_installation ? "Enabling" : "Disabling");
+
+      mct_app_filter_builder_set_allow_user_installation (builder, allow_user_installation);
+      mct_app_filter_builder_set_allow_system_installation (builder, allow_system_installation);
+    }
 }
