@@ -180,7 +180,6 @@ mct_restrict_applications_dialog_class_init (MctRestrictApplicationsDialogClass 
                            "The currently selected user account, or %NULL if no user is selected.",
                            ACT_TYPE_USER,
                            G_PARAM_READWRITE |
-                           G_PARAM_CONSTRUCT_ONLY |
                            G_PARAM_STATIC_STRINGS |
                            G_PARAM_EXPLICIT_NOTIFY);
 
