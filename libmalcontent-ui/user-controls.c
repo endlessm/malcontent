@@ -21,6 +21,7 @@
  */
 
 #include <libmalcontent/malcontent.h>
+#include <locale.h>
 #include <flatpak.h>
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
@@ -37,6 +38,38 @@
 /* The value which we store as an age to indicate that OARS filtering is disabled. */
 static const guint32 oars_disabled_age = (guint32) -1;
 
+/**
+ * MctUserControls:
+ *
+ * A group of widgets which allow setting the parental controls for a given
+ * user.
+ *
+ * If #MctUserControls:user is set, the current parental controls settings for
+ * that user will be loaded and displayed, and any changes made via the controls
+ * will be automatically saved for that user (potentially after a short
+ * timeout).
+ *
+ * If #MctUserControls:user is unset (for example, if setting the parental
+ * controls for a user account which hasn’t yet been created), the controls can
+ * be initialised by setting:
+ *  * #MctUserControls:app-filter
+ *  * #MctUserControls:user-account-type
+ *  * #MctUserControls:user-locale
+ *  * #MctUserControls:user-display-name
+ *
+ * When #MctUserControls:user is unset, changes made to the parental controls
+ * cannot be saved automatically, and must be queried using
+ * mct_user_controls_build_app_filter(), then saved by the calling code.
+ *
+ * As parental controls are system settings, privileges are needed to view and
+ * edit them (for the current user or for other users). These can be acquired
+ * using polkit. #MctUserControls:permission is used to query the current
+ * permissions for getting/setting parental controls. If it’s %NULL, or if
+ * permissions are not currently granted, the #MctUserControls will be
+ * insensitive.
+ *
+ * Since: 0.5.0
+ */
 struct _MctUserControls
 {
   GtkGrid     parent_instance;
@@ -58,11 +91,15 @@ struct _MctUserControls
 
   GCancellable *cancellable; /* (owned) */
   MctManager   *manager; /* (owned) */
-  MctAppFilter *filter; /* (owned) */
+  MctAppFilter *filter; /* (owned) (nullable) */
   guint         selected_age; /* @oars_disabled_age to disable OARS */
 
   guint         blacklist_apps_source_id;
   gboolean      flushed_on_dispose;
+
+  ActUserAccountType  user_account_type;
+  gchar              *user_locale;  /* (nullable) (owned) */
+  gchar              *user_display_name;  /* (nullable) (owned) */
 };
 
 static gboolean blacklist_apps_cb (gpointer data);
@@ -100,9 +137,13 @@ typedef enum
 {
   PROP_USER = 1,
   PROP_PERMISSION,
+  PROP_APP_FILTER,
+  PROP_USER_ACCOUNT_TYPE,
+  PROP_USER_LOCALE,
+  PROP_USER_DISPLAY_NAME,
 } MctUserControlsProperty;
 
-static GParamSpec *properties[PROP_PERMISSION + 1];
+static GParamSpec *properties[PROP_USER_DISPLAY_NAME + 1];
 
 static const GActionEntry actions[] = {
   { "set-age", on_set_age_action_activated, "u", NULL, NULL, { 0, }}
@@ -147,11 +188,32 @@ static const gchar * const oars_categories[] =
 static GsContentRatingSystem
 get_content_rating_system (MctUserControls *self)
 {
-  const gchar *user_language;
+  if (self->user_locale == NULL)
+    return GS_CONTENT_RATING_SYSTEM_UNKNOWN;
 
-  user_language = act_user_get_language (self->user);
+  return gs_utils_content_rating_system_from_locale (self->user_locale);
+}
 
-  return gs_utils_content_rating_system_from_locale (user_language);
+static const gchar *
+get_user_locale (ActUser *user)
+{
+  const gchar *locale;
+
+  g_return_val_if_fail (ACT_IS_USER (user), "C");
+
+  /* accounts-service can return %NULL if loading over D-Bus failed. */
+  locale = act_user_get_language (user);
+  if (locale == NULL)
+    return NULL;
+
+  /* It can return the empty string if the user uses the system default locale. */
+  if (*locale == '\0')
+    locale = setlocale (LC_MESSAGES, NULL);
+
+  if (locale == NULL || *locale == '\0')
+    locale = "C";
+
+  return locale;
 }
 
 static const gchar *
@@ -340,7 +402,7 @@ update_allow_app_installation (MctUserControls *self)
   gboolean allow_user_installation;
   gboolean non_admin_user = TRUE;
 
-  if (act_user_get_account_type (self->user) == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
+  if (self->user_account_type == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
     non_admin_user = FALSE;
 
   /* Admins are always allowed to install apps for all users. This behaviour is governed
@@ -351,8 +413,8 @@ update_allow_app_installation (MctUserControls *self)
   /* If user is admin, we are done here, bail out. */
   if (!non_admin_user)
     {
-      g_debug ("User %s is administrator, hiding app installation controls",
-               act_user_get_user_name (self->user));
+      g_debug ("User ‘%s’ is an administrator, hiding app installation controls",
+               self->user_display_name);
       return;
     }
 
@@ -447,6 +509,12 @@ blacklist_apps_cb (gpointer data)
 
   self->blacklist_apps_source_id = 0;
 
+  if (self->user == NULL)
+    {
+      g_debug ("Not saving app filter as user is unset");
+      return G_SOURCE_REMOVE;
+    }
+
   mct_user_controls_build_app_filter (self, &builder);
   new_filter = mct_app_filter_builder_end (&builder);
 
@@ -513,7 +581,7 @@ on_restrict_applications_button_clicked_cb (GtkButton *button,
     gtk_window_set_transient_for (GTK_WINDOW (self->restrict_applications_dialog),
                                   GTK_WINDOW (toplevel));
 
-  mct_restrict_applications_dialog_set_user_display_name (self->restrict_applications_dialog, get_user_display_name (self->user));
+  mct_restrict_applications_dialog_set_user_display_name (self->restrict_applications_dialog, self->user_display_name);
   mct_restrict_applications_dialog_set_app_filter (self->restrict_applications_dialog, self->filter);
 
   gtk_widget_show (GTK_WIDGET (self->restrict_applications_dialog));
@@ -604,6 +672,8 @@ mct_user_controls_finalize (GObject *object)
   g_clear_object (&self->action_group);
   g_clear_object (&self->cancellable);
   g_clear_object (&self->user);
+  g_clear_pointer (&self->user_locale, g_free);
+  g_clear_pointer (&self->user_display_name, g_free);
 
   if (self->permission != NULL && self->permission_allowed_id != 0)
     {
@@ -656,6 +726,22 @@ mct_user_controls_get_property (GObject    *object,
       g_value_set_object (value, self->permission);
       break;
 
+    case PROP_APP_FILTER:
+      g_value_set_boxed (value, self->filter);
+      break;
+
+    case PROP_USER_ACCOUNT_TYPE:
+      g_value_set_enum (value, self->user_account_type);
+      break;
+
+    case PROP_USER_LOCALE:
+      g_value_set_string (value, self->user_locale);
+      break;
+
+    case PROP_USER_DISPLAY_NAME:
+      g_value_set_string (value, self->user_display_name);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -677,6 +763,22 @@ mct_user_controls_set_property (GObject      *object,
 
     case PROP_PERMISSION:
       mct_user_controls_set_permission (self, g_value_get_object (value));
+      break;
+
+    case PROP_APP_FILTER:
+      mct_user_controls_set_app_filter (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_USER_ACCOUNT_TYPE:
+      mct_user_controls_set_user_account_type (self, g_value_get_enum (value));
+      break;
+
+    case PROP_USER_LOCALE:
+      mct_user_controls_set_user_locale (self, g_value_get_string (value));
+      break;
+
+    case PROP_USER_DISPLAY_NAME:
+      mct_user_controls_set_user_display_name (self, g_value_get_string (value));
       break;
 
     default:
@@ -710,6 +812,91 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_STATIC_STRINGS |
                                                      G_PARAM_EXPLICIT_NOTIFY);
+
+  /**
+   * MctUserControls:app-filter: (nullable)
+   *
+   * The user’s current app filter, used to set up the user controls. As app
+   * filters are immutable, it is not updated as the user controls are changed.
+   * Use mct_user_controls_build_app_filter() to build the new app filter.
+   *
+   * This may be %NULL if the app filter is unknown, or if querying it from
+   * #MctUserControls:user fails.
+   *
+   * Since: 0.5.0
+   */
+  properties[PROP_APP_FILTER] =
+      g_param_spec_boxed ("app-filter",
+                          "App Filter",
+                          "The user’s current app filter, used to set up the user controls, or %NULL if unknown.",
+                          MCT_TYPE_APP_FILTER,
+                          G_PARAM_READWRITE |
+                          G_PARAM_STATIC_STRINGS |
+                          G_PARAM_EXPLICIT_NOTIFY);
+
+  /**
+   * MctUserControls:user-account-type:
+   *
+   * The type of the currently selected user account.
+   *
+   * Since: 0.5.0
+   */
+  properties[PROP_USER_ACCOUNT_TYPE] =
+      g_param_spec_enum ("user-account-type",
+                         "User Account Type",
+                         "The type of the currently selected user account.",
+                         /* FIXME: Not a typo here; libaccountsservice uses the wrong namespace.
+                          * See: https://gitlab.freedesktop.org/accountsservice/accountsservice/issues/84 */
+                         ACT_USER_TYPE_USER_ACCOUNT_TYPE,
+                         ACT_USER_ACCOUNT_TYPE_STANDARD,
+                         G_PARAM_READWRITE |
+                         G_PARAM_STATIC_STRINGS |
+                         G_PARAM_EXPLICIT_NOTIFY);
+
+  /**
+   * MctUserControls:user-locale: (nullable)
+   *
+   * The locale for the currently selected user account, or %NULL if no
+   * user is selected.
+   *
+   * If set, it must be in the format documented by [`setlocale()`](man:setlocale(3)):
+   * ```
+   * language[_territory][.codeset][@modifier]
+   * ```
+   * where `language` is an ISO 639 language code, `territory` is an ISO 3166
+   * country code, and `codeset` is a character set or encoding identifier like
+   * `ISO-8859-1` or `UTF-8`.
+   *
+   * Since: 0.5.0
+   */
+  properties[PROP_USER_LOCALE] =
+      g_param_spec_string ("user-locale",
+                           "User Locale",
+                           "The locale for the currently selected user account, or %NULL if no user is selected.",
+                           NULL,
+                           G_PARAM_READWRITE |
+                           G_PARAM_STATIC_STRINGS |
+                           G_PARAM_EXPLICIT_NOTIFY);
+
+  /**
+   * MctUserControls:user-display-name: (nullable)
+   *
+   * The display name for the currently selected user account, or %NULL if no
+   * user is selected. This will typically be the user’s full name (if known)
+   * or their username.
+   *
+   * If set, it must be valid UTF-8 and non-empty.
+   *
+   * Since: 0.5.0
+   */
+  properties[PROP_USER_DISPLAY_NAME] =
+      g_param_spec_string ("user-display-name",
+                           "User Display Name",
+                           "The display name for the currently selected user account, or %NULL if no user is selected.",
+                           NULL,
+                           G_PARAM_READWRITE |
+                           G_PARAM_STATIC_STRINGS |
+                           G_PARAM_EXPLICIT_NOTIFY);
 
   g_object_class_install_properties (object_class, G_N_ELEMENTS (properties), properties);
 
@@ -813,10 +1000,21 @@ mct_user_controls_set_user (MctUserControls *self,
 
   if (g_set_object (&self->user, user))
     {
+      g_object_freeze_notify (G_OBJECT (self));
+
+      /* Update the starting widget state from the user. */
+      if (user != NULL)
+        {
+          mct_user_controls_set_user_account_type (self, act_user_get_account_type (user));
+          mct_user_controls_set_user_locale (self, get_user_locale (user));
+          mct_user_controls_set_user_display_name (self, get_user_display_name (user));
+        }
+
       update_app_filter_from_user (self);
       setup_parental_control_settings (self);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER]);
+      g_object_thaw_notify (G_OBJECT (self));
     }
 }
 
@@ -893,6 +1091,212 @@ mct_user_controls_set_permission (MctUserControls *self,
   setup_parental_control_settings (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PERMISSION]);
+}
+
+/**
+ * mct_user_controls_get_app_filter:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:app-filter. If the app filter is unknown
+ * or could not be retrieved from #MctUserControls:user, this will be %NULL.
+ *
+ * Returns: (transfer none) (nullable): the initial app filter used to
+ *    populate the user controls, or %NULL if unknown
+ * Since: 0.5.0
+ */
+MctAppFilter *
+mct_user_controls_get_app_filter (MctUserControls *self)
+{
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
+
+  return self->filter;
+}
+
+/**
+ * mct_user_controls_set_app_filter:
+ * @self: an #MctUserControls
+ * @app_filter: (nullable) (transfer none): the app filter to configure the user
+ *    controls from, or %NULL if unknown
+ *
+ * Set the value of #MctUserControls:app-filter.
+ *
+ * This will overwrite any user changes to the controls, so they should be saved
+ * first using mct_user_controls_build_app_filter() if desired. They will be
+ * saved automatically if #MctUserControls:user is set.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_user_controls_set_app_filter (MctUserControls *self,
+                                  MctAppFilter    *app_filter)
+{
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
+
+  /* If we have pending unsaved changes from the previous configuration, force
+   * them to be saved first. */
+  flush_update_blacklisted_apps (self);
+
+  if (self->filter == app_filter)
+    return;
+
+  g_clear_pointer (&self->filter, mct_app_filter_unref);
+  if (app_filter != NULL)
+    self->filter = mct_app_filter_ref (app_filter);
+
+  g_debug ("Set new app filter from caller");
+  setup_parental_control_settings (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_APP_FILTER]);
+}
+
+/**
+ * mct_user_controls_get_user_account_type:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:user-account-type.
+ *
+ * Returns: the account type of the user the controls are configured for
+ * Since: 0.5.0
+ */
+ActUserAccountType
+mct_user_controls_get_user_account_type (MctUserControls *self)
+{
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), ACT_USER_ACCOUNT_TYPE_STANDARD);
+
+  return self->user_account_type;
+}
+
+/**
+ * mct_user_controls_set_user_account_type:
+ * @self: an #MctUserControls
+ * @user_account_type: the account type of the user to configure the controls for
+ *
+ * Set the value of #MctUserControls:user-account-type.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_user_controls_set_user_account_type (MctUserControls    *self,
+                                         ActUserAccountType  user_account_type)
+{
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
+
+  /* If we have pending unsaved changes from the previous user, force them to be
+   * saved first. */
+  flush_update_blacklisted_apps (self);
+
+  if (self->user_account_type == user_account_type)
+    return;
+
+  self->user_account_type = user_account_type;
+
+  setup_parental_control_settings (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER_ACCOUNT_TYPE]);
+}
+
+/**
+ * mct_user_controls_get_user_locale:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:user-locale.
+ *
+ * Returns: (transfer none) (nullable): the locale of the user the controls
+ *    are configured for, or %NULL if unknown
+ * Since: 0.5.0
+ */
+const gchar *
+mct_user_controls_get_user_locale (MctUserControls *self)
+{
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
+
+  return self->user_locale;
+}
+
+/**
+ * mct_user_controls_set_user_locale:
+ * @self: an #MctUserControls
+ * @user_locale: (nullable) (transfer none): the locale of the user
+ *    to configure the controls for, or %NULL if unknown
+ *
+ * Set the value of #MctUserControls:user-locale.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_user_controls_set_user_locale (MctUserControls *self,
+                                   const gchar     *user_locale)
+{
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
+  g_return_if_fail (user_locale == NULL ||
+                    (*user_locale != '\0' &&
+                     g_utf8_validate (user_locale, -1, NULL)));
+
+  /* If we have pending unsaved changes from the previous user, force them to be
+   * saved first. */
+  flush_update_blacklisted_apps (self);
+
+  if (g_strcmp0 (self->user_locale, user_locale) == 0)
+    return;
+
+  g_clear_pointer (&self->user_locale, g_free);
+  self->user_locale = g_strdup (user_locale);
+
+  setup_parental_control_settings (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER_LOCALE]);
+}
+
+/**
+ * mct_user_controls_get_user_display_name:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:user-display-name.
+ *
+ * Returns: (transfer none) (nullable): the display name of the user the controls
+ *    are configured for, or %NULL if unknown
+ * Since: 0.5.0
+ */
+const gchar *
+mct_user_controls_get_user_display_name (MctUserControls *self)
+{
+  g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
+
+  return self->user_display_name;
+}
+
+/**
+ * mct_user_controls_set_user_display_name:
+ * @self: an #MctUserControls
+ * @user_display_name: (nullable) (transfer none): the display name of the user
+ *    to configure the controls for, or %NULL if unknown
+ *
+ * Set the value of #MctUserControls:user-display-name.
+ *
+ * Since: 0.5.0
+ */
+void
+mct_user_controls_set_user_display_name (MctUserControls *self,
+                                         const gchar     *user_display_name)
+{
+  g_return_if_fail (MCT_IS_USER_CONTROLS (self));
+  g_return_if_fail (user_display_name == NULL ||
+                    (*user_display_name != '\0' &&
+                     g_utf8_validate (user_display_name, -1, NULL)));
+
+  /* If we have pending unsaved changes from the previous user, force them to be
+   * saved first. */
+  flush_update_blacklisted_apps (self);
+
+  if (g_strcmp0 (self->user_display_name, user_display_name) == 0)
+    return;
+
+  g_clear_pointer (&self->user_display_name, g_free);
+  self->user_display_name = g_strdup (user_display_name);
+
+  setup_parental_control_settings (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER_DISPLAY_NAME]);
 }
 
 /**
