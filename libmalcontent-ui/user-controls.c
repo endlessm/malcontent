@@ -145,11 +145,11 @@ static const gchar * const oars_categories[] =
 /* Auxiliary methods */
 
 static GsContentRatingSystem
-get_content_rating_system (ActUser *user)
+get_content_rating_system (MctUserControls *self)
 {
   const gchar *user_language;
 
-  user_language = act_user_get_language (user);
+  user_language = act_user_get_language (self->user);
 
   return gs_utils_content_rating_system_from_locale (user_language);
 }
@@ -244,7 +244,7 @@ update_categories_from_language (MctUserControls *self)
   gsize i;
   g_autofree gchar *disabled_action = NULL;
 
-  rating_system = get_content_rating_system (self->user);
+  rating_system = get_content_rating_system (self);
   rating_system_str = gs_content_rating_system_to_str (rating_system);
 
   g_debug ("Using rating system %s", rating_system_str);
@@ -324,7 +324,7 @@ update_oars_level (MctUserControls *self)
   g_debug ("Effective age for this user: %u; %s", maximum_age,
            all_categories_unset ? "all categories unset" : "some categories set");
 
-  rating_system = get_content_rating_system (self->user);
+  rating_system = get_content_rating_system (self);
   rating_age_category = gs_utils_content_rating_age_to_str (rating_system, maximum_age);
 
   /* Unrestricted? */
@@ -616,7 +616,7 @@ on_set_age_action_activated (GSimpleAction *action,
   self = MCT_USER_CONTROLS (user_data);
   age = g_variant_get_uint32 (param);
 
-  rating_system = get_content_rating_system (self->user);
+  rating_system = get_content_rating_system (self);
   entries = gs_utils_content_rating_get_values (rating_system);
   ages = gs_utils_content_rating_get_ages (rating_system);
 
