@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <act/act.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>
