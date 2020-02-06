@@ -198,11 +198,9 @@ flush_update_blacklisted_apps (MctUserControls *self)
 }
 
 static void
-update_app_filter (MctUserControls *self)
+update_app_filter_from_user (MctUserControls *self)
 {
   g_autoptr(GError) error = NULL;
-
-  g_clear_pointer (&self->filter, mct_app_filter_unref);
 
   if (self->user == NULL)
     return;
@@ -217,6 +215,7 @@ update_app_filter (MctUserControls *self)
     return;
 
   /* FIXME: make it asynchronous */
+  g_clear_pointer (&self->filter, mct_app_filter_unref);
   self->filter = mct_manager_get_app_filter (self->manager,
                                              act_user_get_uid (self->user),
                                              MCT_MANAGER_GET_VALUE_FLAGS_NONE,
@@ -847,7 +846,7 @@ mct_user_controls_set_user (MctUserControls *self,
 
   if (g_set_object (&self->user, user))
     {
-      update_app_filter (self);
+      update_app_filter_from_user (self);
       setup_parental_control_settings (self);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER]);
@@ -861,7 +860,7 @@ on_permission_allowed_cb (GObject    *obj,
 {
   MctUserControls *self = MCT_USER_CONTROLS (user_data);
 
-  update_app_filter (self);
+  update_app_filter_from_user (self);
   setup_parental_control_settings (self);
 }
 
@@ -901,7 +900,7 @@ mct_user_controls_set_permission (MctUserControls *self,
     }
 
   /* Handle changes. */
-  update_app_filter (self);
+  update_app_filter_from_user (self);
   setup_parental_control_settings (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PERMISSION]);
