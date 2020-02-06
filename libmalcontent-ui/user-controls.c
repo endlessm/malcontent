@@ -155,6 +155,25 @@ get_content_rating_system (ActUser *user)
   return gs_utils_content_rating_system_from_locale (user_language);
 }
 
+static const gchar *
+get_user_display_name (ActUser *user)
+{
+  const gchar *display_name;
+
+  g_return_val_if_fail (ACT_IS_USER (user), _("unknown"));
+
+  display_name = act_user_get_real_name (user);
+  if (display_name != NULL)
+    return display_name;
+
+  display_name = act_user_get_user_name (user);
+  if (display_name != NULL)
+    return display_name;
+
+  /* Translators: this is the full name for an unknown user account. */
+  return _("unknown");
+}
+
 static void
 schedule_update_blacklisted_apps (MctUserControls *self)
 {
@@ -549,7 +568,7 @@ on_restrict_applications_button_clicked_cb (GtkButton *button,
     gtk_window_set_transient_for (GTK_WINDOW (self->restrict_applications_dialog),
                                   GTK_WINDOW (toplevel));
 
-  mct_restrict_applications_dialog_set_user (self->restrict_applications_dialog, self->user);
+  mct_restrict_applications_dialog_set_user_display_name (self->restrict_applications_dialog, get_user_display_name (self->user));
   mct_restrict_applications_dialog_set_app_filter (self->restrict_applications_dialog, self->filter);
 
   gtk_widget_show (GTK_WIDGET (self->restrict_applications_dialog));

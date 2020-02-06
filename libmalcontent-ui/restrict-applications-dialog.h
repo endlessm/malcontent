@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <act/act.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -34,15 +33,15 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (MctRestrictApplicationsDialog, mct_restrict_applications_dialog, MCT, RESTRICT_APPLICATIONS_DIALOG, GtkDialog)
 
 MctRestrictApplicationsDialog *mct_restrict_applications_dialog_new (MctAppFilter *app_filter,
-                                                                     ActUser      *user);
+                                                                     const gchar  *user_display_name);
 
 MctAppFilter *mct_restrict_applications_dialog_get_app_filter (MctRestrictApplicationsDialog *self);
 void          mct_restrict_applications_dialog_set_app_filter (MctRestrictApplicationsDialog *self,
                                                                MctAppFilter                  *app_filter);
 
-ActUser *mct_restrict_applications_dialog_get_user (MctRestrictApplicationsDialog *self);
-void     mct_restrict_applications_dialog_set_user (MctRestrictApplicationsDialog *self,
-                                                    ActUser                       *user);
+const gchar *mct_restrict_applications_dialog_get_user_display_name (MctRestrictApplicationsDialog *self);
+void         mct_restrict_applications_dialog_set_user_display_name (MctRestrictApplicationsDialog *self,
+                                                                     const gchar                   *user_display_name);
 
 void mct_restrict_applications_dialog_build_app_filter (MctRestrictApplicationsDialog *self,
                                                         MctAppFilterBuilder           *builder);
