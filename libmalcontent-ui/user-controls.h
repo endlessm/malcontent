@@ -23,6 +23,9 @@
 #pragma once
 
 #include <act/act.h>
+#include <gio/gio.h>
+#include <glib.h>
+#include <glib-object.h>
 #include <gtk/gtk.h>
 #include <libmalcontent/malcontent.h>
 
