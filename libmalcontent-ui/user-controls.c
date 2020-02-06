@@ -772,6 +772,16 @@ mct_user_controls_init (MctUserControls *self)
                           G_BINDING_DEFAULT);
 }
 
+/**
+ * mct_user_controls_get_user:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:user.
+ *
+ * Returns: (transfer none) (nullable): the user the controls are configured for,
+ *    or %NULL if unknown
+ * Since: 0.5.0
+ */
 ActUser *
 mct_user_controls_get_user (MctUserControls *self)
 {
@@ -780,6 +790,16 @@ mct_user_controls_get_user (MctUserControls *self)
   return self->user;
 }
 
+/**
+ * mct_user_controls_set_user:
+ * @self: an #MctUserControls
+ * @user: (nullable) (transfer none): the user to configure the controls for,
+ *    or %NULL if unknown
+ *
+ * Set the value of #MctUserControls:user.
+ *
+ * Since: 0.5.0
+ */
 void
 mct_user_controls_set_user (MctUserControls *self,
                             ActUser         *user)
@@ -811,7 +831,18 @@ on_permission_allowed_cb (GObject    *obj,
   setup_parental_control_settings (self);
 }
 
-GPermission *  /* (nullable) */
+/**
+ * mct_user_controls_get_permission:
+ * @self: an #MctUserControls
+ *
+ * Get the value of #MctUserControls:permission.
+ *
+ * Returns: (transfer none) (nullable): a #GPermission indicating whether the
+ *    current user has permission to view or change parental controls, or %NULL
+ *    if permission is not allowed or is unknown
+ * Since: 0.5.0
+ */
+GPermission *
 mct_user_controls_get_permission (MctUserControls *self)
 {
   g_return_val_if_fail (MCT_IS_USER_CONTROLS (self), NULL);
@@ -819,9 +850,20 @@ mct_user_controls_get_permission (MctUserControls *self)
   return self->permission;
 }
 
+/**
+ * mct_user_controls_set_permission:
+ * @self: an #MctUserControls
+ * @permission: (nullable) (transfer none): the #GPermission indicating whether
+ *    the current user has permission to view or change parental controls, or
+ *    %NULL if permission is not allowed or is unknown
+ *
+ * Set the value of #MctUserControls:permission.
+ *
+ * Since: 0.5.0
+ */
 void
 mct_user_controls_set_permission (MctUserControls *self,
-                                  GPermission     *permission  /* (nullable) */)
+                                  GPermission     *permission)
 {
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (permission == NULL || G_IS_PERMISSION (permission));
