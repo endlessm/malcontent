@@ -96,14 +96,13 @@ static void on_permission_allowed_cb (GObject    *obj,
 
 G_DEFINE_TYPE (MctUserControls, mct_user_controls, GTK_TYPE_GRID)
 
-enum
+typedef enum
 {
   PROP_USER = 1,
   PROP_PERMISSION,
-  N_PROPS
-};
+} MctUserControlsProperty;
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[PROP_PERMISSION + 1];
 
 static const GActionEntry actions[] = {
   { "set-age", on_set_age_action_activated, "u", NULL, NULL, { 0, }}
@@ -701,7 +700,7 @@ mct_user_controls_get_property (GObject    *object,
 {
   MctUserControls *self = MCT_USER_CONTROLS (object);
 
-  switch (prop_id)
+  switch ((MctUserControlsProperty) prop_id)
     {
     case PROP_USER:
       g_value_set_object (value, self->user);
@@ -724,7 +723,7 @@ mct_user_controls_set_property (GObject      *object,
 {
   MctUserControls *self = MCT_USER_CONTROLS (object);
 
-  switch (prop_id)
+  switch ((MctUserControlsProperty) prop_id)
     {
     case PROP_USER:
       mct_user_controls_set_user (self, g_value_get_object (value));
@@ -766,7 +765,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
                                                      G_PARAM_STATIC_STRINGS |
                                                      G_PARAM_EXPLICIT_NOTIFY);
 
-  g_object_class_install_properties (object_class, N_PROPS, properties);
+  g_object_class_install_properties (object_class, G_N_ELEMENTS (properties), properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/user-controls.ui");
 
