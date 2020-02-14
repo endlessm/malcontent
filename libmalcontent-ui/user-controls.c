@@ -82,6 +82,9 @@ struct _MctUserControls
   GtkPopover *restriction_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
 
+  GtkListBox *application_usage_permissions_listbox;
+  GtkListBox *software_installation_permissions_listbox;
+
   GSimpleActionGroup *action_group; /* (owned) */
 
   ActUser    *user; /* (owned) (nullable) */
@@ -659,6 +662,28 @@ on_set_age_action_activated (GSimpleAction *action,
   schedule_update_blacklisted_apps (self);
 }
 
+static void
+list_box_header_func (GtkListBoxRow *row,
+                      GtkListBoxRow *before,
+                      gpointer       user_data)
+{
+  GtkWidget *current;
+
+  if (before == NULL)
+    {
+      gtk_list_box_row_set_header (row, NULL);
+      return;
+    }
+
+  current = gtk_list_box_row_get_header (row);
+  if (current == NULL)
+    {
+      current = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+      gtk_widget_show (current);
+      gtk_list_box_row_set_header (row, current);
+    }
+}
+
 /* GObject overrides */
 
 static void
@@ -909,6 +934,8 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, application_usage_permissions_listbox);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, software_installation_permissions_listbox);
 
   gtk_widget_class_bind_template_callback (widget_class, on_allow_installation_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_allow_web_browsers_switch_active_changed_cb);
@@ -957,6 +984,12 @@ mct_user_controls_init (MctUserControls *self)
   g_object_bind_property (self->allow_user_installation_switch, "active",
                           self->allow_system_installation_switch, "sensitive",
                           G_BINDING_DEFAULT);
+
+  /* Automatically add separators between rows. */
+  gtk_list_box_set_header_func (self->application_usage_permissions_listbox,
+                                list_box_header_func, NULL, NULL);
+  gtk_list_box_set_header_func (self->software_installation_permissions_listbox,
+                                list_box_header_func, NULL, NULL);
 }
 
 /**

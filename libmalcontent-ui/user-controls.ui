@@ -33,7 +33,7 @@
         <property name="label_xalign">0</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkListBox">
+          <object class="GtkListBox" id="application_usage_permissions_listbox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -239,7 +239,7 @@
         <property name="label_xalign">0</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkListBox">
+          <object class="GtkListBox" id="software_installation_permissions_listbox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
