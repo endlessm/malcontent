@@ -23,7 +23,11 @@
 #pragma once
 
 #include <act/act.h>
+#include <gio/gio.h>
+#include <glib.h>
+#include <glib-object.h>
 #include <gtk/gtk.h>
+#include <libmalcontent/malcontent.h>
 
 
 G_BEGIN_DECLS
@@ -38,5 +42,24 @@ void     mct_user_controls_set_user (MctUserControls *self,
 GPermission *mct_user_controls_get_permission (MctUserControls *self);
 void         mct_user_controls_set_permission (MctUserControls *self,
                                                GPermission     *permission);
+
+MctAppFilter *mct_user_controls_get_app_filter (MctUserControls *self);
+void          mct_user_controls_set_app_filter (MctUserControls *self,
+                                                MctAppFilter    *app_filter);
+
+ActUserAccountType mct_user_controls_get_user_account_type (MctUserControls    *self);
+void               mct_user_controls_set_user_account_type (MctUserControls    *self,
+                                                            ActUserAccountType  user_account_type);
+
+const gchar *mct_user_controls_get_user_locale (MctUserControls *self);
+void         mct_user_controls_set_user_locale (MctUserControls *self,
+                                                const gchar     *user_locale);
+
+const gchar *mct_user_controls_get_user_display_name (MctUserControls *self);
+void         mct_user_controls_set_user_display_name (MctUserControls *self,
+                                                      const gchar     *user_display_name);
+
+void mct_user_controls_build_app_filter (MctUserControls     *self,
+                                         MctAppFilterBuilder *builder);
 
 G_END_DECLS

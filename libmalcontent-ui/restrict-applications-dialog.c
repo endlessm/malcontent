@@ -19,7 +19,6 @@
  *  - Philip Withnall <withnall@endlessm.com>
  */
 
-#include <act/act.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib-object.h>
@@ -55,7 +54,7 @@ struct _MctRestrictApplicationsDialog
   GtkLabel *description;
 
   MctAppFilter *app_filter;  /* (owned) (not nullable) */
-  ActUser *user;  /* (owned) (nullable) */
+  gchar *user_display_name;  /* (owned) (nullable) */
 };
 
 G_DEFINE_TYPE (MctRestrictApplicationsDialog, mct_restrict_applications_dialog, GTK_TYPE_DIALOG)
@@ -63,10 +62,10 @@ G_DEFINE_TYPE (MctRestrictApplicationsDialog, mct_restrict_applications_dialog, 
 typedef enum
 {
   PROP_APP_FILTER = 1,
-  PROP_USER,
+  PROP_USER_DISPLAY_NAME,
 } MctRestrictApplicationsDialogProperty;
 
-static GParamSpec *properties[PROP_USER + 1];
+static GParamSpec *properties[PROP_USER_DISPLAY_NAME + 1];
 
 static void
 mct_restrict_applications_dialog_constructed (GObject *obj)
@@ -74,7 +73,9 @@ mct_restrict_applications_dialog_constructed (GObject *obj)
   MctRestrictApplicationsDialog *self = MCT_RESTRICT_APPLICATIONS_DIALOG (obj);
 
   g_assert (self->app_filter != NULL);
-  g_assert (self->user == NULL || ACT_IS_USER (self->user));
+  g_assert (self->user_display_name == NULL ||
+            (*self->user_display_name != '\0' &&
+             g_utf8_validate (self->user_display_name, -1, NULL)));
 
   G_OBJECT_CLASS (mct_restrict_applications_dialog_parent_class)->constructed (obj);
 }
@@ -93,8 +94,8 @@ mct_restrict_applications_dialog_get_property (GObject    *object,
       g_value_set_boxed (value, self->app_filter);
       break;
 
-    case PROP_USER:
-      g_value_set_object (value, self->user);
+    case PROP_USER_DISPLAY_NAME:
+      g_value_set_string (value, self->user_display_name);
       break;
 
     default:
@@ -116,8 +117,8 @@ mct_restrict_applications_dialog_set_property (GObject      *object,
       mct_restrict_applications_dialog_set_app_filter (self, g_value_get_boxed (value));
       break;
 
-    case PROP_USER:
-      mct_restrict_applications_dialog_set_user (self, g_value_get_object (value));
+    case PROP_USER_DISPLAY_NAME:
+      mct_restrict_applications_dialog_set_user_display_name (self, g_value_get_string (value));
       break;
 
     default:
@@ -131,7 +132,7 @@ mct_restrict_applications_dialog_dispose (GObject *object)
   MctRestrictApplicationsDialog *self = (MctRestrictApplicationsDialog *)object;
 
   g_clear_pointer (&self->app_filter, mct_app_filter_unref);
-  g_clear_object (&self->user);
+  g_clear_pointer (&self->user_display_name, g_free);
 
   G_OBJECT_CLASS (mct_restrict_applications_dialog_parent_class)->dispose (object);
 }
@@ -168,19 +169,22 @@ mct_restrict_applications_dialog_class_init (MctRestrictApplicationsDialogClass 
                           G_PARAM_EXPLICIT_NOTIFY);
 
   /**
-   * MctRestrictApplicationsDialog:user: (nullable)
+   * MctRestrictApplicationsDialog:user-display-name: (nullable)
    *
-   * The currently selected user account, or %NULL if no user is selected.
+   * The display name for the currently selected user account, or %NULL if no
+   * user is selected. This will typically be the user’s full name (if known)
+   * or their username.
+   *
+   * If set, it must be valid UTF-8 and non-empty.
    *
    * Since: 0.5.0
    */
-  properties[PROP_USER] =
-      g_param_spec_object ("user",
-                           "User",
-                           "The currently selected user account, or %NULL if no user is selected.",
-                           ACT_TYPE_USER,
+  properties[PROP_USER_DISPLAY_NAME] =
+      g_param_spec_string ("user-display-name",
+                           "User Display Name",
+                           "The display name for the currently selected user account, or %NULL if no user is selected.",
+                           NULL,
                            G_PARAM_READWRITE |
-                           G_PARAM_CONSTRUCT_ONLY |
                            G_PARAM_STATIC_STRINGS |
                            G_PARAM_EXPLICIT_NOTIFY);
 
@@ -201,31 +205,12 @@ mct_restrict_applications_dialog_init (MctRestrictApplicationsDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-static const gchar *
-get_user_display_name (ActUser *user)
-{
-  const gchar *display_name;
-
-  g_return_val_if_fail (ACT_IS_USER (user), _("unknown"));
-
-  display_name = act_user_get_real_name (user);
-  if (display_name != NULL)
-    return display_name;
-
-  display_name = act_user_get_user_name (user);
-  if (display_name != NULL)
-    return display_name;
-
-  /* Translators: this is the full name for an unknown user account. */
-  return _("unknown");
-}
-
 static void
 update_description (MctRestrictApplicationsDialog *self)
 {
   g_autofree gchar *description = NULL;
 
-  if (self->user == NULL)
+  if (self->user_display_name == NULL)
     {
       gtk_widget_hide (GTK_WIDGET (self->description));
       return;
@@ -233,7 +218,7 @@ update_description (MctRestrictApplicationsDialog *self)
 
   /* Translators: the placeholder is a user’s full name */
   description = g_strdup_printf (_("Allow %s to use the following installed applications."),
-                                 get_user_display_name (self->user));
+                                 self->user_display_name);
   gtk_label_set_text (self->description, description);
   gtk_widget_show (GTK_WIDGET (self->description));
 }
@@ -241,7 +226,8 @@ update_description (MctRestrictApplicationsDialog *self)
 /**
  * mct_restrict_applications_dialog_new:
  * @app_filter: (transfer none): the initial app filter configuration to show
- * @user: (transfer none) (nullable): the user to show the app filter for
+ * @user_display_name: (transfer none) (nullable): the display name of the user
+ *    to show the app filter for, or %NULL if no user is selected
  *
  * Create a new #MctRestrictApplicationsDialog widget.
  *
@@ -250,14 +236,16 @@ update_description (MctRestrictApplicationsDialog *self)
  */
 MctRestrictApplicationsDialog *
 mct_restrict_applications_dialog_new (MctAppFilter *app_filter,
-                                      ActUser      *user)
+                                      const gchar  *user_display_name)
 {
   g_return_val_if_fail (app_filter != NULL, NULL);
-  g_return_val_if_fail (user == NULL || ACT_IS_USER (user), NULL);
+  g_return_val_if_fail (user_display_name == NULL ||
+                        (*user_display_name != '\0' &&
+                         g_utf8_validate (user_display_name, -1, NULL)), NULL);
 
   return g_object_new (MCT_TYPE_RESTRICT_APPLICATIONS_DIALOG,
                        "app-filter", app_filter,
-                       "user", user,
+                       "user-display-name", user_display_name,
                        NULL);
 }
 
@@ -318,45 +306,50 @@ mct_restrict_applications_dialog_set_app_filter (MctRestrictApplicationsDialog *
 }
 
 /**
- * mct_restrict_applications_dialog_get_user:
+ * mct_restrict_applications_dialog_get_user_display_name:
  * @self: an #MctRestrictApplicationsDialog
  *
- * Get the value of #MctRestrictApplicationsDialog:user.
+ * Get the value of #MctRestrictApplicationsDialog:user-display-name.
  *
- * Returns: (transfer none) (nullable): the user the dialog is configured for,
- *    or %NULL if unknown
+ * Returns: (transfer none) (nullable): the display name of the user the dialog
+ *    is configured for, or %NULL if unknown
  * Since: 0.5.0
  */
-ActUser *
-mct_restrict_applications_dialog_get_user (MctRestrictApplicationsDialog *self)
+const gchar *
+mct_restrict_applications_dialog_get_user_display_name (MctRestrictApplicationsDialog *self)
 {
   g_return_val_if_fail (MCT_IS_RESTRICT_APPLICATIONS_DIALOG (self), NULL);
 
-  return self->user;
+  return self->user_display_name;
 }
 
 /**
- * mct_restrict_applications_dialog_set_user:
+ * mct_restrict_applications_dialog_set_user_display_name:
  * @self: an #MctRestrictApplicationsDialog
- * @user: (nullable) (transfer none): the user to configure the dialog for,
- *    or %NULL if unknown
+ * @user_display_name: (nullable) (transfer none): the display name of the user
+ *    to configure the dialog for, or %NULL if unknown
  *
- * Set the value of #MctRestrictApplicationsDialog:user.
+ * Set the value of #MctRestrictApplicationsDialog:user-display-name.
  *
  * Since: 0.5.0
  */
 void
-mct_restrict_applications_dialog_set_user (MctRestrictApplicationsDialog *self,
-                                           ActUser                       *user)
+mct_restrict_applications_dialog_set_user_display_name (MctRestrictApplicationsDialog *self,
+                                                        const gchar                   *user_display_name)
 {
   g_return_if_fail (MCT_IS_RESTRICT_APPLICATIONS_DIALOG (self));
-  g_return_if_fail (user == NULL || ACT_IS_USER (user));
+  g_return_if_fail (user_display_name == NULL ||
+                    (*user_display_name != '\0' &&
+                     g_utf8_validate (user_display_name, -1, NULL)));
 
-  if (g_set_object (&self->user, user))
-    {
-      update_description (self);
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER]);
-    }
+  if (g_strcmp0 (self->user_display_name, user_display_name) == 0)
+    return;
+
+  g_clear_pointer (&self->user_display_name, g_free);
+  self->user_display_name = g_strdup (user_display_name);
+
+  update_description (self);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USER_DISPLAY_NAME]);
 }
 
 /**

@@ -70,14 +70,14 @@ pkgconfig.generate(libmalcontent_ui,
   libraries_private: libmalcontent_ui_private_deps,
 )
 
-gnome.generate_gir(libmalcontent_ui,
+libmalcontent_ui_gir = gnome.generate_gir(libmalcontent_ui,
   sources: libmalcontent_ui_sources + libmalcontent_ui_headers + libmalcontent_ui_private_headers,
   nsversion: libmalcontent_ui_api_version,
   namespace: 'MalcontentUi',
   symbol_prefix: 'mct_',
   identifier_prefix: 'Mct',
   export_packages: 'libmalcontent-ui',
-  includes: ['AccountsService-1.0', 'Gio-2.0', 'GObject-2.0', 'Gtk-3.0'],
+  includes: ['AccountsService-1.0', 'Gio-2.0', 'GObject-2.0', 'Gtk-3.0', libmalcontent_gir[0]],
   install: true,
   dependencies: libmalcontent_ui_dep,
 )
