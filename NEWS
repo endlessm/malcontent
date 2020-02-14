@@ -1,3 +1,27 @@
+Overview of changes in malcontent 0.5.0
+=======================================
+
+* Add libmalcontent-ui library for parental controls widgets
+
+* Add malcontent-control parental controls app
+
+* Add initial support for session limits (but more needs to be done)
+
+* Rename some of the commands for `malcontent-client` and rename some C APIs
+  (but with compatibility defines)
+
+* Bugs fixed:
+ - #6 Align GLib dependency requirements
+ - !16 docs: Improve documentation of "app-filter-changed" signal
+ - !18 build: Port meson-make-symlink script to Python
+ - !19 Add session limits support and PAM module
+ - !20 Initial version of parental controls app
+ - !21 build: Fix default value of pamlibdir
+ - !22 Iterate on UI of parental controls app
+ - !23 Split widgets into separate library
+ - !24 Allow user controls to be used for not-yet-existing users
+
+
 Overview of changes in malcontent 0.4.0
 =======================================
 
