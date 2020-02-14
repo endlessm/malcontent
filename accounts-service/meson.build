@@ -7,6 +7,7 @@ i18n.merge_file('com.endlessm.ParentalControls.policy',
 )
 
 dbus_interfaces = [
+  'com.endlessm.ParentalControls.AccountInfo',
   'com.endlessm.ParentalControls.AppFilter',
   'com.endlessm.ParentalControls.SessionLimits',
 ]
