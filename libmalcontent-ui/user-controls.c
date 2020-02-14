@@ -82,6 +82,7 @@ struct _MctUserControls
   GtkSwitch  *restrict_web_browsers_switch;
   GtkLabel   *restrict_web_browsers_description;
   GtkButton  *oars_button;
+  GtkLabel   *oars_button_label;
   GtkPopover *oars_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
   GtkLabel   *restrict_applications_description;
@@ -399,7 +400,7 @@ update_oars_level (MctUserControls *self)
   if (rating_age_category == NULL || all_categories_unset)
     rating_age_category = _("All Ages");
 
-  gtk_button_set_label (self->oars_button, rating_age_category);
+  gtk_label_set_label (self->oars_button_label, rating_age_category);
 }
 
 static void
@@ -670,13 +671,13 @@ on_set_age_action_activated (GSimpleAction *action,
 
   /* Update the button */
   if (age == oars_disabled_age)
-    gtk_button_set_label (self->oars_button, _("All Ages"));
+    gtk_label_set_label (self->oars_button_label, _("All Ages"));
 
   for (i = 0; age != oars_disabled_age && entries[i] != NULL; i++)
     {
       if (ages[i] == age)
         {
-          gtk_button_set_label (self->oars_button, entries[i]);
+          gtk_label_set_label (self->oars_button_label, entries[i]);
           break;
         }
     }
@@ -966,6 +967,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_button);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_button_label);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_description);
