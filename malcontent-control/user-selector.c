@@ -309,8 +309,8 @@ sort_users (gconstpointer a,
   ActUser *ua, *ub;
   gint result;
 
-  ua = ACT_USER (a);
-  ub = ACT_USER (b);
+  ua = ACT_USER ((gpointer) a);
+  ub = ACT_USER ((gpointer) b);
 
   /* Make sure the current user is shown first */
   if (act_user_get_uid (ua) == getuid ())
@@ -344,7 +344,7 @@ user_compare (gconstpointer i,
   gint result;
 
   item = (MctCarouselItem *) i;
-  user = ACT_USER (u);
+  user = ACT_USER ((gpointer) u);
 
   uid_a = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item), "uid"));
   uid_b = act_user_get_uid (user);
