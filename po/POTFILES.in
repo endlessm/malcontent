@@ -10,8 +10,10 @@ libmalcontent-ui/restrict-applications-selector.ui
 libmalcontent-ui/user-controls.c
 libmalcontent-ui/user-controls.ui
 malcontent-control/application.c
+malcontent-control/carousel.ui
 malcontent-control/main.ui
 malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in
 malcontent-control/org.freedesktop.MalcontentControl.desktop.in
 malcontent-control/org.freedesktop.MalcontentControl.policy.in
+malcontent-control/user-selector.c
 pam/pam_malcontent.c
