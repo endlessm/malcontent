@@ -113,6 +113,6 @@ if xmllint.found()
   )
 endif
 
-# FIXME: Add icons and tests
-#subdir('icons')
+# FIXME: Add tests
+subdir('icons')
 #subdir('tests')
