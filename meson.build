@@ -133,3 +133,5 @@ subdir('malcontent-client')
 subdir('malcontent-control')
 subdir('pam')
 subdir('po')
+
+meson.add_install_script('build-aux/meson_post_install.py')
