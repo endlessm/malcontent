@@ -76,11 +76,15 @@ struct _MctUserControls
 
   GMenu      *age_menu;
   GtkSwitch  *restrict_system_installation_switch;
+  GtkLabel   *restrict_system_installation_description;
   GtkSwitch  *restrict_user_installation_switch;
+  GtkLabel   *restrict_user_installation_description;
   GtkSwitch  *restrict_web_browsers_switch;
+  GtkLabel   *restrict_web_browsers_description;
   GtkButton  *restriction_button;
   GtkPopover *restriction_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
+  GtkLabel   *restrict_applications_description;
 
   GtkListBox *application_usage_permissions_listbox;
   GtkListBox *software_installation_permissions_listbox;
@@ -476,6 +480,32 @@ update_restrict_web_browsers (MctUserControls *self)
 }
 
 static void
+update_labels_from_name (MctUserControls *self)
+{
+  g_autofree gchar *l = NULL;
+
+  /* Translators: The placeholder is a user’s display name. */
+  l = g_strdup_printf (_("Prevents %s from running web browsers. Note that limited web content may still be available in other applications."), self->user_display_name);
+  gtk_label_set_label (self->restrict_web_browsers_description, l);
+  g_clear_pointer (&l, g_free);
+
+  /* Translators: The placeholder is a user’s display name. */
+  l = g_strdup_printf (_("Prevents specified applications from being used by %s."), self->user_display_name);
+  gtk_label_set_label (self->restrict_applications_description, l);
+  g_clear_pointer (&l, g_free);
+
+  /* Translators: The placeholder is a user’s display name. */
+  l = g_strdup_printf (_("Prevents %s from installing applications."), self->user_display_name);
+  gtk_label_set_label (self->restrict_user_installation_description, l);
+  g_clear_pointer (&l, g_free);
+
+  /* Translators: The placeholder is a user’s display name. */
+  l = g_strdup_printf (_("Prevents %s’s application installations from being available to all users."), self->user_display_name);
+  gtk_label_set_label (self->restrict_system_installation_description, l);
+  g_clear_pointer (&l, g_free);
+}
+
+static void
 setup_parental_control_settings (MctUserControls *self)
 {
   gboolean is_authorized;
@@ -498,6 +528,7 @@ setup_parental_control_settings (MctUserControls *self)
   update_categories_from_language (self);
   update_allow_app_installation (self);
   update_restrict_web_browsers (self);
+  update_labels_from_name (self);
 }
 
 /* Callbacks */
@@ -929,11 +960,15 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, age_menu);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_system_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_system_installation_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_user_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_user_installation_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, application_usage_permissions_listbox);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, software_installation_permissions_listbox);
 
