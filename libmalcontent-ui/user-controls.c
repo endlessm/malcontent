@@ -75,8 +75,8 @@ struct _MctUserControls
   GtkGrid     parent_instance;
 
   GMenu      *age_menu;
-  GtkSwitch  *allow_system_installation_switch;
-  GtkSwitch  *allow_user_installation_switch;
+  GtkSwitch  *restrict_system_installation_switch;
+  GtkSwitch  *restrict_user_installation_switch;
   GtkSwitch  *restrict_web_browsers_switch;
   GtkButton  *restriction_button;
   GtkPopover *restriction_popover;
@@ -107,9 +107,9 @@ struct _MctUserControls
 
 static gboolean blacklist_apps_cb (gpointer data);
 
-static void on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
-                                                            GParamSpec       *pspec,
-                                                            MctUserControls *self);
+static void on_restrict_installation_switch_active_changed_cb (GtkSwitch        *s,
+                                                               GParamSpec       *pspec,
+                                                               MctUserControls *self);
 
 static void on_restrict_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
                                                                GParamSpec       *pspec,
@@ -401,8 +401,8 @@ update_oars_level (MctUserControls *self)
 static void
 update_allow_app_installation (MctUserControls *self)
 {
-  gboolean allow_system_installation;
-  gboolean allow_user_installation;
+  gboolean restrict_system_installation;
+  gboolean restrict_user_installation;
   gboolean non_admin_user = TRUE;
 
   if (self->user_account_type == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
@@ -410,8 +410,8 @@ update_allow_app_installation (MctUserControls *self)
 
   /* Admins are always allowed to install apps for all users. This behaviour is governed
    * by flatpak polkit rules. Hence, these hide these defunct switches for admins. */
-  gtk_widget_set_visible (GTK_WIDGET (self->allow_system_installation_switch), non_admin_user);
-  gtk_widget_set_visible (GTK_WIDGET (self->allow_user_installation_switch), non_admin_user);
+  gtk_widget_set_visible (GTK_WIDGET (self->restrict_system_installation_switch), non_admin_user);
+  gtk_widget_set_visible (GTK_WIDGET (self->restrict_user_installation_switch), non_admin_user);
 
   /* If user is admin, we are done here, bail out. */
   if (!non_admin_user)
@@ -421,36 +421,36 @@ update_allow_app_installation (MctUserControls *self)
       return;
     }
 
-  allow_system_installation = mct_app_filter_is_system_installation_allowed (self->filter);
-  allow_user_installation = mct_app_filter_is_user_installation_allowed (self->filter);
+  restrict_system_installation = !mct_app_filter_is_system_installation_allowed (self->filter);
+  restrict_user_installation = !mct_app_filter_is_user_installation_allowed (self->filter);
 
   /* While the underlying permissions storage allows the system and user settings
    * to be stored completely independently, force the system setting to OFF if
    * the user setting is OFF in the UI. This keeps the policy in use for most
    * people simpler. */
-  if (!allow_user_installation)
-    allow_system_installation = FALSE;
+  if (restrict_user_installation)
+    restrict_system_installation = TRUE;
 
-  g_signal_handlers_block_by_func (self->allow_system_installation_switch,
-                                   on_allow_installation_switch_active_changed_cb,
+  g_signal_handlers_block_by_func (self->restrict_system_installation_switch,
+                                   on_restrict_installation_switch_active_changed_cb,
                                    self);
 
-  g_signal_handlers_block_by_func (self->allow_user_installation_switch,
-                                   on_allow_installation_switch_active_changed_cb,
+  g_signal_handlers_block_by_func (self->restrict_user_installation_switch,
+                                   on_restrict_installation_switch_active_changed_cb,
                                    self);
 
-  gtk_switch_set_active (self->allow_system_installation_switch, allow_system_installation);
-  gtk_switch_set_active (self->allow_user_installation_switch, allow_user_installation);
+  gtk_switch_set_active (self->restrict_system_installation_switch, restrict_system_installation);
+  gtk_switch_set_active (self->restrict_user_installation_switch, restrict_user_installation);
 
-  g_debug ("Allow system installation: %s", allow_system_installation ? "yes" : "no");
-  g_debug ("Allow user installation: %s", allow_user_installation ? "yes" : "no");
+  g_debug ("Restrict system installation: %s", restrict_system_installation ? "yes" : "no");
+  g_debug ("Restrict user installation: %s", restrict_user_installation ? "yes" : "no");
 
-  g_signal_handlers_unblock_by_func (self->allow_system_installation_switch,
-                                     on_allow_installation_switch_active_changed_cb,
+  g_signal_handlers_unblock_by_func (self->restrict_system_installation_switch,
+                                     on_restrict_installation_switch_active_changed_cb,
                                      self);
 
-  g_signal_handlers_unblock_by_func (self->allow_user_installation_switch,
-                                     on_allow_installation_switch_active_changed_cb,
+  g_signal_handlers_unblock_by_func (self->restrict_user_installation_switch,
+                                     on_restrict_installation_switch_active_changed_cb,
                                      self);
 }
 
@@ -539,21 +539,21 @@ blacklist_apps_cb (gpointer data)
 }
 
 static void
-on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
-                                                GParamSpec       *pspec,
-                                                MctUserControls *self)
+on_restrict_installation_switch_active_changed_cb (GtkSwitch        *s,
+                                                   GParamSpec       *pspec,
+                                                   MctUserControls *self)
 {
   /* See the comment about policy in update_allow_app_installation(). */
-  if (s == self->allow_user_installation_switch &&
-      !gtk_switch_get_active (s) &&
-      gtk_switch_get_active (self->allow_system_installation_switch))
+  if (s == self->restrict_user_installation_switch &&
+      gtk_switch_get_active (s) &&
+      !gtk_switch_get_active (self->restrict_system_installation_switch))
     {
-      g_signal_handlers_block_by_func (self->allow_system_installation_switch,
-                                       on_allow_installation_switch_active_changed_cb,
+      g_signal_handlers_block_by_func (self->restrict_system_installation_switch,
+                                       on_restrict_installation_switch_active_changed_cb,
                                        self);
-      gtk_switch_set_active (self->allow_system_installation_switch, FALSE);
-      g_signal_handlers_unblock_by_func (self->allow_system_installation_switch,
-                                         on_allow_installation_switch_active_changed_cb,
+      gtk_switch_set_active (self->restrict_system_installation_switch, TRUE);
+      g_signal_handlers_unblock_by_func (self->restrict_system_installation_switch,
+                                         on_restrict_installation_switch_active_changed_cb,
                                          self);
     }
 
@@ -928,8 +928,8 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/user-controls.ui");
 
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, age_menu);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_system_installation_switch);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_user_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_system_installation_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_user_installation_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
@@ -937,7 +937,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, application_usage_permissions_listbox);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, software_installation_permissions_listbox);
 
-  gtk_widget_class_bind_template_callback (widget_class, on_allow_installation_switch_active_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_restrict_installation_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_web_browsers_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_delete_event_cb);
@@ -989,9 +989,9 @@ mct_user_controls_init (MctUserControls *self)
 
   gtk_popover_bind_model (self->restriction_popover, G_MENU_MODEL (self->age_menu), NULL);
 
-  g_object_bind_property (self->allow_user_installation_switch, "active",
-                          self->allow_system_installation_switch, "sensitive",
-                          G_BINDING_DEFAULT);
+  g_object_bind_property (self->restrict_user_installation_switch, "active",
+                          self->restrict_system_installation_switch, "sensitive",
+                          G_BINDING_DEFAULT | G_BINDING_INVERT_BOOLEAN);
 
   /* Automatically add separators between rows. */
   gtk_list_box_set_header_func (self->application_usage_permissions_listbox,
@@ -1399,16 +1399,16 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
   /* App installation */
   if (self->user_account_type != ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)
     {
-      gboolean allow_system_installation;
-      gboolean allow_user_installation;
+      gboolean restrict_system_installation;
+      gboolean restrict_user_installation;
 
-      allow_system_installation = gtk_switch_get_active (self->allow_system_installation_switch);
-      allow_user_installation = gtk_switch_get_active (self->allow_user_installation_switch);
+      restrict_system_installation = gtk_switch_get_active (self->restrict_system_installation_switch);
+      restrict_user_installation = gtk_switch_get_active (self->restrict_user_installation_switch);
 
-      g_debug ("\t → %s system installation", allow_system_installation ? "Enabling" : "Disabling");
-      g_debug ("\t → %s user installation", allow_user_installation ? "Enabling" : "Disabling");
+      g_debug ("\t → %s system installation", restrict_system_installation ? "Restricting" : "Allowing");
+      g_debug ("\t → %s user installation", restrict_user_installation ? "Restricting" : "Allowing");
 
-      mct_app_filter_builder_set_allow_user_installation (builder, allow_user_installation);
-      mct_app_filter_builder_set_allow_system_installation (builder, allow_system_installation);
+      mct_app_filter_builder_set_allow_user_installation (builder, !restrict_user_installation);
+      mct_app_filter_builder_set_allow_system_installation (builder, !restrict_system_installation);
     }
 }
