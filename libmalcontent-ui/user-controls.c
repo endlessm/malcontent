@@ -949,11 +949,19 @@ mct_user_controls_init (MctUserControls *self)
 {
   g_autoptr(GDBusConnection) system_bus = NULL;
   g_autoptr(GError) error = NULL;
+  g_autoptr(GtkCssProvider) provider = NULL;
 
   /* Ensure the types used in the UI are registered. */
   g_type_ensure (MCT_TYPE_RESTRICT_APPLICATIONS_DIALOG);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  provider = gtk_css_provider_new ();
+  gtk_css_provider_load_from_resource (provider,
+                                       "/org/freedesktop/MalcontentUi/ui/restricts-switch.css");
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
 
   self->selected_age = (guint) -1;
 
