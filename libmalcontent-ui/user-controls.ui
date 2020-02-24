@@ -57,18 +57,18 @@
                     <property name="row-spacing">4</property>
                     <property name="column-spacing">4</property>
                     <child>
-                      <object class="GtkLabel" id="allow_web_browsers_label">
+                      <object class="GtkLabel" id="restrict_web_browsers_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
                         <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Allow _Web Browsers</property>
+                        <property name="label" translatable="yes">Restrict _Web Browsers</property>
                         <property name="use_underline">True</property>
-                        <property name="mnemonic_widget">allow_web_browsers_switch</property>
+                        <property name="mnemonic_widget">restrict_web_browsers_switch</property>
                         <accessibility>
-                          <relation target="allow_web_browsers_switch" type="label-for"/>
+                          <relation target="restrict_web_browsers_switch" type="label-for"/>
                         </accessibility>
                       </object>
                       <packing>
@@ -77,7 +77,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="allow_web_browsers_description">
+                      <object class="GtkLabel" id="restrict_web_browsers_description">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -92,7 +92,7 @@
                           <class name="dim-label" />
                         </style>
                         <accessibility>
-                          <relation target="allow_web_browsers_switch" type="description-for"/>
+                          <relation target="restrict_web_browsers_switch" type="description-for"/>
                         </accessibility>
                       </object>
                       <packing>
@@ -101,12 +101,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="allow_web_browsers_switch">
+                      <object class="GtkSwitch" id="restrict_web_browsers_switch">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
-                        <signal name="notify::active" handler="on_allow_web_browsers_switch_active_changed_cb" object="MctUserControls" swapped="no" />
+                        <signal name="notify::active" handler="on_restrict_web_browsers_switch_active_changed_cb" object="MctUserControls" swapped="no" />
+                        <style>
+                          <class name="restricts" />
+                        </style>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -514,8 +517,8 @@
   <object class="GtkSizeGroup">
     <property name="mode">horizontal</property>
     <widgets>
-      <widget name="allow_web_browsers_label" />
-      <widget name="allow_web_browsers_description" />
+      <widget name="restrict_web_browsers_label" />
+      <widget name="restrict_web_browsers_description" />
       <widget name="restrict_applications_label" />
       <widget name="restrict_applications_description" />
       <widget name="restriction_label" />

@@ -77,7 +77,7 @@ struct _MctUserControls
   GMenu      *age_menu;
   GtkSwitch  *allow_system_installation_switch;
   GtkSwitch  *allow_user_installation_switch;
-  GtkSwitch  *allow_web_browsers_switch;
+  GtkSwitch  *restrict_web_browsers_switch;
   GtkButton  *restriction_button;
   GtkPopover *restriction_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
@@ -111,9 +111,9 @@ static void on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
                                                             GParamSpec       *pspec,
                                                             MctUserControls *self);
 
-static void on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
-                                                            GParamSpec       *pspec,
-                                                            MctUserControls *self);
+static void on_restrict_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
+                                                               GParamSpec       *pspec,
+                                                               MctUserControls *self);
 
 static void on_restrict_applications_button_clicked_cb (GtkButton *button,
                                                         gpointer   user_data);
@@ -455,23 +455,23 @@ update_allow_app_installation (MctUserControls *self)
 }
 
 static void
-update_allow_web_browsers (MctUserControls *self)
+update_restrict_web_browsers (MctUserControls *self)
 {
-  gboolean allow_web_browsers;
+  gboolean restrict_web_browsers;
 
-  allow_web_browsers = mct_app_filter_is_content_type_allowed (self->filter,
-                                                               WEB_BROWSERS_CONTENT_TYPE);
+  restrict_web_browsers = !mct_app_filter_is_content_type_allowed (self->filter,
+                                                                   WEB_BROWSERS_CONTENT_TYPE);
 
-  g_signal_handlers_block_by_func (self->allow_web_browsers_switch,
-                                   on_allow_web_browsers_switch_active_changed_cb,
+  g_signal_handlers_block_by_func (self->restrict_web_browsers_switch,
+                                   on_restrict_web_browsers_switch_active_changed_cb,
                                    self);
 
-  gtk_switch_set_active (self->allow_web_browsers_switch, allow_web_browsers);
+  gtk_switch_set_active (self->restrict_web_browsers_switch, restrict_web_browsers);
 
-  g_debug ("Allow web browsers: %s", allow_web_browsers ? "yes" : "no");
+  g_debug ("Restrict web browsers: %s", restrict_web_browsers ? "yes" : "no");
 
-  g_signal_handlers_unblock_by_func (self->allow_web_browsers_switch,
-                                     on_allow_web_browsers_switch_active_changed_cb,
+  g_signal_handlers_unblock_by_func (self->restrict_web_browsers_switch,
+                                     on_restrict_web_browsers_switch_active_changed_cb,
                                      self);
 }
 
@@ -497,7 +497,7 @@ setup_parental_control_settings (MctUserControls *self)
   update_oars_level (self);
   update_categories_from_language (self);
   update_allow_app_installation (self);
-  update_allow_web_browsers (self);
+  update_restrict_web_browsers (self);
 }
 
 /* Callbacks */
@@ -562,9 +562,9 @@ on_allow_installation_switch_active_changed_cb (GtkSwitch        *s,
 }
 
 static void
-on_allow_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
-                                                GParamSpec       *pspec,
-                                                MctUserControls *self)
+on_restrict_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
+                                                   GParamSpec       *pspec,
+                                                   MctUserControls *self)
 {
   /* Save the changes. */
   schedule_update_blacklisted_apps (self);
@@ -930,7 +930,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, age_menu);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_system_installation_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_user_installation_switch);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, allow_web_browsers_switch);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
@@ -938,7 +938,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, software_installation_permissions_listbox);
 
   gtk_widget_class_bind_template_callback (widget_class, on_allow_installation_switch_active_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, on_allow_web_browsers_switch_active_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_restrict_web_browsers_switch_active_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_delete_event_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_response_cb);
@@ -1354,7 +1354,7 @@ void
 mct_user_controls_build_app_filter (MctUserControls     *self,
                                     MctAppFilterBuilder *builder)
 {
-  gboolean allow_web_browsers;
+  gboolean restrict_web_browsers;
   gsize i;
 
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
@@ -1389,11 +1389,11 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
     }
 
   /* Web browsers */
-  allow_web_browsers = gtk_switch_get_active (self->allow_web_browsers_switch);
+  restrict_web_browsers = gtk_switch_get_active (self->restrict_web_browsers_switch);
 
-  g_debug ("\t → %s web browsers", allow_web_browsers ? "Enabling" : "Disabling");
+  g_debug ("\t → %s web browsers", restrict_web_browsers ? "Restricting" : "Allowing");
 
-  if (!allow_web_browsers)
+  if (restrict_web_browsers)
     mct_app_filter_builder_blacklist_content_type (builder, WEB_BROWSERS_CONTENT_TYPE);
 
   /* App installation */
