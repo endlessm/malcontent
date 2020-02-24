@@ -68,6 +68,8 @@ struct _MctRestrictApplicationsSelector
 
   FlatpakInstallation *system_installation; /* (owned) */
   FlatpakInstallation *user_installation; /* (owned) */
+
+  GtkCssProvider *css_provider;  /* (owned) */
 };
 
 G_DEFINE_TYPE (MctRestrictApplicationsSelector, mct_restrict_applications_selector, GTK_TYPE_BOX)
@@ -157,6 +159,7 @@ mct_restrict_applications_selector_dispose (GObject *object)
   g_clear_pointer (&self->app_filter, mct_app_filter_unref);
   g_clear_object (&self->system_installation);
   g_clear_object (&self->user_installation);
+  g_clear_object (&self->css_provider);
 
   G_OBJECT_CLASS (mct_restrict_applications_selector_parent_class)->dispose (object);
 }
@@ -239,6 +242,10 @@ mct_restrict_applications_selector_init (MctRestrictApplicationsSelector *self)
 
   self->system_installation = flatpak_installation_new_system (NULL, NULL);
   self->user_installation = flatpak_installation_new_user (NULL, NULL);
+
+  self->css_provider = gtk_css_provider_new ();
+  gtk_css_provider_load_from_resource (self->css_provider,
+                                       "/org/freedesktop/MalcontentUi/ui/restricts-switch.css");
 }
 
 static void
@@ -251,7 +258,7 @@ on_switch_active_changed_cb (GtkSwitch  *s,
   gboolean allowed;
 
   app = g_object_get_data (G_OBJECT (s), "GAppInfo");
-  allowed = gtk_switch_get_active (s);
+  allowed = !gtk_switch_get_active (s);
 
   if (allowed)
     {
@@ -286,6 +293,7 @@ create_row_for_app_cb (gpointer item,
   gboolean allowed;
   const gchar *app_name;
   gint size;
+  GtkStyleContext *context;
 
   app_name = g_app_info_get_name (app);
 
@@ -319,6 +327,11 @@ create_row_for_app_cb (gpointer item,
   w = g_object_new (GTK_TYPE_SWITCH,
                     "valign", GTK_ALIGN_CENTER,
                     NULL);
+  context = gtk_widget_get_style_context (w);
+  gtk_style_context_add_class (context, "restricts");
+  gtk_style_context_add_provider (context,
+                                  GTK_STYLE_PROVIDER (self->css_provider),
+                                  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
   gtk_container_add (GTK_CONTAINER (box), w);
 
   gtk_widget_show_all (box);
@@ -326,7 +339,7 @@ create_row_for_app_cb (gpointer item,
   /* Fetch status from AccountService */
   allowed = mct_app_filter_is_appinfo_allowed (self->app_filter, app);
 
-  gtk_switch_set_active (GTK_SWITCH (w), allowed);
+  gtk_switch_set_active (GTK_SWITCH (w), !allowed);
   g_object_set_data_full (G_OBJECT (w), "GAppInfo", g_object_ref (app), g_object_unref);
 
   if (allowed)

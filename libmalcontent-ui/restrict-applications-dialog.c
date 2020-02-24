@@ -217,7 +217,7 @@ update_description (MctRestrictApplicationsDialog *self)
     }
 
   /* Translators: the placeholder is a user’s full name */
-  description = g_strdup_printf (_("Allow %s to use the following installed applications."),
+  description = g_strdup_printf (_("Restrict %s from using the following installed applications."),
                                  self->user_display_name);
   gtk_label_set_text (self->description, description);
   gtk_widget_show (GTK_WIDGET (self->description));

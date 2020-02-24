@@ -22,7 +22,7 @@
         <child>
           <object class="GtkLabel" id="description">
             <!-- Translated dynamically: -->
-            <property name="label">Allow {username} to use the following installed applications.</property>
+            <property name="label">Restrict {username} from using the following installed applications.</property>
             <property name="visible">False</property>
             <child internal-child="accessible">
               <object class="AtkObject">
