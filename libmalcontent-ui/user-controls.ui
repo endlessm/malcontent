@@ -436,7 +436,7 @@
                     <property name="row-spacing">4</property>
                     <property name="column-spacing">4</property>
                     <child>
-                      <object class="GtkLabel" id="restriction_label">
+                      <object class="GtkLabel" id="oars_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -445,10 +445,10 @@
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">Application _Suitability</property>
                         <property name="use_underline">True</property>
-                        <property name="mnemonic_widget">restriction_button</property>
+                        <property name="mnemonic_widget">oars_button</property>
                         <accessibility>
-                          <relation target="restriction_button" type="label-for"/>
-                          <relation target="restriction_button" type="flows-to"/>
+                          <relation target="oars_button" type="label-for"/>
+                          <relation target="oars_button" type="flows-to"/>
                         </accessibility>
                       </object>
                       <packing>
@@ -457,7 +457,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="restriction_description">
+                      <object class="GtkLabel" id="oars_description">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -472,7 +472,7 @@
                           <class name="dim-label" />
                         </style>
                         <accessibility>
-                          <relation target="restriction_button" type="description-for"/>
+                          <relation target="oars_button" type="description-for"/>
                         </accessibility>
                       </object>
                       <packing>
@@ -481,12 +481,12 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkMenuButton" id="restriction_button">
+                      <object class="GtkMenuButton" id="oars_button">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
-                        <property name="popover">restriction_popover</property>
+                        <property name="popover">oars_popover</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -508,9 +508,9 @@
     </child>
   </template>
 
-  <object class="GtkPopoverMenu" id="restriction_popover">
+  <object class="GtkPopoverMenu" id="oars_popover">
     <accessibility>
-      <relation target="restriction_button" type="popup-for"/>
+      <relation target="oars_button" type="popup-for"/>
     </accessibility>
   </object>
 
@@ -519,8 +519,8 @@
   <object class="GtkSizeGroup">
     <property name="mode">horizontal</property>
     <widgets>
-      <widget name="restriction_button" />
-      <widget name="restriction_popover" />
+      <widget name="oars_button" />
+      <widget name="oars_popover" />
     </widgets>
   </object>
 
@@ -531,7 +531,7 @@
       <widget name="restrict_web_browsers_description" />
       <widget name="restrict_applications_label" />
       <widget name="restrict_applications_description" />
-      <widget name="restriction_label" />
+      <widget name="oars_label" />
       <widget name="restrict_user_installation_label" />
       <widget name="restrict_system_installation_label" />
     </widgets>

@@ -81,8 +81,8 @@ struct _MctUserControls
   GtkLabel   *restrict_user_installation_description;
   GtkSwitch  *restrict_web_browsers_switch;
   GtkLabel   *restrict_web_browsers_description;
-  GtkButton  *restriction_button;
-  GtkPopover *restriction_popover;
+  GtkButton  *oars_button;
+  GtkPopover *oars_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
   GtkLabel   *restrict_applications_description;
 
@@ -399,7 +399,7 @@ update_oars_level (MctUserControls *self)
   if (rating_age_category == NULL || all_categories_unset)
     rating_age_category = _("All Ages");
 
-  gtk_button_set_label (self->restriction_button, rating_age_category);
+  gtk_button_set_label (self->oars_button, rating_age_category);
 }
 
 static void
@@ -670,13 +670,13 @@ on_set_age_action_activated (GSimpleAction *action,
 
   /* Update the button */
   if (age == oars_disabled_age)
-    gtk_button_set_label (self->restriction_button, _("All Ages"));
+    gtk_button_set_label (self->oars_button, _("All Ages"));
 
   for (i = 0; age != oars_disabled_age && entries[i] != NULL; i++)
     {
       if (ages[i] == age)
         {
-          gtk_button_set_label (self->restriction_button, entries[i]);
+          gtk_button_set_label (self->oars_button, entries[i]);
           break;
         }
     }
@@ -965,8 +965,8 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_user_installation_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_switch);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_web_browsers_description);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_button);
-  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restriction_popover);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_button);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_description);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, application_usage_permissions_listbox);
@@ -1022,7 +1022,7 @@ mct_user_controls_init (MctUserControls *self)
                                   "permissions",
                                   G_ACTION_GROUP (self->action_group));
 
-  gtk_popover_bind_model (self->restriction_popover, G_MENU_MODEL (self->age_menu), NULL);
+  gtk_popover_bind_model (self->oars_popover, G_MENU_MODEL (self->age_menu), NULL);
 
   g_object_bind_property (self->restrict_user_installation_switch, "active",
                           self->restrict_system_installation_switch, "sensitive",
