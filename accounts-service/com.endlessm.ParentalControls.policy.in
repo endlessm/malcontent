@@ -79,4 +79,44 @@
       <allow_active>auth_admin_keep</allow_active>
     </defaults>
   </action>
+
+  <action id="com.endlessm.ParentalControls.AccountInfo.ChangeOwn">
+    <description>Change your own account info</description>
+    <message>Authentication is required to change your account info.</message>
+    <defaults>
+      <allow_any>auth_admin_keep</allow_any>
+      <allow_inactive>auth_admin_keep</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+  <action id="com.endlessm.ParentalControls.AccountInfo.ReadOwn">
+    <description>Read your own account info</description>
+    <message>Authentication is required to read your account info.</message>
+    <defaults>
+      <allow_any>yes</allow_any>
+      <allow_inactive>yes</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <action id="com.endlessm.ParentalControls.AccountInfo.ChangeAny">
+    <description>Change another user’s account info</description>
+    <message>Authentication is required to change another user’s account info.</message>
+    <defaults>
+      <allow_any>auth_admin_keep</allow_any>
+      <allow_inactive>auth_admin_keep</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+  <action id="com.endlessm.ParentalControls.AccountInfo.ReadAny">
+    <description>Read another user’s account info</description>
+    <message>Authentication is required to read another user’s account info.</message>
+    <defaults>
+      <allow_any>yes</allow_any>
+      <allow_inactive>yes</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
 </policyconfig>
