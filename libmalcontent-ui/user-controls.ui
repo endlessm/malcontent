@@ -82,7 +82,8 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="ellipsize">end</property>
+                        <property name="ellipsize">none</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <!-- Set dynamically from user-controls.c: -->
                         <property name="label">Prevents {username} from running web browsers. Note that limited web content may still be available in other applications.</property>
@@ -165,7 +166,8 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="ellipsize">end</property>
+                        <property name="ellipsize">none</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <!-- Set dynamically from user-controls.c: -->
                         <property name="label">Prevents specified applications from being used by {username}.</property>
@@ -293,7 +295,8 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="ellipsize">end</property>
+                        <property name="ellipsize">none</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <!-- Set dynamically from user-controls.c: -->
                         <property name="label">Prevents {username} from installing applications.</property>
@@ -377,7 +380,8 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="ellipsize">end</property>
+                        <property name="ellipsize">none</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <!-- Set dynamically from user-controls.c: -->
                         <property name="label">Prevents {username}’s application installations from being available to all users.</property>
@@ -462,7 +466,8 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="ellipsize">end</property>
+                        <property name="ellipsize">none</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">Restricts application installation to those suitable for certain ages or above.</property>
                         <attributes>
