@@ -44,6 +44,14 @@
   </kudos>
   <translation type="gettext">malcontent</translation>
   <releases>
+    <release version="0.6.0" date="2020-02-26" type="stable">
+      <description>
+        <ul>
+          <li>Improve parental controls application UI and add icon</li>
+          <li>Support for indicating which accounts are parent accounts</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.5.0" date="2020-02-14" type="stable">
       <description>
         <ul>

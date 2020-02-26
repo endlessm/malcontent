@@ -1,3 +1,31 @@
+Overview of changes in malcontent 0.6.0
+=======================================
+
+* Add icon for `malcontent-control` (thanks Jakub Steiner) (#9)
+
+* Redesign `malcontent-control` UI in response to design feedback (#11)
+
+* Add `AccountInfo` interface for metadata on parent accounts (!26)
+
+* Fix translation of the UI (!31)
+
+* Bugs fixed:
+ - #9 Add icon for malcontent-control
+ - #11 User controls UI tweaks
+ - !26 accounts-service: Add AccountInfo interface
+ - !27 user-selector: Fix some const-to-non-const cast warnings
+ - !29 po: Add some missing files to POTFILES.in
+ - !30 Add Ukrainian translation
+ - !31 build: Fix definition of PACKAGE_LOCALE_DIR
+ - !32 Add Brazilian Portuguese translation
+ - !33 po: Order LINGUAS alphabetically
+ - !34 More small UI tweaks
+
+* Translation updates:
+ - Portuguese (Brazil)
+ - Ukrainian
+
+
 Overview of changes in malcontent 0.5.0
 =======================================
 
