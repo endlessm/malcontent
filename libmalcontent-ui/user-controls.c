@@ -486,7 +486,7 @@ update_labels_from_name (MctUserControls *self)
   g_autofree gchar *l = NULL;
 
   /* Translators: The placeholder is a user’s display name. */
-  l = g_strdup_printf (_("Prevents %s from running web browsers. Note that limited web content may still be available in other applications."), self->user_display_name);
+  l = g_strdup_printf (_("Prevents %s from running web browsers. Limited web content may still be available in other applications."), self->user_display_name);
   gtk_label_set_label (self->restrict_web_browsers_description, l);
   g_clear_pointer (&l, g_free);
 
@@ -501,7 +501,7 @@ update_labels_from_name (MctUserControls *self)
   g_clear_pointer (&l, g_free);
 
   /* Translators: The placeholder is a user’s display name. */
-  l = g_strdup_printf (_("Prevents %s’s application installations from being available to all users."), self->user_display_name);
+  l = g_strdup_printf (_("Applications installed by %s will not appear for other users."), self->user_display_name);
   gtk_label_set_label (self->restrict_system_installation_description, l);
   g_clear_pointer (&l, g_free);
 }
