@@ -447,7 +447,7 @@ mct_carousel_init (MctCarousel *self)
 
   gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
                                              provider,
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
 
   g_object_unref (provider);
 
