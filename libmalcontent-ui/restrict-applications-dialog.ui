@@ -10,7 +10,7 @@
     <child internal-child="headerbar">
       <object class="GtkHeaderBar">
         <property name="title" translatable="yes">Restrict Applications</property>
-        <property name="show-close-button">False</property>
+        <property name="show-close-button">True</property>
       </object>
     </child>
     <child internal-child="vbox">
@@ -46,16 +46,5 @@
         </child>
       </object>
     </child>
-    <child type="action">
-      <object class="GtkButton" id="button_save">
-        <property name="can-default">True</property>
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">_Save</property>
-        <property name="use-underline">True</property>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="apply" default="true">button_save</action-widget>
-    </action-widgets>
   </template>
 </interface>
