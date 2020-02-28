@@ -1,0 +1,6 @@
+usr/bin/malcontent-control
+usr/share/icons/hicolor/symbolic/apps/org.freedesktop.MalcontentControl-symbolic.svg
+usr/share/icons/hicolor/scalable/apps/org.freedesktop.MalcontentControl.svg
+usr/share/metainfo/org.freedesktop.MalcontentControl.appdata.xml
+usr/share/applications/org.freedesktop.MalcontentControl.desktop
+usr/share/polkit-1/actions/org.freedesktop.MalcontentControl.policy

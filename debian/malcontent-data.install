@@ -1,6 +1,9 @@
+usr/share/accountsservice/interfaces/com.endlessm.ParentalControls.AccountInfo.xml
 usr/share/accountsservice/interfaces/com.endlessm.ParentalControls.AppFilter.xml
 usr/share/accountsservice/interfaces/com.endlessm.ParentalControls.SessionLimits.xml
+usr/share/dbus-1/interfaces/com.endlessm.ParentalControls.AccountInfo.xml
 usr/share/dbus-1/interfaces/com.endlessm.ParentalControls.AppFilter.xml
 usr/share/dbus-1/interfaces/com.endlessm.ParentalControls.SessionLimits.xml
+usr/share/locale/*/LC_MESSAGES/malcontent.mo
 usr/share/polkit-1/actions/com.endlessm.ParentalControls.policy
 usr/share/polkit-1/rules.d/com.endlessm.ParentalControls.rules

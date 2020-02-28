@@ -10,12 +10,26 @@ Build-Depends:
  gtk-doc-tools,
  libaccountsservice-dev (>= 0.6.39),
  libdbus-1-dev,
+ libflatpak-dev,
  libgirepository1.0-dev (>= 1.30.0),
  libglib2.0-dev (>= 2.60.1),
+ libgtk-3-dev (>= 3.24),
  libpam0g-dev,
  meson,
  policykit-1,
  python3-gi,
+
+Package: malcontent-control
+Section: misc
+Architecture: any
+Multi-arch: same
+Depends:
+ malcontent-data (= ${source:Version}),
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Parental Controls UI
+ This package contains a user interface for querying and setting parental
+ controls for users.
 
 Package: malcontent-data
 Section: misc
@@ -70,6 +84,20 @@ Description: Parental Controls Library - introspection bindings
  This package contains a machine-readable API description for
  libmalcontent for use by the client tools and other clients.
 
+Package: gir1.2-malcontent-ui-0
+Section: introspection
+Architecture: any
+Multi-arch: same
+Depends:
+ ${gir:Depends},
+ ${misc:Depends},
+Description: Parental Controls UI Library - introspection bindings
+ This package contains a library with widgets for accessing the parental
+ controls settings for users.
+ .
+ This package contains a machine-readable API description for
+ libmalcontent for use by the client tools and other clients.
+
 Package: libmalcontent-0
 Section: misc
 Architecture: any
@@ -107,3 +135,31 @@ Description: Parental Controls Library - tests
  .
  This package contains unit tests for the client APIs used to access the
  parental controls.
+
+Package: libmalcontent-ui-0
+Section: misc
+Architecture: any
+Depends:
+ malcontent-data (= ${source:Version}),
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Parental Controls UI Library
+ This package contains a library with widgets for accessing the parental
+ controls settings for users.
+
+Package: libmalcontent-ui-0-dev
+Section: libdevel
+Architecture: any
+Multi-arch: same
+Depends:
+ libaccountsservice-dev,
+ libglib2.0-dev,
+ libgtk-3-dev,
+ libmalcontent-0-dev (= ${source:Version}),
+ libmalcontent-ui-0 (= ${binary:Version}),
+ ${misc:Depends},
+Description: Parental Controls UI Library - library development
+ This package contains a library with widgets for accessing the parental
+ controls settings for users.
+ .
+ This package contains development files for clients.

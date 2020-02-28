@@ -3,7 +3,7 @@ Upstream-Name: malcontent
 Upstream-Contact: Philip Withnall <withnall@endlessm.com>
 Source: https://gitlab.freedesktop.org/pwithnall/malcontent
 Disclaimer: Not part of the Debian distribution.
-Copyright: Copyright 2018, 2019 Endless Mobile, Inc.
+Copyright: Copyright 2018, 2019, 2020 Endless Mobile, Inc.
 License: LGPL-2.1+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
