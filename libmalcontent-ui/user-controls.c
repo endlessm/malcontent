@@ -22,7 +22,6 @@
 
 #include <libmalcontent/malcontent.h>
 #include <locale.h>
-#include <flatpak.h>
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 #include <glib/gi18n.h>
