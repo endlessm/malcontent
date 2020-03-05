@@ -9,3 +9,9 @@ option(
   type: 'string',
   description: 'directory for PAM modules'
 )
+option(
+  'ui',
+  type: 'feature',
+  value: 'enabled',
+  description: 'enable UI library'
+)

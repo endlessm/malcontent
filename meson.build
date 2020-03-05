@@ -127,9 +127,13 @@ test_env = [
 
 subdir('accounts-service')
 subdir('libmalcontent')
-subdir('libmalcontent-ui')
+if get_option('ui').enabled()
+  subdir('libmalcontent-ui')
+endif
 subdir('malcontent-client')
-subdir('malcontent-control')
+if get_option('ui').enabled()
+  subdir('malcontent-control')
+endif
 subdir('pam')
 subdir('po')
 
