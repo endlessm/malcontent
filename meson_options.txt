@@ -15,3 +15,9 @@ option(
   value: 'enabled',
   description: 'enable UI library'
 )
+option(
+  'use_system_libmalcontent',
+  type: 'boolean',
+  value: false,
+  description: 'use installed libmalcontent rather than building it; used in distros to break a dependency cycle'
+)

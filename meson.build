@@ -126,7 +126,14 @@ test_env = [
 ]
 
 subdir('accounts-service')
-subdir('libmalcontent')
+if not get_option('use_system_libmalcontent')
+  subdir('libmalcontent')
+else
+  libmalcontent_api_version = '0'
+  libmalcontent_dep = dependency('malcontent-' + libmalcontent_api_version, version: meson.project_version())
+  libmalcontent_gir = ['Malcontent-' + libmalcontent_api_version,
+                       'Malcontent-' + libmalcontent_api_version + '.typelib']
+endif
 if get_option('ui').enabled()
   subdir('libmalcontent-ui')
 endif
