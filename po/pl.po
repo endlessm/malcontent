@@ -1,0 +1,885 @@
+# Polish translation for malcontent.
+# Copyright © 2020 the malcontent authors.
+# This file is distributed under the same license as the malcontent package.
+# Piotr Drąg <piotrdrag@gmail.com>, 2020.
+# Aviary.pl <community-poland@mozilla.org>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: malcontent\n"
+"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
+"issues\n"
+"POT-Creation-Date: 2020-03-06 15:27+0000\n"
+"PO-Revision-Date: 2020-03-06 17:45+0100\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
+"Language-Team: Polish <community-poland@mozilla.org>\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:4
+msgid "Change your own app filter"
+msgstr "Zmiana własnego filtru programów"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:5
+msgid "Authentication is required to change your app filter."
+msgstr "Wymagane jest uwierzytelnienie, aby zmienić swój filtr programów."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:14
+msgid "Read your own app filter"
+msgstr "Odczytanie własnego filtru programów"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:15
+msgid "Authentication is required to read your app filter."
+msgstr "Wymagane jest uwierzytelnienie, aby odczytać własne filtry programów."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:24
+msgid "Change another user’s app filter"
+msgstr "Zmiana filtru programów innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:25
+msgid "Authentication is required to change another user’s app filter."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby zmienić filtr programów innego "
+"użytkownika."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:34
+msgid "Read another user’s app filter"
+msgstr "Odczytanie filtru programów innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:35
+msgid "Authentication is required to read another user’s app filter."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać filtr programów innego "
+"użytkownika."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:44
+msgid "Change your own session limits"
+msgstr "Zmiana własnych ograniczeń sesji"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:45
+msgid "Authentication is required to change your session limits."
+msgstr "Wymagane jest uwierzytelnienie, aby zmienić własne ograniczenia sesji."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:54
+msgid "Read your own session limits"
+msgstr "Odczytanie własnych ograniczeń sesji"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:55
+msgid "Authentication is required to read your session limits."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać własne ograniczenia sesji."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:64
+msgid "Change another user’s session limits"
+msgstr "Zmiana ograniczeń sesji innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:65
+msgid "Authentication is required to change another user’s session limits."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby zmienić ograniczenia sesji innego "
+"użytkownika."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:74
+msgid "Read another user’s session limits"
+msgstr "Odczytanie ograniczeń sesji innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:75
+msgid "Authentication is required to read another user’s session limits."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać ograniczenia sesji innego "
+"użytkownika."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:84
+msgid "Change your own account info"
+msgstr "Zmiana własnych informacji o koncie"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:85
+msgid "Authentication is required to change your account info."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby zmienić własne informacje o koncie."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:94
+msgid "Read your own account info"
+msgstr "Odczytanie własnych informacji o koncie"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:95
+msgid "Authentication is required to read your account info."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać własne informacje o koncie."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:104
+msgid "Change another user’s account info"
+msgstr "Zmiana informacji o koncie innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:105
+msgid "Authentication is required to change another user’s account info."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby zmienić informacje o koncie innego "
+"użytkownika."
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:114
+msgid "Read another user’s account info"
+msgstr "Odczytanie informacji o koncie innego użytkownika"
+
+#: accounts-service/com.endlessm.ParentalControls.policy.in:115
+msgid "Authentication is required to read another user’s account info."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać informacje o koncie innego "
+"użytkownika."
+
+#: libmalcontent/manager.c:314 libmalcontent/manager.c:451
+#, c-format
+msgid "Not allowed to query app filter data for user %u"
+msgstr "Brak zezwolenia na odpytanie danych filtru programów użytkownika %u"
+
+#: libmalcontent/manager.c:319
+#, c-format
+msgid "User %u does not exist"
+msgstr "Użytkownik %u nie istnieje"
+
+#: libmalcontent/manager.c:432
+msgid "App filtering is globally disabled"
+msgstr "Filtrowanie programów jest wyłączone globalnie"
+
+#: libmalcontent/manager.c:471
+#, c-format
+msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
+msgstr "Filtr OARS użytkownika %u ma nieznany rodzaj „%s”"
+
+#: libmalcontent/manager.c:935
+msgid "Session limits are globally disabled"
+msgstr "Ograniczenia sesji są wyłączone globalnie"
+
+#: libmalcontent/manager.c:954
+#, c-format
+msgid "Not allowed to query session limits data for user %u"
+msgstr "Brak zezwolenia na odpytanie danych ograniczeń sesji użytkownika %u"
+
+#: libmalcontent/manager.c:966
+#, c-format
+msgid "Session limit for user %u has an unrecognized type ‘%u’"
+msgstr "Ograniczenie sesji użytkownika %u ma nieznany typ „%u”"
+
+#: libmalcontent/manager.c:984
+#, c-format
+msgid "Session limit for user %u has invalid daily schedule %u–%u"
+msgstr ""
+"Ograniczenie sesji użytkownika %u ma nieprawidłowy dzienny harmonogram %u-%u"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:76
+msgid "No cartoon violence"
+msgstr "Brak rysunkowej przemocy"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:79
+msgid "Cartoon characters in unsafe situations"
+msgstr "Rysunkowe postacie w niebezpiecznych sytuacjach"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:82
+msgid "Cartoon characters in aggressive conflict"
+msgstr "Rysunkowe postacie w agresywnym konflikcie"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:85
+msgid "Graphic violence involving cartoon characters"
+msgstr "Obrazowa przemoc dotycząca rysunkowych postaci"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:88
+msgid "No fantasy violence"
+msgstr "Brak nierzeczywistej przemocy"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:91
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr ""
+"Postacie w niebezpiecznych sytuacjach, łatwo odróżnialnych od rzeczywistości"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:94
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "Postacie w agresywnym konflikcie, łatwo odróżnialnym od rzeczywistości"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:97
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "Obrazowa przemoc, łatwo odróżnialna od rzeczywistości"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:100
+msgid "No realistic violence"
+msgstr "Brak realistycznej przemocy"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:103
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "Średnio realistyczne postacie w niebezpiecznych sytuacjach"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:106
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "Przedstawienia realistycznych postaci w agresywnym konflikcie"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:109
+msgid "Graphic violence involving realistic characters"
+msgstr "Obrazowa przemoc dotycząca realistycznych postaci"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:112
+msgid "No bloodshed"
+msgstr "Brak rozlewu krwi"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:115
+msgid "Unrealistic bloodshed"
+msgstr "Nierealistyczny rozlew krwi"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:118
+msgid "Realistic bloodshed"
+msgstr "Realistyczny rozlew krwi"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:121
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "Przedstawienia rozlewu krwi i okaleczeń części ciała"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:124
+msgid "No sexual violence"
+msgstr "Brak przemocy seksualnej"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:127
+msgid "Rape or other violent sexual behavior"
+msgstr "Gwałt lub inne brutalne zachowanie seksualne"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:130
+msgid "No references to alcohol"
+msgstr "Brak odniesień do alkoholu"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:133
+msgid "References to alcoholic beverages"
+msgstr "Odniesienia do napojów alkoholowych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:136
+msgid "Use of alcoholic beverages"
+msgstr "Spożycie napojów alkoholowych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:139
+msgid "No references to illicit drugs"
+msgstr "Brak odniesień do narkotyków"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:142
+msgid "References to illicit drugs"
+msgstr "Odniesienia do narkotyków"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:145
+msgid "Use of illicit drugs"
+msgstr "Spożycie narkotyków"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:148
+msgid "References to tobacco products"
+msgstr "Odniesienia do wyrobów tytoniowych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:151
+msgid "Use of tobacco products"
+msgstr "Spożycie wyrobów tytoniowych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:154
+msgid "No nudity of any sort"
+msgstr "Brak wszelkiego rodzaju nagości"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:157
+msgid "Brief artistic nudity"
+msgstr "Krótkotrwała nagość artystyczna"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:160
+msgid "Prolonged nudity"
+msgstr "Długotrwała nagość"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:163
+msgid "No references or depictions of sexual nature"
+msgstr "Brak odniesień lub przedstawień o naturze seksualnej"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:166
+msgid "Provocative references or depictions"
+msgstr "Wyzywające odniesienia lub przedstawienia"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:169
+msgid "Sexual references or depictions"
+msgstr "Seksualne odniesienia lub przedstawienia"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:172
+msgid "Graphic sexual behavior"
+msgstr "Obrazowe zachowania seksualne"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:175
+msgid "No profanity of any kind"
+msgstr "Brak wszelkiego rodzaju przekleństw"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:178
+msgid "Mild or infrequent use of profanity"
+msgstr "Lekkie lub nieczęste użycie przekleństw"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:181
+msgid "Moderate use of profanity"
+msgstr "Umiarkowane użycie przekleństw"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:184
+msgid "Strong or frequent use of profanity"
+msgstr "Silne lub częste użycie przekleństw"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:187
+msgid "No inappropriate humor"
+msgstr "Brak nieodpowiedniego humoru"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:190
+msgid "Slapstick humor"
+msgstr "Komedia slapstikowa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:193
+msgid "Vulgar or bathroom humor"
+msgstr "Komedia wulgarna lub toaletowa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:196
+msgid "Mature or sexual humor"
+msgstr "Komedia dla dorosłych lub seksualna"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:199
+msgid "No discriminatory language of any kind"
+msgstr "Brak wszelkiego rodzaju języka dyskryminacyjnego"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:202
+msgid "Negativity towards a specific group of people"
+msgstr "Niechęć wobec konkretnej grupy ludzi"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:205
+msgid "Discrimination designed to cause emotional harm"
+msgstr "Dyskryminacja mająca na celu krzywdę emocjonalną"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:208
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr ""
+"Jawna dyskryminacja ze względu na płeć, orientację seksualną, rasę lub "
+"religię"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:211
+msgid "No advertising of any kind"
+msgstr "Brak wszelkiego rodzaju reklam"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:214
+msgid "Product placement"
+msgstr "Lokowanie produktu"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:217
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "Jawne odniesienia do konkretnych marek lub zastrzeżonych produktów"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:220
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "Użytkownicy są zachęcani do zakupu fizycznych przedmiotów"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:223
+msgid "No gambling of any kind"
+msgstr "Brak wszelkiego rodzaju hazardu"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:226
+msgid "Gambling on random events using tokens or credits"
+msgstr "Zakłady o losowe wydarzenia używające żetonów lub punktów"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:229
+msgid "Gambling using “play” money"
+msgstr "Zakłady używające zabawkowych pieniędzy"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:232
+msgid "Gambling using real money"
+msgstr "Zakłady używające prawdziwych pieniędzy"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:235
+msgid "No ability to spend money"
+msgstr "Brak możliwości wydawania pieniędzy"
+
+#. v1.1
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:238
+msgid "Users are encouraged to donate real money"
+msgstr "Użytkownicy są zachęcani do przekazywania datków pieniężnych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:241
+msgid "Ability to spend real money in-game"
+msgstr "Możliwość wydawania prawdziwych pieniędzy w grze"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:244
+msgid "No way to chat with other users"
+msgstr "Brak możliwości rozmów tekstowych z innymi użytkownikami"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:247
+msgid "User-to-user game interactions without chat functionality"
+msgstr "Interakcje w grze między użytkownikami bez funkcji rozmów tekstowych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:250
+msgid "Moderated chat functionality between users"
+msgstr "Moderowana funkcja rozmów tekstowych między użytkownikami"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:253
+msgid "Uncontrolled chat functionality between users"
+msgstr "Niekontrolowana funkcja rozmów tekstowych między użytkownikami"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:256
+msgid "No way to talk with other users"
+msgstr "Brak możliwości rozmów głosowych z innymi użytkownikami"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:259
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr ""
+"Niekontrolowana funkcja rozmów głosowych lub wideo między użytkownikami"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:262
+msgid "No sharing of social network usernames or email addresses"
+msgstr ""
+"Brak udostępniania nazw użytkowników serwisów społecznościowych lub adresów "
+"e-mail"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:265
+msgid "Sharing social network usernames or email addresses"
+msgstr ""
+"Udostępnianie nazw użytkowników serwisów społecznościowych lub adresów e-mail"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:268
+msgid "No sharing of user information with 3rd parties"
+msgstr "Brak udostępniania informacji o użytkownikach stronom trzecim"
+
+#. v1.1
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:271
+msgid "Checking for the latest application version"
+msgstr "Wyszukiwanie najnowszej wersji programu"
+
+#. v1.1
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:274
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr ""
+"Udostępnianie danych diagnostycznych nieumożliwiających identyfikację "
+"użytkownika"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:277
+msgid "Sharing information that lets others identify the user"
+msgstr "Udostępnianie informacji umożliwiających identyfikację użytkownika"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:280
+msgid "No sharing of physical location to other users"
+msgstr "Brak udostępniania rzeczywistego adresu innym użytkownikom"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:283
+msgid "Sharing physical location to other users"
+msgstr "Udostępnianie rzeczywistego adresu innym użytkownikom"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:288
+msgid "No references to homosexuality"
+msgstr "Brak odniesień do homoseksualizmu"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:291
+msgid "Indirect references to homosexuality"
+msgstr "Niebezpośrednie odniesienia do homoseksualizmu"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:294
+msgid "Kissing between people of the same gender"
+msgstr "Całowanie między osobami tej samej płci"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:297
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "Obrazowe zachowania seksualne między osobami tej samej płci"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:300
+msgid "No references to prostitution"
+msgstr "Brak odniesień do prostytucji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:303
+msgid "Indirect references to prostitution"
+msgstr "Niebezpośrednie odniesienia do prostytucji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:306
+msgid "Direct references to prostitution"
+msgstr "Bezpośrednie odniesienia do prostytucji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:309
+msgid "Graphic depictions of the act of prostitution"
+msgstr "Obrazowe przedstawienia czynności związanych z prostytucją"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:312
+msgid "No references to adultery"
+msgstr "Brak odniesień do cudzołóstwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:315
+msgid "Indirect references to adultery"
+msgstr "Niebezpośrednie odniesienia do cudzołóstwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:318
+msgid "Direct references to adultery"
+msgstr "Bezpośrednie odniesienia do cudzołóstwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:321
+msgid "Graphic depictions of the act of adultery"
+msgstr "Obrazowe przedstawienia czynności związanych z cudzołóstwem"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:324
+msgid "No sexualized characters"
+msgstr "Brak seksualizowanych postaci"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:327
+msgid "Scantily clad human characters"
+msgstr "Skąpo odziane postacie ludzkie"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:330
+msgid "Overtly sexualized human characters"
+msgstr "Jawnie seksualizowane postacie ludzkie"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:333
+msgid "No references to desecration"
+msgstr "Brak odniesień do profanacji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:336
+msgid "Depictions or references to historical desecration"
+msgstr "Przedstawienia lub odniesienia do historycznej profanacji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:339
+msgid "Depictions of modern-day human desecration"
+msgstr "Przedstawienia współczesnej profanacji ludzi"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:342
+msgid "Graphic depictions of modern-day desecration"
+msgstr "Obrazowe przedstawienia współczesnej profanacji"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:345
+msgid "No visible dead human remains"
+msgstr "Brak widocznych zwłok ludzkich"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:348
+msgid "Visible dead human remains"
+msgstr "Widoczne zwłoki ludzkie"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:351
+msgid "Dead human remains that are exposed to the elements"
+msgstr "Zwłoki ludzkie wystawione na działanie warunków atmosferycznych"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:354
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "Obrazowe przedstawienia profanacji ludzkich ciał"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:357
+msgid "No references to slavery"
+msgstr "Brak odniesień do niewolnictwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:360
+msgid "Depictions or references to historical slavery"
+msgstr "Przedstawienia lub odniesienia do historycznego niewolnictwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:363
+msgid "Depictions of modern-day slavery"
+msgstr "Przedstawienia współczesnego niewolnictwa"
+
+#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:366
+msgid "Graphic depictions of modern-day slavery"
+msgstr "Obrazowe przedstawienia współczesnego niewolnictwa"
+
+#. Translators: the placeholder is a user’s full name
+#: libmalcontent-ui/restrict-applications-dialog.c:220
+#, c-format
+msgid "Restrict %s from using the following installed applications."
+msgstr ""
+"Ograniczanie użytkownikowi „%s” możliwości używania poniższych "
+"zainstalowanych programów."
+
+#: libmalcontent-ui/restrict-applications-dialog.ui:6
+#: libmalcontent-ui/restrict-applications-dialog.ui:12
+msgid "Restrict Applications"
+msgstr "Ograniczanie programów"
+
+#: libmalcontent-ui/restrict-applications-selector.ui:24
+msgid "No applications found to restrict."
+msgstr "Nie odnaleziono żadnych programów do ograniczenia."
+
+#. Translators: this is the full name for an unknown user account.
+#: libmalcontent-ui/user-controls.c:231 libmalcontent-ui/user-controls.c:242
+msgid "unknown"
+msgstr "nieznany"
+
+#: libmalcontent-ui/user-controls.c:327 libmalcontent-ui/user-controls.c:400
+#: libmalcontent-ui/user-controls.c:673
+msgid "All Ages"
+msgstr "W każdym wieku"
+
+#. Translators: The placeholder is a user’s display name.
+#: libmalcontent-ui/user-controls.c:488
+#, c-format
+msgid ""
+"Prevents %s from running web browsers. Limited web content may still be "
+"available in other applications."
+msgstr ""
+"Uniemożliwia użytkownikowi „%s” używanie przeglądarek internetowych. Pewne "
+"treści internetowe mogą nadal być dostępne w innych programach."
+
+#. Translators: The placeholder is a user’s display name.
+#: libmalcontent-ui/user-controls.c:493
+#, c-format
+msgid "Prevents specified applications from being used by %s."
+msgstr "Uniemożliwia użytkownikowi „%s” używanie podanych programów."
+
+#. Translators: The placeholder is a user’s display name.
+#: libmalcontent-ui/user-controls.c:498
+#, c-format
+msgid "Prevents %s from installing applications."
+msgstr "Uniemożliwia użytkownikowi „%s” instalowanie programów."
+
+#. Translators: The placeholder is a user’s display name.
+#: libmalcontent-ui/user-controls.c:503
+#, c-format
+msgid "Applications installed by %s will not appear for other users."
+msgstr ""
+"Programy zainstalowane przez użytkownika „%s” nie będą widoczne dla "
+"pozostałych użytkowników."
+
+#: libmalcontent-ui/user-controls.ui:17
+msgid "Application Usage Restrictions"
+msgstr "Ograniczenia używania programów"
+
+#: libmalcontent-ui/user-controls.ui:67
+msgid "Restrict _Web Browsers"
+msgstr "_Ograniczanie przeglądarek internetowych"
+
+#: libmalcontent-ui/user-controls.ui:151
+msgid "_Restrict Applications"
+msgstr "Ogr_aniczanie programów"
+
+#: libmalcontent-ui/user-controls.ui:230
+msgid "Software Installation Restrictions"
+msgstr "Ograniczenia instalacji oprogramowania"
+
+#: libmalcontent-ui/user-controls.ui:280
+msgid "Restrict Application _Installation"
+msgstr "Ogra_niczanie instalacji programów"
+
+#: libmalcontent-ui/user-controls.ui:365
+msgid "Restrict Application Installation for _Others"
+msgstr "Ograni_czanie instalacji programów dla innych"
+
+#: libmalcontent-ui/user-controls.ui:450
+msgid "Application _Suitability"
+msgstr "O_dpowiedniość programów"
+
+#: libmalcontent-ui/user-controls.ui:472
+msgid ""
+"Restricts browsing or installation of applications to applications suitable "
+"for certain ages or above."
+msgstr ""
+"Ogranicza przeglądanie lub instalowanie programów do tych odpowiednich dla "
+"danego wieku."
+
+#. Translators: the name of the application as it appears in a software center
+#: malcontent-control/application.c:101
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
+#: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
+msgid "Parental Controls"
+msgstr "Kontrola rodzicielska"
+
+#: malcontent-control/application.c:239
+msgid "Failed to load user data from the system"
+msgstr "Wczytanie danych użytkownika z systemu się nie powiodło"
+
+#: malcontent-control/application.c:241
+msgid "Please make sure that the AccountsService is installed and enabled."
+msgstr ""
+"Proszę się upewnić, że usługa AccountsService jest zainstalowana i włączona."
+
+#: malcontent-control/carousel.ui:48
+msgid "Previous Page"
+msgstr "Poprzednia strona"
+
+#: malcontent-control/carousel.ui:74
+msgid "Next Page"
+msgstr "Następna strona"
+
+#: malcontent-control/main.ui:67
+msgid "Permission Required"
+msgstr "Wymagane jest pozwolenie"
+
+#: malcontent-control/main.ui:81
+msgid ""
+"Permission is required to view and change parental controls settings for "
+"other users."
+msgstr ""
+"Wymagane jest uprawnienie, aby wyświetlić lub zmienić ustawienia kontroli "
+"rodzicielskiej dla innych użytkowników."
+
+#: malcontent-control/main.ui:122
+msgid "No Child Users Configured"
+msgstr "Nie skonfigurowano żadnych kont dzieci"
+
+#: malcontent-control/main.ui:136
+msgid ""
+"No child users are currently set up on the system. Create one before setting "
+"up their parental controls."
+msgstr ""
+"Na komputerze obecnie nie skonfigurowano żadnego konta dziecka. Należy "
+"utworzyć takie konto, aby móc skonfigurować jego kontrolę rodzicielską."
+
+#: malcontent-control/main.ui:148
+msgid "Create _Child User"
+msgstr "_Utwórz konto dziecka"
+
+#: malcontent-control/main.ui:176
+msgid "Loading…"
+msgstr "Wczytywanie…"
+
+#. Translators: the brief summary of the application as it appears in a software center.
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
+#: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
+msgid "Set parental controls and monitor usage by users"
+msgstr "Kontrola rodzicielska i monitorowanie użycia"
+
+#. Translators: These are the application description paragraphs in the AppData file.
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
+msgid ""
+"Manage users’ parental controls restrictions, controlling how long they can "
+"use the computer for, what software they can install, and what installed "
+"software they can run."
+msgstr ""
+"Umożliwia zarządzanie ograniczeniami kontroli rodzicielskiej użytkowników, "
+"kontrolowanie jak długo mogą używać komputera, jakie oprogramowanie mogą "
+"instalować oraz którego zainstalowanego oprogramowania mogą używać."
+
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
+msgid "The GNOME Project"
+msgstr "Projekt GNOME"
+
+#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
+msgid ""
+"parental controls;screen time;app restrictions;web browser restrictions;oars;"
+"usage;usage limit;kid;child;"
+msgstr ""
+"kontrola rodzicielska;ograniczanie;restrykcje;ograniczenia programów;"
+"ograniczenia aplikacji;ograniczenia przeglądarki internetowej;www;oars;"
+"użycie;użytek;czas korzystania;limit korzystania;dziecko;dzieciak;dzieci;"
+"children;kids;"
+
+#: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
+msgid "Manage parental controls"
+msgstr "Zarządzanie kontrolą rodzicielską"
+
+#: malcontent-control/org.freedesktop.MalcontentControl.policy.in:10
+msgid "Authentication is required to read and change user parental controls"
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby odczytać lub zmienić kontrolę "
+"rodzicielską użytkownika"
+
+#: malcontent-control/user-selector.c:426
+msgid "Your account"
+msgstr "Moje konto"
+
+#. Always allow root, to avoid a situation where this PAM module prevents
+#. * all users logging in with no way of recovery.
+#: pam/pam_malcontent.c:142 pam/pam_malcontent.c:188
+#, c-format
+msgid "User ‘%s’ has no time limits enabled"
+msgstr "Użytkownik „%s” nie ma włączonych żadnych ograniczeń czasowych"
+
+#: pam/pam_malcontent.c:151 pam/pam_malcontent.c:172
+#, c-format
+msgid "Error getting session limits for user ‘%s’: %s"
+msgstr "Błąd podczas uzyskiwania ograniczeń sesji użytkownika „%s”: %s"
+
+#: pam/pam_malcontent.c:182
+#, c-format
+msgid "User ‘%s’ has no time remaining"
+msgstr "Użytkownikowi „%s” skończył się czas"
+
+#: pam/pam_malcontent.c:200
+#, c-format
+msgid "Error setting time limit on login session: %s"
+msgstr "Błąd podczas ustawiania ograniczenia czasowego na sesję logowania: %s"
