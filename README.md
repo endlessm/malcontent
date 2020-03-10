@@ -101,7 +101,9 @@ Dependencies
 Licensing
 ---------
 
-All code in this project is licensed under LGPL-2.1+. See COPYING for more details.
+All code in the libraries in this project is licensed under LGPL-2.1+. Code in the
+`malcontent-control` application is licensed under GPL-2.0+. See `COPYING` and the
+copyright headers in individual files for more details.
 
 Bugs
 ----
