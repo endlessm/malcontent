@@ -126,6 +126,7 @@ test_env = [
 ]
 
 subdir('accounts-service')
+subdir('help')
 if not get_option('use_system_libmalcontent')
   subdir('libmalcontent')
 else
