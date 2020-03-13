@@ -491,6 +491,7 @@
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
+                        <property name="direction">right</property>
                         <property name="popover">oars_popover</property>
                         <child>
                           <object class="GtkBox">
