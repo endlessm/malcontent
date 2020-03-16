@@ -92,6 +92,7 @@ struct _MctUserControls
   GSimpleActionGroup *action_group; /* (owned) */
 
   ActUser    *user; /* (owned) (nullable) */
+  gulong      user_changed_id;
 
   GPermission *permission;  /* (owned) (nullable) */
   gulong permission_allowed_id;
@@ -524,8 +525,8 @@ setup_parental_control_settings (MctUserControls *self)
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), is_authorized);
 
-  update_oars_level (self);
   update_categories_from_language (self);
+  update_oars_level (self);
   update_allow_app_installation (self);
   update_restrict_web_browsers (self);
   update_labels_from_name (self);
@@ -727,6 +728,9 @@ mct_user_controls_finalize (GObject *object)
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->action_group);
   g_clear_object (&self->cancellable);
+  if (self->user != NULL && self->user_changed_id != 0)
+    g_signal_handler_disconnect (self->user, self->user_changed_id);
+  self->user_changed_id = 0;
   g_clear_object (&self->user);
   g_clear_pointer (&self->user_locale, g_free);
   g_clear_pointer (&self->user_display_name, g_free);
@@ -1054,6 +1058,17 @@ mct_user_controls_get_user (MctUserControls *self)
   return self->user;
 }
 
+static void
+user_changed_cb (ActUser  *user,
+                 gpointer  user_data)
+{
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
+
+  mct_user_controls_set_user_account_type (self, act_user_get_account_type (user));
+  mct_user_controls_set_user_locale (self, get_user_locale (user));
+  mct_user_controls_set_user_display_name (self, get_user_display_name (user));
+}
+
 /**
  * mct_user_controls_set_user:
  * @self: an #MctUserControls
@@ -1068,6 +1083,8 @@ void
 mct_user_controls_set_user (MctUserControls *self,
                             ActUser         *user)
 {
+  g_autoptr(ActUser) old_user = NULL;
+
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (user == NULL || ACT_IS_USER (user));
 
@@ -1075,16 +1092,21 @@ mct_user_controls_set_user (MctUserControls *self,
    * saved first. */
   flush_update_blacklisted_apps (self);
 
+  old_user = (self->user != NULL) ? g_object_ref (self->user) : NULL;
+
   if (g_set_object (&self->user, user))
     {
       g_object_freeze_notify (G_OBJECT (self));
 
+      if (old_user != NULL)
+        g_signal_handler_disconnect (old_user, self->user_changed_id);
+
       /* Update the starting widget state from the user. */
       if (user != NULL)
         {
-          mct_user_controls_set_user_account_type (self, act_user_get_account_type (user));
-          mct_user_controls_set_user_locale (self, get_user_locale (user));
-          mct_user_controls_set_user_display_name (self, get_user_display_name (user));
+          self->user_changed_id = g_signal_connect (user, "changed",
+                                                    (GCallback) user_changed_cb, self);
+          user_changed_cb (user, self);
         }
 
       update_app_filter_from_user (self);
