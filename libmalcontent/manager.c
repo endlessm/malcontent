@@ -738,9 +738,6 @@ mct_manager_get_session_limits (MctManager                *self,
   g_autoptr(GVariant) result_variant = NULL;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GError) local_error = NULL;
-  g_autoptr(MctSessionLimits) session_limits = NULL;
-  guint32 limit_type;
-  guint32 daily_start_time, daily_end_time;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
   g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
@@ -791,8 +788,7 @@ mct_manager_get_session_limits (MctManager                *self,
   /* Extract the properties we care about. They may be silently omitted from the
    * results if we don’t have permission to access them. */
   properties = g_variant_get_child_value (result_variant, 0);
-  if (!g_variant_lookup (properties, "LimitType", "u",
-                         &limit_type))
+  if (!g_variant_lookup (properties, "LimitType", "u", NULL))
     {
       g_set_error (error, MCT_MANAGER_ERROR,
                    MCT_MANAGER_ERROR_PERMISSION_DENIED,
@@ -801,45 +797,7 @@ mct_manager_get_session_limits (MctManager                *self,
       return NULL;
     }
 
-  /* Check that the limit type is something we support. */
-  G_STATIC_ASSERT (sizeof (limit_type) >= sizeof (MctSessionLimitsType));
-
-  if ((guint) limit_type > MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE)
-    {
-      g_set_error (error, MCT_MANAGER_ERROR,
-                   MCT_MANAGER_ERROR_INVALID_DATA,
-                   _("Session limit for user %u has an unrecognized type ‘%u’"),
-                   (guint) user_id, limit_type);
-      return NULL;
-    }
-
-  if (!g_variant_lookup (properties, "DailySchedule", "(uu)",
-                         &daily_start_time, &daily_end_time))
-    {
-      /* Default value. */
-      daily_start_time = 0;
-      daily_end_time = 24 * 60 * 60;
-    }
-
-  if (daily_start_time >= daily_end_time ||
-      daily_end_time > 24 * 60 * 60)
-    {
-      g_set_error (error, MCT_MANAGER_ERROR,
-                   MCT_MANAGER_ERROR_INVALID_DATA,
-                   _("Session limit for user %u has invalid daily schedule %u–%u"),
-                   (guint) user_id, daily_start_time, daily_end_time);
-      return NULL;
-    }
-
-  /* Success. Create an #MctSessionLimits object to contain the results. */
-  session_limits = g_new0 (MctSessionLimits, 1);
-  session_limits->ref_count = 1;
-  session_limits->user_id = user_id;
-  session_limits->limit_type = limit_type;
-  session_limits->daily_start_time = daily_start_time;
-  session_limits->daily_end_time = daily_end_time;
-
-  return g_steal_pointer (&session_limits);
+  return mct_session_limits_deserialize (properties, user_id, error);
 }
 
 static void get_session_limits_thread_cb (GTask        *task,
@@ -973,11 +931,12 @@ mct_manager_set_session_limits (MctManager                *self,
                                 GError                   **error)
 {
   g_autofree gchar *object_path = NULL;
-  g_autoptr(GVariant) limit_variant = NULL;
-  const gchar *limit_property_name = NULL;
   g_autoptr(GVariant) limit_type_variant = NULL;
-  g_autoptr(GVariant) limit_result_variant = NULL;
   g_autoptr(GVariant) limit_type_result_variant = NULL;
+  g_autoptr(GVariant) properties_variant = NULL;
+  g_autoptr(GVariant) properties_value = NULL;
+  const gchar *properties_key = NULL;
+  GVariantIter iter;
   g_autoptr(GError) local_error = NULL;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
@@ -992,29 +951,22 @@ mct_manager_set_session_limits (MctManager                *self,
   if (object_path == NULL)
     return FALSE;
 
-  switch (session_limits->limit_type)
-    {
-    case MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE:
-      limit_variant = g_variant_new ("(uu)",
-                                     session_limits->daily_start_time,
-                                     session_limits->daily_end_time);
-      limit_property_name = "DailySchedule";
-      break;
-    case MCT_SESSION_LIMITS_TYPE_NONE:
-      limit_variant = NULL;
-      limit_property_name = NULL;
-      break;
-    default:
-      g_assert_not_reached ();
-    }
+  properties_variant = mct_session_limits_serialize (session_limits);
 
-  limit_type_variant = g_variant_new_uint32 (session_limits->limit_type);
-
-  if (limit_property_name != NULL)
+  g_variant_iter_init (&iter, properties_variant);
+  while (g_variant_iter_loop (&iter, "{&sv}", &properties_key, &properties_value))
     {
-      /* Change the details of the new limit first, so that all the properties are
-       * correct by the time the limit type is changed over. */
-      limit_result_variant =
+      g_autoptr(GVariant) result_variant = NULL;
+
+      /* Change the limit type last, so all the details of the new limit are
+       * correct by the time it’s changed over. */
+      if (g_str_equal (properties_key, "LimitType"))
+        {
+          limit_type_variant = g_steal_pointer (&properties_value);
+          continue;
+        }
+
+      result_variant =
           g_dbus_connection_call_sync (self->connection,
                                        "org.freedesktop.Accounts",
                                        object_path,
@@ -1022,8 +974,8 @@ mct_manager_set_session_limits (MctManager                *self,
                                        "Set",
                                        g_variant_new ("(ssv)",
                                                       "com.endlessm.ParentalControls.SessionLimits",
-                                                      limit_property_name,
-                                                      g_steal_pointer (&limit_variant)),
+                                                      properties_key,
+                                                      properties_value),
                                        G_VARIANT_TYPE ("()"),
                                        (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                          ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
@@ -1047,7 +999,7 @@ mct_manager_set_session_limits (MctManager                *self,
                                    g_variant_new ("(ssv)",
                                                   "com.endlessm.ParentalControls.SessionLimits",
                                                   "LimitType",
-                                                  g_steal_pointer (&limit_type_variant)),
+                                                  limit_type_variant),
                                    G_VARIANT_TYPE ("()"),
                                    (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
                                      ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
