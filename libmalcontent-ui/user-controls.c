@@ -524,8 +524,8 @@ setup_parental_control_settings (MctUserControls *self)
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), is_authorized);
 
-  update_oars_level (self);
   update_categories_from_language (self);
+  update_oars_level (self);
   update_allow_app_installation (self);
   update_restrict_web_browsers (self);
   update_labels_from_name (self);
