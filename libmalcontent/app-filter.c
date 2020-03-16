@@ -96,7 +96,7 @@ mct_app_filter_unref (MctAppFilter *filter)
  *
  * Get the user ID of the user this #MctAppFilter is for.
  *
- * Returns: user ID of the relevant user
+ * Returns: user ID of the relevant user, or `(uid_t) -1` if unknown
  * Since: 0.2.0
  */
 uid_t
@@ -531,6 +531,174 @@ mct_app_filter_is_system_installation_allowed (MctAppFilter *filter)
   g_return_val_if_fail (filter->ref_count >= 1, FALSE);
 
   return filter->allow_system_installation;
+}
+
+/**
+ * _mct_app_filter_build_app_filter_variant:
+ * @filter: an #MctAppFilter
+ *
+ * Build a #GVariant which contains the app filter from @filter, in the format
+ * used for storing it in AccountsService.
+ *
+ * Returns: (transfer floating): a new, floating #GVariant containing the app
+ *    filter
+ */
+static GVariant *
+_mct_app_filter_build_app_filter_variant (MctAppFilter *filter)
+{
+  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("(bas)"));
+
+  g_return_val_if_fail (filter != NULL, NULL);
+  g_return_val_if_fail (filter->ref_count >= 1, NULL);
+
+  g_variant_builder_add (&builder, "b",
+                         (filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST));
+  g_variant_builder_open (&builder, G_VARIANT_TYPE ("as"));
+
+  for (gsize i = 0; filter->app_list[i] != NULL; i++)
+    g_variant_builder_add (&builder, "s", filter->app_list[i]);
+
+  g_variant_builder_close (&builder);
+
+  return g_variant_builder_end (&builder);
+}
+
+/**
+ * mct_app_filter_serialize:
+ * @filter: an #MctAppFilter
+ *
+ * Build a #GVariant which contains the app filter from @filter, in an opaque
+ * variant format. This format may change in future, but
+ * mct_app_filter_deserialize() is guaranteed to always be able to load any
+ * variant produced by the current or any previous version of
+ * mct_app_filter_serialize().
+ *
+ * Returns: (transfer floating): a new, floating #GVariant containing the app
+ *    filter
+ * Since: 0.7.0
+ */
+GVariant *
+mct_app_filter_serialize (MctAppFilter *filter)
+{
+  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("a{sv}"));
+
+  g_return_val_if_fail (filter != NULL, NULL);
+  g_return_val_if_fail (filter->ref_count >= 1, NULL);
+
+  /* The serialisation format is exactly the
+   * `com.endlessm.ParentalControls.AppFilter` D-Bus interface. */
+  g_variant_builder_add (&builder, "{sv}", "AppFilter",
+                         _mct_app_filter_build_app_filter_variant (filter));
+  g_variant_builder_add (&builder, "{sv}", "OarsFilter",
+                         g_variant_new ("(s@a{ss})", "oars-1.1",
+                                        filter->oars_ratings));
+  g_variant_builder_add (&builder, "{sv}", "AllowUserInstallation",
+                         g_variant_new_boolean (filter->allow_user_installation));
+  g_variant_builder_add (&builder, "{sv}", "AllowSystemInstallation",
+                         g_variant_new_boolean (filter->allow_system_installation));
+
+  return g_variant_builder_end (&builder);
+}
+
+/**
+ * mct_app_filter_deserialize:
+ * @variant: a serialized app filter variant
+ * @user_id: the ID of the user the app filter relates to
+ * @error: return location for a #GError, or %NULL
+ *
+ * Deserialize an app filter previously serialized with
+ * mct_app_filter_serialize(). This function guarantees to be able to
+ * deserialize any serialized form from this version or older versions of
+ * libmalcontent.
+ *
+ * If deserialization fails, %MCT_MANAGER_ERROR_INVALID_DATA will be returned.
+ *
+ * Returns: (transfer full): deserialized app filter
+ * Since: 0.7.0
+ */
+MctAppFilter *
+mct_app_filter_deserialize (GVariant  *variant,
+                            uid_t      user_id,
+                            GError   **error)
+{
+  gboolean is_whitelist;
+  g_auto(GStrv) app_list = NULL;
+  const gchar *content_rating_kind;
+  g_autoptr(GVariant) oars_variant = NULL;
+  gboolean allow_user_installation;
+  gboolean allow_system_installation;
+  g_autoptr(MctAppFilter) app_filter = NULL;
+
+  g_return_val_if_fail (variant != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* Check the overall type. */
+  if (!g_variant_is_of_type (variant, G_VARIANT_TYPE ("a{sv}")))
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("App filter for user %u was in an unrecognized format"),
+                   (guint) user_id);
+      return NULL;
+    }
+
+  /* Extract the properties we care about. The default values here should be
+   * kept in sync with those in the `com.endlessm.ParentalControls.AppFilter`
+   * D-Bus interface. */
+  if (!g_variant_lookup (variant, "AppFilter", "(b^as)",
+                         &is_whitelist, &app_list))
+    {
+      /* Default value. */
+      is_whitelist = FALSE;
+      app_list = g_new0 (gchar *, 1);
+    }
+
+  if (!g_variant_lookup (variant, "OarsFilter", "(&s@a{ss})",
+                         &content_rating_kind, &oars_variant))
+    {
+      /* Default value. */
+      content_rating_kind = "oars-1.1";
+      oars_variant = g_variant_new ("a{ss}", NULL);
+    }
+
+  /* Check that the OARS filter is in a format we support. Currently, that’s
+   * only oars-1.0 and oars-1.1. */
+  if (!g_str_equal (content_rating_kind, "oars-1.0") &&
+      !g_str_equal (content_rating_kind, "oars-1.1"))
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("OARS filter for user %u has an unrecognized kind ‘%s’"),
+                   (guint) user_id, content_rating_kind);
+      return NULL;
+    }
+
+  if (!g_variant_lookup (variant, "AllowUserInstallation", "b",
+                         &allow_user_installation))
+    {
+      /* Default value. */
+      allow_user_installation = TRUE;
+    }
+
+  if (!g_variant_lookup (variant, "AllowSystemInstallation", "b",
+                         &allow_system_installation))
+    {
+      /* Default value. */
+      allow_system_installation = FALSE;
+    }
+
+  /* Success. Create an #MctAppFilter object to contain the results. */
+  app_filter = g_new0 (MctAppFilter, 1);
+  app_filter->ref_count = 1;
+  app_filter->user_id = user_id;
+  app_filter->app_list = g_steal_pointer (&app_list);
+  app_filter->app_list_type =
+    is_whitelist ? MCT_APP_FILTER_LIST_WHITELIST : MCT_APP_FILTER_LIST_BLACKLIST;
+  app_filter->oars_ratings = g_steal_pointer (&oars_variant);
+  app_filter->allow_user_installation = allow_user_installation;
+  app_filter->allow_system_installation = allow_system_installation;
+
+  return g_steal_pointer (&app_filter);
 }
 
 /*

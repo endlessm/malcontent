@@ -85,6 +85,83 @@ test_app_filter_refs (void)
   /* Final ref is dropped by g_autoptr(). */
 }
 
+/* Basic test of mct_app_filter_serialize() on an app filter. */
+static void
+test_app_filter_serialize (void)
+{
+  g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
+  g_autoptr(MctAppFilter) filter = NULL;
+  g_autoptr(GVariant) serialized = NULL;
+
+  /* Use an empty #MctAppFilter. */
+  filter = mct_app_filter_builder_end (&builder);
+
+  /* We can’t assert anything about the serialisation format, since it’s opaque. */
+  serialized = mct_app_filter_serialize (filter);
+  g_assert_nonnull (serialized);
+}
+
+/* Basic test of mct_app_filter_deserialize() on various current and historic
+ * serialised app filter variants. */
+static void
+test_app_filter_deserialize (void)
+{
+  /* These are all opaque. Older versions should be kept around to test
+   * backwards compatibility. */
+  const gchar *valid_app_filters[] =
+    {
+      "@a{sv} {}",
+      "{ 'AppFilter': <(true, @as [])> }",
+      "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'mild' })> }",
+      "{ 'AllowUserInstallation': <true> }",
+      "{ 'AllowSystemInstallation': <true> }",
+    };
+
+  for (gsize i = 0; i < G_N_ELEMENTS (valid_app_filters); i++)
+    {
+      g_autoptr(GVariant) serialized = NULL;
+      g_autoptr(MctAppFilter) filter = NULL;
+      g_autoptr(GError) local_error = NULL;
+
+      g_test_message ("%" G_GSIZE_FORMAT ": %s", i, valid_app_filters[i]);
+
+      serialized = g_variant_parse (NULL, valid_app_filters[i], NULL, NULL, NULL);
+      g_assert (serialized != NULL);
+
+      filter = mct_app_filter_deserialize (serialized, 1, &local_error);
+      g_assert_no_error (local_error);
+      g_assert_nonnull (filter);
+    }
+}
+
+/* Test of mct_app_filter_deserialize() on various invalid variants. */
+static void
+test_app_filter_deserialize_invalid (void)
+{
+  const gchar *invalid_app_filters[] =
+    {
+      "false",
+      "()",
+      "{ 'OarsFilter': <('invalid', { 'violence-cartoon': 'mild' })> }",
+    };
+
+  for (gsize i = 0; i < G_N_ELEMENTS (invalid_app_filters); i++)
+    {
+      g_autoptr(GVariant) serialized = NULL;
+      g_autoptr(MctAppFilter) filter = NULL;
+      g_autoptr(GError) local_error = NULL;
+
+      g_test_message ("%" G_GSIZE_FORMAT ": %s", i, invalid_app_filters[i]);
+
+      serialized = g_variant_parse (NULL, invalid_app_filters[i], NULL, NULL, NULL);
+      g_assert (serialized != NULL);
+
+      filter = mct_app_filter_deserialize (serialized, 1, &local_error);
+      g_assert_error (local_error, MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_DATA);
+      g_assert_null (filter);
+    }
+}
+
 /* Fixture for tests which use an #MctAppFilterBuilder. The builder can either
  * be heap- or stack-allocated. @builder will always be a valid pointer to it.
  */
@@ -1380,6 +1457,10 @@ main (int    argc,
   g_test_add_func ("/app-filter/error-quark", test_app_filter_error_quark);
   g_test_add_func ("/app-filter/types", test_app_filter_types);
   g_test_add_func ("/app-filter/refs", test_app_filter_refs);
+
+  g_test_add_func ("/app-filter/serialize", test_app_filter_serialize);
+  g_test_add_func ("/app-filter/deserialize", test_app_filter_deserialize);
+  g_test_add_func ("/app-filter/deserialize/invalid", test_app_filter_deserialize_invalid);
 
   g_test_add ("/app-filter/builder/stack/non-empty", BuilderFixture, NULL,
               builder_set_up_stack, test_app_filter_builder_non_empty,

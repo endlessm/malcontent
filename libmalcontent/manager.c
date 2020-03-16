@@ -257,37 +257,6 @@ _mct_manager_user_changed_cb (GDBusConnection *connection,
   g_signal_emit_by_name (manager, "app-filter-changed", uid);
 }
 
-/**
- * _mct_app_filter_build_app_filter_variant:
- * @filter: an #MctAppFilter
- *
- * Build a #GVariant which contains the app filter from @filter, in the format
- * used for storing it in AccountsService.
- *
- * Returns: (transfer floating): a new, floating #GVariant containing the app
- *    filter
- * Since: 0.2.0
- */
-static GVariant *
-_mct_app_filter_build_app_filter_variant (MctAppFilter *filter)
-{
-  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("(bas)"));
-
-  g_return_val_if_fail (filter != NULL, NULL);
-  g_return_val_if_fail (filter->ref_count >= 1, NULL);
-
-  g_variant_builder_add (&builder, "b",
-                         (filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST));
-  g_variant_builder_open (&builder, G_VARIANT_TYPE ("as"));
-
-  for (gsize i = 0; filter->app_list[i] != NULL; i++)
-    g_variant_builder_add (&builder, "s", filter->app_list[i]);
-
-  g_variant_builder_close (&builder);
-
-  return g_variant_builder_end (&builder);
-}
-
 /* Check if @error is a D-Bus remote error matching @expected_error_name. */
 static gboolean
 bus_remote_error_matches (const GError *error,
@@ -386,13 +355,6 @@ mct_manager_get_app_filter (MctManager            *self,
   g_autoptr(GVariant) result_variant = NULL;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GError) local_error = NULL;
-  g_autoptr(MctAppFilter) app_filter = NULL;
-  gboolean is_whitelist;
-  g_auto(GStrv) app_list = NULL;
-  const gchar *content_rating_kind;
-  g_autoptr(GVariant) oars_variant = NULL;
-  gboolean allow_user_installation;
-  gboolean allow_system_installation;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), NULL);
   g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
@@ -443,8 +405,7 @@ mct_manager_get_app_filter (MctManager            *self,
   /* Extract the properties we care about. They may be silently omitted from the
    * results if we don’t have permission to access them. */
   properties = g_variant_get_child_value (result_variant, 0);
-  if (!g_variant_lookup (properties, "AppFilter", "(b^as)",
-                         &is_whitelist, &app_list))
+  if (!g_variant_lookup (properties, "AppFilter", "(b^as)", NULL, NULL))
     {
       g_set_error (error, MCT_MANAGER_ERROR,
                    MCT_MANAGER_ERROR_PERMISSION_DENIED,
@@ -453,52 +414,7 @@ mct_manager_get_app_filter (MctManager            *self,
       return NULL;
     }
 
-  if (!g_variant_lookup (properties, "OarsFilter", "(&s@a{ss})",
-                         &content_rating_kind, &oars_variant))
-    {
-      /* Default value. */
-      content_rating_kind = "oars-1.1";
-      oars_variant = g_variant_new ("a{ss}", NULL);
-    }
-
-  /* Check that the OARS filter is in a format we support. Currently, that’s
-   * only oars-1.0 and oars-1.1. */
-  if (!g_str_equal (content_rating_kind, "oars-1.0") &&
-      !g_str_equal (content_rating_kind, "oars-1.1"))
-    {
-      g_set_error (error, MCT_MANAGER_ERROR,
-                   MCT_MANAGER_ERROR_INVALID_DATA,
-                   _("OARS filter for user %u has an unrecognized kind ‘%s’"),
-                   (guint) user_id, content_rating_kind);
-      return NULL;
-    }
-
-  if (!g_variant_lookup (properties, "AllowUserInstallation", "b",
-                         &allow_user_installation))
-    {
-      /* Default value. */
-      allow_user_installation = TRUE;
-    }
-
-  if (!g_variant_lookup (properties, "AllowSystemInstallation", "b",
-                         &allow_system_installation))
-    {
-      /* Default value. */
-      allow_system_installation = FALSE;
-    }
-
-  /* Success. Create an #MctAppFilter object to contain the results. */
-  app_filter = g_new0 (MctAppFilter, 1);
-  app_filter->ref_count = 1;
-  app_filter->user_id = user_id;
-  app_filter->app_list = g_steal_pointer (&app_list);
-  app_filter->app_list_type =
-    is_whitelist ? MCT_APP_FILTER_LIST_WHITELIST : MCT_APP_FILTER_LIST_BLACKLIST;
-  app_filter->oars_ratings = g_steal_pointer (&oars_variant);
-  app_filter->allow_user_installation = allow_user_installation;
-  app_filter->allow_system_installation = allow_system_installation;
-
-  return g_steal_pointer (&app_filter);
+  return mct_app_filter_deserialize (properties, user_id, error);
 }
 
 static void get_app_filter_thread_cb (GTask        *task,
@@ -632,14 +548,10 @@ mct_manager_set_app_filter (MctManager            *self,
                             GError               **error)
 {
   g_autofree gchar *object_path = NULL;
-  g_autoptr(GVariant) app_filter_variant = NULL;
-  g_autoptr(GVariant) oars_filter_variant = NULL;
-  g_autoptr(GVariant) allow_user_installation_variant = NULL;
-  g_autoptr(GVariant) allow_system_installation_variant = NULL;
-  g_autoptr(GVariant) app_filter_result_variant = NULL;
-  g_autoptr(GVariant) oars_filter_result_variant = NULL;
-  g_autoptr(GVariant) allow_user_installation_result_variant = NULL;
-  g_autoptr(GVariant) allow_system_installation_result_variant = NULL;
+  g_autoptr(GVariant) properties_variant = NULL;
+  g_autoptr(GVariant) properties_value = NULL;
+  const gchar *properties_key = NULL;
+  GVariantIter iter;
   g_autoptr(GError) local_error = NULL;
 
   g_return_val_if_fail (MCT_IS_MANAGER (self), FALSE);
@@ -654,102 +566,35 @@ mct_manager_set_app_filter (MctManager            *self,
   if (object_path == NULL)
     return FALSE;
 
-  app_filter_variant = _mct_app_filter_build_app_filter_variant (app_filter);
-  oars_filter_variant = g_variant_new ("(s@a{ss})", "oars-1.1",
-                                       app_filter->oars_ratings);
-  allow_user_installation_variant = g_variant_new_boolean (app_filter->allow_user_installation);
-  allow_system_installation_variant = g_variant_new_boolean (app_filter->allow_system_installation);
+  properties_variant = mct_app_filter_serialize (app_filter);
 
-  app_filter_result_variant =
-      g_dbus_connection_call_sync (self->connection,
-                                   "org.freedesktop.Accounts",
-                                   object_path,
-                                   "org.freedesktop.DBus.Properties",
-                                   "Set",
-                                   g_variant_new ("(ssv)",
-                                                  "com.endlessm.ParentalControls.AppFilter",
-                                                  "AppFilter",
-                                                  g_steal_pointer (&app_filter_variant)),
-                                   G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
-                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                                     : G_DBUS_CALL_FLAGS_NONE,
-                                   -1,  /* timeout, ms */
-                                   cancellable,
-                                   &local_error);
-  if (local_error != NULL)
+  g_variant_iter_init (&iter, properties_variant);
+  while (g_variant_iter_loop (&iter, "{&sv}", &properties_key, &properties_value))
     {
-      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
-      return FALSE;
-    }
+      g_autoptr(GVariant) result_variant = NULL;
 
-  oars_filter_result_variant =
-      g_dbus_connection_call_sync (self->connection,
-                                   "org.freedesktop.Accounts",
-                                   object_path,
-                                   "org.freedesktop.DBus.Properties",
-                                   "Set",
-                                   g_variant_new ("(ssv)",
-                                                  "com.endlessm.ParentalControls.AppFilter",
-                                                  "OarsFilter",
-                                                  g_steal_pointer (&oars_filter_variant)),
-                                   G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
-                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                                     : G_DBUS_CALL_FLAGS_NONE,
-                                   -1,  /* timeout, ms */
-                                   cancellable,
-                                   &local_error);
-  if (local_error != NULL)
-    {
-      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
-      return FALSE;
-    }
-
-  allow_user_installation_result_variant =
-      g_dbus_connection_call_sync (self->connection,
-                                   "org.freedesktop.Accounts",
-                                   object_path,
-                                   "org.freedesktop.DBus.Properties",
-                                   "Set",
-                                   g_variant_new ("(ssv)",
-                                                  "com.endlessm.ParentalControls.AppFilter",
-                                                  "AllowUserInstallation",
-                                                  g_steal_pointer (&allow_user_installation_variant)),
-                                   G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
-                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                                     : G_DBUS_CALL_FLAGS_NONE,
-                                   -1,  /* timeout, ms */
-                                   cancellable,
-                                   &local_error);
-  if (local_error != NULL)
-    {
-      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
-      return FALSE;
-    }
-
-  allow_system_installation_result_variant =
-      g_dbus_connection_call_sync (self->connection,
-                                   "org.freedesktop.Accounts",
-                                   object_path,
-                                   "org.freedesktop.DBus.Properties",
-                                   "Set",
-                                   g_variant_new ("(ssv)",
-                                                  "com.endlessm.ParentalControls.AppFilter",
-                                                  "AllowSystemInstallation",
-                                                  g_steal_pointer (&allow_system_installation_variant)),
-                                   G_VARIANT_TYPE ("()"),
-                                   (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
-                                     ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
-                                     : G_DBUS_CALL_FLAGS_NONE,
-                                   -1,  /* timeout, ms */
-                                   cancellable,
-                                   &local_error);
-  if (local_error != NULL)
-    {
-      g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
-      return FALSE;
+      result_variant =
+          g_dbus_connection_call_sync (self->connection,
+                                       "org.freedesktop.Accounts",
+                                       object_path,
+                                       "org.freedesktop.DBus.Properties",
+                                       "Set",
+                                       g_variant_new ("(ssv)",
+                                                      "com.endlessm.ParentalControls.AppFilter",
+                                                      properties_key,
+                                                      properties_value),
+                                       G_VARIANT_TYPE ("()"),
+                                       (flags & MCT_MANAGER_SET_VALUE_FLAGS_INTERACTIVE)
+                                         ? G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION
+                                         : G_DBUS_CALL_FLAGS_NONE,
+                                       -1,  /* timeout, ms */
+                                       cancellable,
+                                       &local_error);
+      if (local_error != NULL)
+        {
+          g_propagate_error (error, bus_error_to_manager_error (local_error, user_id));
+          return FALSE;
+        }
     }
 
   return TRUE;
