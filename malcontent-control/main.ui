@@ -78,7 +78,7 @@
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Permission is required to view and change parental controls settings for other users.</property>
+                    <property name="label" translatable="yes">Permission is required to view and change user parental controls settings.</property>
                     <property name="wrap">True</property>
                     <child internal-child="accessible">
                       <object class="AtkObject">
