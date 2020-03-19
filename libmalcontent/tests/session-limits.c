@@ -92,6 +92,84 @@ test_session_limits_check_time_remaining_invalid_time (void)
   g_assert_true (time_limit_enabled);
 }
 
+/* Basic test of mct_session_limits_serialize() on session limits. */
+static void
+test_session_limits_serialize (void)
+{
+  g_auto(MctSessionLimitsBuilder) builder = MCT_SESSION_LIMITS_BUILDER_INIT ();
+  g_autoptr(MctSessionLimits) limits = NULL;
+  g_autoptr(GVariant) serialized = NULL;
+
+  /* Use an empty #MctSessionLimits. */
+  limits = mct_session_limits_builder_end (&builder);
+
+  /* We can’t assert anything about the serialisation format, since it’s opaque. */
+  serialized = mct_session_limits_serialize (limits);
+  g_assert_nonnull (serialized);
+}
+
+/* Basic test of mct_session_limits_deserialize() on various current and historic
+ * serialised app filter variants. */
+static void
+test_session_limits_deserialize (void)
+{
+  /* These are all opaque. Older versions should be kept around to test
+   * backwards compatibility. */
+  const gchar *valid_session_limits[] =
+    {
+      "@a{sv} {}",
+      "{ 'LimitType': <@u 0> }",
+      "{ 'LimitType': <@u 1>, 'DailySchedule': <(@u 0, @u 100)> }",
+      "{ 'DailySchedule': <(@u 0, @u 100)> }",
+    };
+
+  for (gsize i = 0; i < G_N_ELEMENTS (valid_session_limits); i++)
+    {
+      g_autoptr(GVariant) serialized = NULL;
+      g_autoptr(MctSessionLimits) limits = NULL;
+      g_autoptr(GError) local_error = NULL;
+
+      g_test_message ("%" G_GSIZE_FORMAT ": %s", i, valid_session_limits[i]);
+
+      serialized = g_variant_parse (NULL, valid_session_limits[i], NULL, NULL, NULL);
+      g_assert (serialized != NULL);
+
+      limits = mct_session_limits_deserialize (serialized, 1, &local_error);
+      g_assert_no_error (local_error);
+      g_assert_nonnull (limits);
+    }
+}
+
+/* Test of mct_session_limits_deserialize() on various invalid variants. */
+static void
+test_session_limits_deserialize_invalid (void)
+{
+  const gchar *invalid_session_limits[] =
+    {
+      "false",
+      "()",
+      "{ 'LimitType': <@u 100> }",
+      "{ 'DailySchedule': <(@u 100, @u 0)> }",
+      "{ 'DailySchedule': <(@u 0, @u 4294967295)> }",
+    };
+
+  for (gsize i = 0; i < G_N_ELEMENTS (invalid_session_limits); i++)
+    {
+      g_autoptr(GVariant) serialized = NULL;
+      g_autoptr(MctSessionLimits) limits = NULL;
+      g_autoptr(GError) local_error = NULL;
+
+      g_test_message ("%" G_GSIZE_FORMAT ": %s", i, invalid_session_limits[i]);
+
+      serialized = g_variant_parse (NULL, invalid_session_limits[i], NULL, NULL, NULL);
+      g_assert (serialized != NULL);
+
+      limits = mct_session_limits_deserialize (serialized, 1, &local_error);
+      g_assert_error (local_error, MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_DATA);
+      g_assert_null (limits);
+    }
+}
+
 /* Fixture for tests which use an #MctSessionLimitsBuilder. The builder can
  * either be heap- or stack-allocated. @builder will always be a valid pointer
  * to it.
@@ -1129,6 +1207,10 @@ main (int    argc,
   g_test_add_func ("/session-limits/refs", test_session_limits_refs);
   g_test_add_func ("/session-limits/check-time-remaining/invalid-time",
                    test_session_limits_check_time_remaining_invalid_time);
+
+  g_test_add_func ("/session-limits/serialize", test_session_limits_serialize);
+  g_test_add_func ("/session-limits/deserialize", test_session_limits_deserialize);
+  g_test_add_func ("/session-limits/deserialize/invalid", test_session_limits_deserialize_invalid);
 
   g_test_add ("/session-limits/builder/stack/non-empty", BuilderFixture, NULL,
               builder_set_up_stack, test_session_limits_builder_non_empty,

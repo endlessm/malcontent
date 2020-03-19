@@ -26,6 +26,7 @@
 #include <glib-object.h>
 #include <glib/gi18n-lib.h>
 #include <gio/gio.h>
+#include <libmalcontent/manager.h>
 #include <libmalcontent/session-limits.h>
 
 #include "libmalcontent/session-limits-private.h"
@@ -85,7 +86,7 @@ mct_session_limits_unref (MctSessionLimits *limits)
  *
  * Get the user ID of the user this #MctSessionLimits is for.
  *
- * Returns: user ID of the relevant user
+ * Returns: user ID of the relevant user, or `(uid_t) -1` if unknown
  * Since: 0.5.0
  */
 uid_t
@@ -188,6 +189,149 @@ out:
     *time_limit_enabled_out = time_limit_enabled;
 
   return user_allowed_now;
+}
+
+/**
+ * mct_session_limits_serialize:
+ * @limits: an #MctSessionLimits
+ *
+ * Build a #GVariant which contains the session limits from @limits, in an
+ * opaque variant format. This format may change in future, but
+ * mct_session_limits_deserialize() is guaranteed to always be able to load any
+ * variant produced by the current or any previous version of
+ * mct_session_limits_serialize().
+ *
+ * Returns: (transfer floating): a new, floating #GVariant containing the
+ *    session limits
+ * Since: 0.7.0
+ */
+GVariant *
+mct_session_limits_serialize (MctSessionLimits *limits)
+{
+  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("a{sv}"));
+  g_autoptr(GVariant) limit_variant = NULL;
+  const gchar *limit_property_name;
+
+  g_return_val_if_fail (limits != NULL, NULL);
+  g_return_val_if_fail (limits->ref_count >= 1, NULL);
+
+  /* The serialisation format is exactly the
+   * `com.endlessm.ParentalControls.SessionLimits` D-Bus interface. */
+  switch (limits->limit_type)
+    {
+    case MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE:
+      limit_variant = g_variant_new ("(uu)",
+                                     limits->daily_start_time,
+                                     limits->daily_end_time);
+      limit_property_name = "DailySchedule";
+      break;
+    case MCT_SESSION_LIMITS_TYPE_NONE:
+      limit_variant = NULL;
+      limit_property_name = NULL;
+      break;
+    default:
+      g_assert_not_reached ();
+    }
+
+  if (limit_property_name != NULL)
+    {
+      g_variant_builder_add (&builder, "{sv}", limit_property_name,
+                             g_steal_pointer (&limit_variant));
+    }
+
+  g_variant_builder_add (&builder, "{sv}", "LimitType",
+                         g_variant_new_uint32 (limits->limit_type));
+
+  return g_variant_builder_end (&builder);
+}
+
+/**
+ * mct_session_limits_deserialize:
+ * @variant: a serialized session limits variant
+ * @user_id: the ID of the user the session limits relate to
+ * @error: return location for a #GError, or %NULL
+ *
+ * Deserialize a set of session limits previously serialized with
+ * mct_session_limits_serialize(). This function guarantees to be able to
+ * deserialize any serialized form from this version or older versions of
+ * libmalcontent.
+ *
+ * If deserialization fails, %MCT_MANAGER_ERROR_INVALID_DATA will be returned.
+ *
+ * Returns: (transfer full): deserialized session limits
+ * Since: 0.7.0
+ */
+MctSessionLimits *
+mct_session_limits_deserialize (GVariant  *variant,
+                                uid_t      user_id,
+                                GError   **error)
+{
+  g_autoptr(MctSessionLimits) session_limits = NULL;
+  guint32 limit_type;
+  guint32 daily_start_time, daily_end_time;
+
+  g_return_val_if_fail (variant != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* Check the overall type. */
+  if (!g_variant_is_of_type (variant, G_VARIANT_TYPE ("a{sv}")))
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u was in an unrecognized format"),
+                   (guint) user_id);
+      return NULL;
+    }
+
+  /* Extract the properties we care about. The default values here should be
+   * kept in sync with those in the `com.endlessm.ParentalControls.SessionLimits`
+   * D-Bus interface. */
+  if (!g_variant_lookup (variant, "LimitType", "u",
+                         &limit_type))
+    {
+      /* Default value. */
+      limit_type = MCT_SESSION_LIMITS_TYPE_NONE;
+    }
+
+  /* Check that the limit type is something we support. */
+  G_STATIC_ASSERT (sizeof (limit_type) >= sizeof (MctSessionLimitsType));
+
+  if ((guint) limit_type > MCT_SESSION_LIMITS_TYPE_DAILY_SCHEDULE)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has an unrecognized type ‘%u’"),
+                   (guint) user_id, limit_type);
+      return NULL;
+    }
+
+  if (!g_variant_lookup (variant, "DailySchedule", "(uu)",
+                         &daily_start_time, &daily_end_time))
+    {
+      /* Default value. */
+      daily_start_time = 0;
+      daily_end_time = 24 * 60 * 60;
+    }
+
+  if (daily_start_time >= daily_end_time ||
+      daily_end_time > 24 * 60 * 60)
+    {
+      g_set_error (error, MCT_MANAGER_ERROR,
+                   MCT_MANAGER_ERROR_INVALID_DATA,
+                   _("Session limit for user %u has invalid daily schedule %u–%u"),
+                   (guint) user_id, daily_start_time, daily_end_time);
+      return NULL;
+    }
+
+  /* Success. Create an #MctSessionLimits object to contain the results. */
+  session_limits = g_new0 (MctSessionLimits, 1);
+  session_limits->ref_count = 1;
+  session_limits->user_id = user_id;
+  session_limits->limit_type = limit_type;
+  session_limits->daily_start_time = daily_start_time;
+  session_limits->daily_end_time = daily_end_time;
+
+  return g_steal_pointer (&session_limits);
 }
 
 /*

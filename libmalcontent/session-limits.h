@@ -57,6 +57,11 @@ gboolean mct_session_limits_check_time_remaining (MctSessionLimits *limits,
                                                   guint64          *time_remaining_secs_out,
                                                   gboolean         *time_limit_enabled_out);
 
+GVariant         *mct_session_limits_serialize   (MctSessionLimits  *limits);
+MctSessionLimits *mct_session_limits_deserialize (GVariant          *variant,
+                                                  uid_t              user_id,
+                                                  GError           **error);
+
 /**
  * MctSessionLimitsBuilder:
  *

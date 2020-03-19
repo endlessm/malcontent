@@ -96,6 +96,11 @@ MctAppFilterOarsValue   mct_app_filter_get_oars_value    (MctAppFilter *filter,
 gboolean                mct_app_filter_is_user_installation_allowed   (MctAppFilter *filter);
 gboolean                mct_app_filter_is_system_installation_allowed (MctAppFilter *filter);
 
+GVariant     *mct_app_filter_serialize   (MctAppFilter  *filter);
+MctAppFilter *mct_app_filter_deserialize (GVariant      *variant,
+                                          uid_t          user_id,
+                                          GError       **error);
+
 /**
  * MctAppFilterBuilder:
  *
