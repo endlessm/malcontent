@@ -108,6 +108,21 @@ mct_app_filter_get_user_id (MctAppFilter *filter)
   return filter->user_id;
 }
 
+static MctAppFilterOarsValue
+oars_str_to_enum (const gchar *value_str)
+{
+  if (g_str_equal (value_str, "none"))
+    return MCT_APP_FILTER_OARS_VALUE_NONE;
+  else if (g_str_equal (value_str, "mild"))
+    return MCT_APP_FILTER_OARS_VALUE_MILD;
+  else if (g_str_equal (value_str, "moderate"))
+    return MCT_APP_FILTER_OARS_VALUE_MODERATE;
+  else if (g_str_equal (value_str, "intense"))
+    return MCT_APP_FILTER_OARS_VALUE_INTENSE;
+  else
+    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+}
+
 /**
  * mct_app_filter_is_path_allowed:
  * @filter: an #MctAppFilter
@@ -477,16 +492,7 @@ mct_app_filter_get_oars_value (MctAppFilter *filter,
   if (!g_variant_lookup (filter->oars_ratings, oars_section, "&s", &value_str))
     return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 
-  if (g_str_equal (value_str, "none"))
-    return MCT_APP_FILTER_OARS_VALUE_NONE;
-  else if (g_str_equal (value_str, "mild"))
-    return MCT_APP_FILTER_OARS_VALUE_MILD;
-  else if (g_str_equal (value_str, "moderate"))
-    return MCT_APP_FILTER_OARS_VALUE_MODERATE;
-  else if (g_str_equal (value_str, "intense"))
-    return MCT_APP_FILTER_OARS_VALUE_INTENSE;
-  else
-    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+  return oars_str_to_enum (value_str);
 }
 
 /**
