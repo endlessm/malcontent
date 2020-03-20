@@ -78,6 +78,9 @@ void          mct_app_filter_unref (MctAppFilter *filter);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctAppFilter, mct_app_filter_unref)
 
 uid_t    mct_app_filter_get_user_id            (MctAppFilter *filter);
+
+gboolean mct_app_filter_is_enabled             (MctAppFilter *filter);
+
 gboolean mct_app_filter_is_path_allowed        (MctAppFilter *filter,
                                                 const gchar  *path);
 gboolean mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
