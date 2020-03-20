@@ -1,7 +1,9 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 accounts-service/com.endlessm.ParentalControls.policy.in
+libmalcontent/app-filter.c
 libmalcontent/manager.c
+libmalcontent/session-limits.c
 libmalcontent-ui/gs-content-rating.c
 libmalcontent-ui/restrict-applications-dialog.c
 libmalcontent-ui/restrict-applications-dialog.ui
