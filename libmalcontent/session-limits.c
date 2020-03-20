@@ -99,6 +99,31 @@ mct_session_limits_get_user_id (MctSessionLimits *limits)
 }
 
 /**
+ * mct_session_limits_is_enabled:
+ * @limits: an #MctSessionLimits
+ *
+ * Check whether any session limits are enabled and are going to impose at least
+ * one restriction on the user. This gives a high level view of whether session
+ * limit parental controls are ‘enabled’ for the given user.
+ *
+ * This function is equivalent to the value returned by the
+ * `time_limit_enabled_out` argument of
+ * mct_session_limits_check_time_remaining().
+ *
+ * Returns: %TRUE if the session limits object contains at least one restrictive
+ *    session limit, %FALSE if there are no limits in place
+ * Since: 0.7.0
+ */
+gboolean
+mct_session_limits_is_enabled (MctSessionLimits *limits)
+{
+  g_return_val_if_fail (limits != NULL, FALSE);
+  g_return_val_if_fail (limits->ref_count >= 1, FALSE);
+
+  return (limits->limit_type != MCT_SESSION_LIMITS_TYPE_NONE);
+}
+
+/**
  * mct_session_limits_check_time_remaining:
  * @limits: an #MctSessionLimits
  * @now_usecs: current time as microseconds since the Unix epoch (UTC),

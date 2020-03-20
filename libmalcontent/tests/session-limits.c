@@ -518,6 +518,7 @@ test_session_limits_bus_get (BusFixture    *fixture,
 
   /* Check the session limits properties. */
   g_assert_cmpuint (mct_session_limits_get_user_id (session_limits), ==, fixture->valid_uid);
+  g_assert_true (mct_session_limits_is_enabled (session_limits));
   g_assert_false (mct_session_limits_check_time_remaining (session_limits, usec (0),
                                                            &time_remaining_secs, &time_limit_enabled));
   g_assert_true (time_limit_enabled);
@@ -580,6 +581,7 @@ test_session_limits_bus_get_none (BusFixture    *fixture,
 
   /* Check the session limits properties. */
   g_assert_cmpuint (mct_session_limits_get_user_id (session_limits), ==, fixture->valid_uid);
+  g_assert_false (mct_session_limits_is_enabled (session_limits));
   g_assert_true (mct_session_limits_check_time_remaining (session_limits, usec (0),
                                                           &time_remaining_secs, &time_limit_enabled));
   g_assert_false (time_limit_enabled);
