@@ -64,6 +64,7 @@ struct _MctApplication
 
   GCancellable *cancellable;  /* (owned) */
 
+  GDBusConnection *dbus_connection;  /* (owned) */
   ActUserManager *user_manager;  /* (owned) */
 
   GPermission *permission;  /* (owned) */
@@ -125,6 +126,7 @@ mct_application_dispose (GObject *object)
       g_clear_object (&self->permission);
     }
 
+  g_clear_object (&self->dbus_connection);
   g_clear_error (&self->permission_error);
   g_clear_object (&self->cancellable);
 
@@ -161,11 +163,20 @@ mct_application_activate (GApplication *application)
 
       builder = gtk_builder_new ();
 
+      g_assert (self->dbus_connection == NULL);
+      self->dbus_connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, self->cancellable, &local_error);
+      if (self->dbus_connection == NULL)
+        {
+          g_error ("Error getting system bus: %s", local_error->message);
+          return;
+        }
+
       g_assert (self->user_manager == NULL);
       self->user_manager = g_object_ref (act_user_manager_get_default ());
 
       gtk_builder_set_translation_domain (builder, "malcontent");
       gtk_builder_expose_object (builder, "user_manager", G_OBJECT (self->user_manager));
+      gtk_builder_expose_object (builder, "dbus_connection", G_OBJECT (self->dbus_connection));
 
       gtk_builder_add_from_resource (builder, "/org/freedesktop/MalcontentControl/ui/main.ui", &local_error);
       g_assert (local_error == NULL);

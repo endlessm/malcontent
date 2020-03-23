@@ -97,6 +97,7 @@ struct _MctUserControls
   GPermission *permission;  /* (owned) (nullable) */
   gulong permission_allowed_id;
 
+  GDBusConnection *dbus_connection;  /* (owned) */
   GCancellable *cancellable; /* (owned) */
   MctManager   *manager; /* (owned) */
   MctAppFilter *filter; /* (owned) (nullable) */
@@ -149,9 +150,10 @@ typedef enum
   PROP_USER_ACCOUNT_TYPE,
   PROP_USER_LOCALE,
   PROP_USER_DISPLAY_NAME,
+  PROP_DBUS_CONNECTION,
 } MctUserControlsProperty;
 
-static GParamSpec *properties[PROP_USER_DISPLAY_NAME + 1];
+static GParamSpec *properties[PROP_DBUS_CONNECTION + 1];
 
 static const GActionEntry actions[] = {
   { "set-age", on_set_age_action_activated, "u", NULL, NULL, { 0, }}
@@ -719,6 +721,18 @@ list_box_header_func (GtkListBoxRow *row,
 /* GObject overrides */
 
 static void
+mct_user_controls_constructed (GObject *object)
+{
+  MctUserControls *self = MCT_USER_CONTROLS (object);
+
+  /* Chain up. */
+  G_OBJECT_CLASS (mct_user_controls_parent_class)->constructed (object);
+
+  g_assert (self->dbus_connection != NULL);
+  self->manager = mct_manager_new (self->dbus_connection);
+}
+
+static void
 mct_user_controls_finalize (GObject *object)
 {
   MctUserControls *self = (MctUserControls *)object;
@@ -744,6 +758,7 @@ mct_user_controls_finalize (GObject *object)
 
   g_clear_pointer (&self->filter, mct_app_filter_unref);
   g_clear_object (&self->manager);
+  g_clear_object (&self->dbus_connection);
 
   /* Hopefully we don’t have data loss. */
   g_assert (self->flushed_on_dispose);
@@ -802,6 +817,10 @@ mct_user_controls_get_property (GObject    *object,
       g_value_set_string (value, self->user_display_name);
       break;
 
+    case PROP_DBUS_CONNECTION:
+      g_value_set_object (value, self->dbus_connection);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -841,6 +860,12 @@ mct_user_controls_set_property (GObject      *object,
       mct_user_controls_set_user_display_name (self, g_value_get_string (value));
       break;
 
+    case PROP_DBUS_CONNECTION:
+      /* Construct only. */
+      g_assert (self->dbus_connection == NULL);
+      self->dbus_connection = g_value_dup_object (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -852,6 +877,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->constructed = mct_user_controls_constructed;
   object_class->finalize = mct_user_controls_finalize;
   object_class->dispose = mct_user_controls_dispose;
   object_class->get_property = mct_user_controls_get_property;
@@ -958,6 +984,24 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
                            G_PARAM_STATIC_STRINGS |
                            G_PARAM_EXPLICIT_NOTIFY);
 
+  /**
+   * MctUserControls:dbus-connection: (not nullable)
+   *
+   * A connection to the system bus. This will be used for retrieving details
+   * of user accounts, and must be provided at construction time.
+   *
+   * Since: 0.7.0
+   */
+  properties[PROP_DBUS_CONNECTION] =
+      g_param_spec_object ("dbus-connection",
+                           "D-Bus Connection",
+                           "A connection to the system bus.",
+                           G_TYPE_DBUS_CONNECTION,
+                           G_PARAM_READWRITE |
+                           G_PARAM_CONSTRUCT_ONLY |
+                           G_PARAM_STATIC_STRINGS |
+                           G_PARAM_EXPLICIT_NOTIFY);
+
   g_object_class_install_properties (object_class, G_N_ELEMENTS (properties), properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/MalcontentUi/ui/user-controls.ui");
@@ -987,7 +1031,6 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
 static void
 mct_user_controls_init (MctUserControls *self)
 {
-  g_autoptr(GDBusConnection) system_bus = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GtkCssProvider) provider = NULL;
 
@@ -1006,16 +1049,6 @@ mct_user_controls_init (MctUserControls *self)
   self->selected_age = (guint) -1;
 
   self->cancellable = g_cancellable_new ();
-
-  /* FIXME: should become asynchronous */
-  system_bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, self->cancellable, &error);
-  if (system_bus == NULL)
-    {
-      g_warning ("Error getting system bus while setting up app permissions: %s", error->message);
-      return;
-    }
-
-  self->manager = mct_manager_new (system_bus);
 
   self->action_group = g_simple_action_group_new ();
   g_action_map_add_action_entries (G_ACTION_MAP (self->action_group),
