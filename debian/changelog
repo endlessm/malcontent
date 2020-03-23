@@ -1,3 +1,9 @@
+malcontent (0.6.0-1endless1) master; urgency=medium
+
+  * Add dependency on eos-metrics-0-dev for downstream metrics (T28742)
+
+ -- Philip Withnall <withnall@endlessm.com>  Mon, 23 Mar 2020 15:01:00 +0000
+
 malcontent (0.6.0-1) master; urgency=medium
 
   * Upstream 0.6.0 release
