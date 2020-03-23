@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include <act/act.h>
+#include <eosmetrics/eosmetrics.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gi18n-lib.h>
@@ -216,6 +217,92 @@ mct_application_activate (GApplication *application)
 }
 
 static void
+mct_application_shutdown (GApplication *application)
+{
+  MctApplication *self = MCT_APPLICATION (application);
+  EmtrEventRecorder *recorder;
+  g_autoptr(MctManager) mct_manager = NULL;
+  g_autoptr(GSList) users = NULL;  /* (element-type ActUser) */
+  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("aa{sv}"));
+  guint n_entries = 0;
+
+  /* Endless-specific code to send metrics containing all the parental controls
+   * for all users, so we can see how different parental controls features are
+   * being used.
+   *
+   * Serialise the app filter for each user. It’s OK to use blocking calls here,
+   * as the UI is no longer shown.
+   *
+   * See https://phabricator.endlessm.com/T28741#810046 */
+#define MCT_PARENTAL_CONTROLS_EVENT "449ec188-cb7b-45d3-a0ed-291d943b9aa6"
+
+  g_debug ("Gathering parental controls statistics");
+
+  users = act_user_manager_list_users (self->user_manager);
+  mct_manager = mct_manager_new (self->dbus_connection);
+
+  for (GSList *l = users; l != NULL; l = l->next)
+    {
+      ActUser *user = ACT_USER (l->data);
+      g_autoptr(MctAppFilter) filter = NULL;
+      g_autoptr(GError) local_error = NULL;
+      g_autoptr(GVariant) serialised_filter = NULL;
+      gboolean is_administrator;
+      g_auto(GVariantDict) dict = G_VARIANT_DICT_INIT (NULL);
+
+      /* Skip system accounts. */
+      if (act_user_is_system_account (user))
+        continue;
+
+      /* Get the user’s filter. */
+      filter = mct_manager_get_app_filter (mct_manager,
+                                           act_user_get_uid (user),
+                                           MCT_MANAGER_GET_VALUE_FLAGS_NONE,
+                                           NULL,
+                                           &local_error);
+      if (g_error_matches (local_error, MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_DISABLED))
+        {
+          g_debug ("Skipping metrics submission as parental controls are globally disabled");
+          break;
+        }
+      else if (g_error_matches (local_error, MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED))
+        {
+          g_debug ("Failed to get app filter for metrics for user %u: %s",
+                   (guint) act_user_get_uid (user), local_error->message);
+          continue;
+        }
+      else if (local_error != NULL)
+        {
+          g_warning ("Failed to get app filter for metrics for user %u: %s",
+                     (guint) act_user_get_uid (user), local_error->message);
+          continue;
+        }
+
+      serialised_filter = mct_app_filter_serialize (filter);
+
+      /* Add an additional `IsAdministrator` key to help the stats. */
+      is_administrator = (act_user_get_account_type (user) == ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR);
+
+      g_variant_dict_init (&dict, serialised_filter);
+      g_variant_dict_insert (&dict, "IsAdministrator", "b", is_administrator);
+      g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
+      n_entries++;
+    }
+
+  /* Send them, but only if we have something to send. */
+  if (n_entries > 0)
+    {
+      recorder = emtr_event_recorder_get_default ();
+      emtr_event_recorder_record_event (recorder,
+                                        MCT_PARENTAL_CONTROLS_EVENT,
+                                        g_variant_builder_end (&builder));
+    }
+
+  /* Chain up. */
+  G_APPLICATION_CLASS (mct_application_parent_class)->shutdown (application);
+}
+
+static void
 mct_application_class_init (MctApplicationClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -225,6 +312,7 @@ mct_application_class_init (MctApplicationClass *klass)
   object_class->dispose = mct_application_dispose;
 
   application_class->activate = mct_application_activate;
+  application_class->shutdown = mct_application_shutdown;
 }
 
 static void
