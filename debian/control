@@ -5,6 +5,7 @@ Maintainer: Philip Withnall <withnall@endlessm.com>
 Standards-Version: 4.3.0
 Build-Depends:
  debhelper-compat (= 12),
+ eos-metrics-0-dev (>= 0.5.0),
  gir1.2-glib-2.0,
  gobject-introspection (>= 1.30.0),
  gtk-doc-tools,
