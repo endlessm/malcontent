@@ -24,6 +24,7 @@ malcontent_control = executable('malcontent-control',
   ] + resources,
   dependencies: [
     dependency('accountsservice'),
+    dependency('eosmetrics-0', version: '>= 0.5.0'),
     dependency('gio-2.0', version: '>= 2.44'),
     dependency('glib-2.0', version: '>= 2.54.2'),
     dependency('gobject-2.0', version: '>= 2.54'),
