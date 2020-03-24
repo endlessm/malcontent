@@ -1,3 +1,36 @@
+Overview of changes in malcontent 0.7.0
+=======================================
+
+* Add `-Dui` configure option to help work around circular dependency with
+  flatpak (#16)
+
+* Add data serialization and deserialization methods for app filters and
+  session limits (!45)
+
+* Add mct_app_filter_is_enabled() and mct_session_limits_is_enabled() APIs
+  for determining whether filtering/limits are enabled at a high level (!47)
+
+* Bugs fixed:
+ - #16 Circular dependency on flatpak
+ - !35 Update Ukrainian translation
+ - !37 Drop a few unnecessary dependencies
+ - !39 Add Polish translation
+ - !40 Use libglib-testing submodule only as fallback
+ - !41 Fix typo in malcontent-client.8
+ - !42 docs: Update license information in README and meson.build
+ - !43 user-controls: Make OARS drop down open to the right
+ - !44 Fix updating the UI when a user’s locale changes
+ - !45 Support data serialisation and deserialisation
+ - !46 Fix papercuts when editing parental controls of current user
+ - !47 app-filter: Add mct_app_filter_is_enabled() API
+ - !48 Update POTFILES.in 200320
+ - !49 malcontent-control: Refactor bus initialisation
+
+* Translation updates:
+ - Polish
+ - Ukrainian
+
+
 Overview of changes in malcontent 0.6.0
 =======================================
 
