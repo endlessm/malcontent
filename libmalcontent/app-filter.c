@@ -108,6 +108,69 @@ mct_app_filter_get_user_id (MctAppFilter *filter)
   return filter->user_id;
 }
 
+static MctAppFilterOarsValue
+oars_str_to_enum (const gchar *value_str)
+{
+  if (g_str_equal (value_str, "none"))
+    return MCT_APP_FILTER_OARS_VALUE_NONE;
+  else if (g_str_equal (value_str, "mild"))
+    return MCT_APP_FILTER_OARS_VALUE_MILD;
+  else if (g_str_equal (value_str, "moderate"))
+    return MCT_APP_FILTER_OARS_VALUE_MODERATE;
+  else if (g_str_equal (value_str, "intense"))
+    return MCT_APP_FILTER_OARS_VALUE_INTENSE;
+  else
+    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+}
+
+/**
+ * mct_app_filter_is_enabled:
+ * @filter: an #MctAppFilter
+ *
+ * Check whether the app filter is enabled and is going to impose at least one
+ * restriction on the user. This gives a high level view of whether app filter
+ * parental controls are ‘enabled’ for the given user.
+ *
+ * Returns: %TRUE if the app filter contains at least one non-default value,
+ *    %FALSE if it’s entirely default
+ * Since: 0.7.0
+ */
+gboolean
+mct_app_filter_is_enabled (MctAppFilter *filter)
+{
+  gboolean oars_ratings_all_intense_or_unknown;
+  GVariantIter iter;
+  const gchar *oars_value;
+
+  g_return_val_if_fail (filter != NULL, FALSE);
+  g_return_val_if_fail (filter->ref_count >= 1, FALSE);
+
+  /* The least restrictive OARS filter has all values as intense, or unknown. */
+  oars_ratings_all_intense_or_unknown = TRUE;
+  g_variant_iter_init (&iter, filter->oars_ratings);
+
+  while (g_variant_iter_loop (&iter, "{&s&s}", NULL, &oars_value))
+    {
+      MctAppFilterOarsValue value = oars_str_to_enum (oars_value);
+
+      if (value != MCT_APP_FILTER_OARS_VALUE_UNKNOWN &&
+          value != MCT_APP_FILTER_OARS_VALUE_INTENSE)
+        {
+          oars_ratings_all_intense_or_unknown = FALSE;
+          break;
+        }
+    }
+
+  /* Check all fields against their default values. Ignore
+   * `allow_system_installation` since it’s false by default, so the default
+   * value is already the most restrictive. */
+  return ((filter->app_list_type == MCT_APP_FILTER_LIST_BLACKLIST &&
+           filter->app_list[0] != NULL) ||
+          filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST ||
+          !oars_ratings_all_intense_or_unknown ||
+          !filter->allow_user_installation);
+}
+
 /**
  * mct_app_filter_is_path_allowed:
  * @filter: an #MctAppFilter
@@ -477,16 +540,7 @@ mct_app_filter_get_oars_value (MctAppFilter *filter,
   if (!g_variant_lookup (filter->oars_ratings, oars_section, "&s", &value_str))
     return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 
-  if (g_str_equal (value_str, "none"))
-    return MCT_APP_FILTER_OARS_VALUE_NONE;
-  else if (g_str_equal (value_str, "mild"))
-    return MCT_APP_FILTER_OARS_VALUE_MILD;
-  else if (g_str_equal (value_str, "moderate"))
-    return MCT_APP_FILTER_OARS_VALUE_MODERATE;
-  else if (g_str_equal (value_str, "intense"))
-    return MCT_APP_FILTER_OARS_VALUE_INTENSE;
-  else
-    return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+  return oars_str_to_enum (value_str);
 }
 
 /**

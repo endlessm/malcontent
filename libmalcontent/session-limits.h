@@ -52,6 +52,9 @@ void              mct_session_limits_unref (MctSessionLimits *limits);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctSessionLimits, mct_session_limits_unref)
 
 uid_t    mct_session_limits_get_user_id          (MctSessionLimits *limits);
+
+gboolean mct_session_limits_is_enabled           (MctSessionLimits *limits);
+
 gboolean mct_session_limits_check_time_remaining (MctSessionLimits *limits,
                                                   guint64           now_usecs,
                                                   guint64          *time_remaining_secs_out,

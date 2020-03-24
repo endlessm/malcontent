@@ -52,7 +52,7 @@ struct _MctAppFilter
 
   uid_t user_id;
 
-  gchar **app_list;  /* (owned) (array zero-terminated=1) */
+  gchar **app_list;  /* (not nullable) (owned) (array zero-terminated=1) */
   MctAppFilterListType app_list_type;
 
   GVariant *oars_ratings;  /* (type a{ss}) (owned non-floating) */

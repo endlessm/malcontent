@@ -162,6 +162,55 @@ test_app_filter_deserialize_invalid (void)
     }
 }
 
+/* Test that mct_app_filter_is_enabled() returns the correct results on various
+ * app filters. */
+static void
+test_app_filter_is_enabled (void)
+{
+  const struct
+    {
+      const gchar *serialized;
+      gboolean is_enabled;
+    }
+  app_filters[] =
+    {
+      { "@a{sv} {}", FALSE },
+      { "{ 'AppFilter': <(true, @as [])> }", TRUE },
+      { "{ 'AppFilter': <(false, @as [])> }", FALSE },
+      { "{ 'AppFilter': <(false, @as [ '/usr/bin/gnome-software' ])> }", TRUE },
+      { "{ 'OarsFilter': <('oars-1.1', @a{ss} {})> }", FALSE },
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'mild' })> }", TRUE },
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'intense' })> }", FALSE },
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': '' })> }", FALSE },  /* technically an invalid serialisation */
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'none' })> }", TRUE },
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'mild', 'violence-realistic': 'intense' })> }", TRUE },
+      { "{ 'OarsFilter': <('oars-1.1', { 'violence-cartoon': 'mild', 'violence-realistic': 'none' })> }", TRUE },
+      { "{ 'AllowUserInstallation': <true> }", FALSE },
+      { "{ 'AllowUserInstallation': <false> }", TRUE },
+      { "{ 'AllowSystemInstallation': <true> }", FALSE },
+      { "{ 'AllowSystemInstallation': <false> }", FALSE },
+    };
+
+  for (gsize i = 0; i < G_N_ELEMENTS (app_filters); i++)
+    {
+      g_autoptr(GVariant) variant = NULL;
+      g_autoptr(MctAppFilter) filter = NULL;
+
+      g_test_message ("%" G_GSIZE_FORMAT ": %s", i, app_filters[i].serialized);
+
+      variant = g_variant_parse (NULL, app_filters[i].serialized, NULL, NULL, NULL);
+      g_assert (variant != NULL);
+
+      filter = mct_app_filter_deserialize (variant, 1, NULL);
+      g_assert (filter != NULL);
+
+      if (app_filters[i].is_enabled)
+        g_assert_true (mct_app_filter_is_enabled (filter));
+      else
+        g_assert_false (mct_app_filter_is_enabled (filter));
+    }
+}
+
 /* Fixture for tests which use an #MctAppFilterBuilder. The builder can either
  * be heap- or stack-allocated. @builder will always be a valid pointer to it.
  */
@@ -244,6 +293,8 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
 
   filter = mct_app_filter_builder_end (fixture->builder);
 
+  g_assert_true (mct_app_filter_is_enabled (filter));
+
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (mct_app_filter_is_path_allowed (filter,
                                                   "/usr/bin/gnome-software"));
@@ -284,6 +335,8 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
   g_autofree const gchar **sections = NULL;
 
   filter = mct_app_filter_builder_end (fixture->builder);
+
+  g_assert_false (mct_app_filter_is_enabled (filter));
 
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_true (mct_app_filter_is_path_allowed (filter,
@@ -332,6 +385,7 @@ test_app_filter_builder_copy_empty (void)
                                                  "x-scheme-handler/http");
   filter = mct_app_filter_builder_end (builder_copy);
 
+  g_assert_true (mct_app_filter_is_enabled (filter));
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
   g_assert_true (mct_app_filter_is_content_type_allowed (filter,
@@ -359,6 +413,7 @@ test_app_filter_builder_copy_full (void)
   builder_copy = mct_app_filter_builder_copy (builder);
   filter = mct_app_filter_builder_end (builder_copy);
 
+  g_assert_true (mct_app_filter_is_enabled (filter));
   g_assert_true (mct_app_filter_is_path_allowed (filter, "/bin/false"));
   g_assert_false (mct_app_filter_is_path_allowed (filter, "/bin/true"));
   g_assert_true (mct_app_filter_is_content_type_allowed (filter,
@@ -691,6 +746,7 @@ test_app_filter_bus_get (BusFixture    *fixture,
 
   /* Check the app filter properties. */
   g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_true (mct_app_filter_is_enabled (app_filter));
   g_assert_false (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Chess"));
 }
@@ -736,6 +792,7 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
   /* Check the app filter properties. The returned filter is a whitelist,
    * whereas typically a blacklist is returned. */
   g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_true (mct_app_filter_is_enabled (app_filter));
   g_assert_false (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted1"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted2"));
@@ -791,6 +848,7 @@ test_app_filter_bus_get_all_oars_values (BusFixture    *fixture,
   /* Check the OARS filter properties. Each OARS value should have been parsed
    * correctly, except for the unknown `other` one. */
   g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_true (mct_app_filter_is_enabled (app_filter));
   g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
                    MCT_APP_FILTER_OARS_VALUE_NONE);
   g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-sexual"), ==,
@@ -838,6 +896,7 @@ test_app_filter_bus_get_defaults (BusFixture    *fixture,
 
   /* Check the default values for the properties. */
   g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
+  g_assert_false (mct_app_filter_is_enabled (app_filter));
   oars_sections = mct_app_filter_get_oars_sections (app_filter);
   g_assert_cmpuint (g_strv_length ((gchar **) oars_sections), ==, 0);
   g_assert_cmpint (mct_app_filter_get_oars_value (app_filter, "violence-bloodshed"), ==,
@@ -1461,6 +1520,8 @@ main (int    argc,
   g_test_add_func ("/app-filter/serialize", test_app_filter_serialize);
   g_test_add_func ("/app-filter/deserialize", test_app_filter_deserialize);
   g_test_add_func ("/app-filter/deserialize/invalid", test_app_filter_deserialize_invalid);
+
+  g_test_add_func ("/app-filter/is-enabled", test_app_filter_is_enabled);
 
   g_test_add ("/app-filter/builder/stack/non-empty", BuilderFixture, NULL,
               builder_set_up_stack, test_app_filter_builder_non_empty,
