@@ -24,6 +24,7 @@
 #include <glib.h>
 #include <locale.h>
 #include <stdlib.h>
+#include "config.h"
 
 /* Test that the `pam_malcontent.so` module can be loaded using dlopen() and
  * that it exports the appropriate symbols for PAM to be able to use it. */
@@ -36,6 +37,13 @@ test_pam_malcontent_dlopen (void)
   void *fn;
 
   module_path = g_test_build_filename (G_TEST_BUILT, "..", "pam_malcontent.so", NULL);
+
+  /* Installed tests version. */
+  if (!g_file_test (module_path, G_FILE_TEST_EXISTS))
+    {
+      g_free (module_path);
+      module_path = g_build_filename (PAMLIBDIR, "pam_malcontent.so", NULL);
+    }
 
   /* Check the module can be loaded. */
   handle = dlopen (module_path, RTLD_NOW);

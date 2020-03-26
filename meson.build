@@ -49,6 +49,7 @@ libglib_testing_dep = dependency(
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', 'malcontent')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('localedir')))
+config_h.set_quoted('PAMLIBDIR', pamlibdir)
 config_h.set_quoted('VERSION', meson.project_version())
 configure_file(
   output: 'config.h',
