@@ -48,6 +48,9 @@ static void permission_notify_allowed_cb (GObject    *obj,
                                           gpointer    user_data);
 static void user_accounts_panel_button_clicked_cb (GtkButton *button,
                                                    gpointer   user_data);
+static void about_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data);
+static void help_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data);
+static void quit_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data);
 
 
 /**
@@ -216,6 +219,28 @@ mct_application_activate (GApplication *application)
 }
 
 static void
+mct_application_startup (GApplication *application)
+{
+  const GActionEntry app_entries[] =
+    {
+      { "about", about_action_cb, NULL, NULL, NULL, { 0, } },
+      { "help", help_action_cb, NULL, NULL, NULL, { 0, } },
+      { "quit", quit_action_cb, NULL, NULL, NULL, { 0, } },
+    };
+
+  /* Chain up. */
+  G_APPLICATION_CLASS (mct_application_parent_class)->startup (application);
+
+  g_action_map_add_action_entries (G_ACTION_MAP (application), app_entries,
+                                   G_N_ELEMENTS (app_entries), application);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (application),
+                                         "app.help", (const gchar * const[]) { "F1", NULL });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (application),
+                                         "app.quit", (const gchar * const[]) { "<Primary>q", "<Primary>w", NULL });
+}
+
+static void
 mct_application_class_init (MctApplicationClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -225,6 +250,62 @@ mct_application_class_init (MctApplicationClass *klass)
   object_class->dispose = mct_application_dispose;
 
   application_class->activate = mct_application_activate;
+  application_class->startup = mct_application_startup;
+}
+
+static void
+about_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data)
+{
+  MctApplication *self = MCT_APPLICATION (user_data);
+  const gchar *authors[] =
+    {
+      "Philip Withnall <withnall@endlessm.com>",
+      "Georges Basile Stavracas Neto <georges@endlessm.com>",
+      "Andre Moreira Magalhaes <andre@endlessm.com>",
+      NULL
+    };
+
+  gtk_show_about_dialog (mct_application_get_main_window (self),
+                         "version", VERSION,
+                         "copyright", _("Copyright © 2019, 2020 Endless Mobile, Inc."),
+                         "authors", authors,
+                         "translator-credits", _("translator-credits"),
+                         "logo-icon-name", "org.freedesktop.MalcontentControl",
+                         "license-type", GTK_LICENSE_GPL_2_0,
+                         "wrap-license", TRUE,
+                         "website-label", _("Malcontent Website"),
+                         "website", "https://gitlab.freedesktop.org/pwithnall/malcontent",
+                         NULL);
+}
+
+static void
+help_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data)
+{
+  MctApplication *self = MCT_APPLICATION (user_data);
+  g_autoptr(GError) local_error = NULL;
+
+  if (!gtk_show_uri_on_window (mct_application_get_main_window (self), "help:malcontent",
+                               gtk_get_current_event_time (), &local_error))
+    {
+      GtkWidget *dialog = gtk_message_dialog_new (mct_application_get_main_window (self),
+                                                  GTK_DIALOG_MODAL,
+                                                  GTK_MESSAGE_ERROR,
+                                                  GTK_BUTTONS_OK,
+                                                  _("The help contents could not be displayed"));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", local_error->message);
+
+      gtk_dialog_run (GTK_DIALOG (dialog));
+
+      gtk_widget_destroy (dialog);
+    }
+}
+
+static void
+quit_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data)
+{
+  MctApplication *self = MCT_APPLICATION (user_data);
+
+  g_application_quit (G_APPLICATION (self));
 }
 
 static void
