@@ -23,5 +23,6 @@
 #pragma once
 
 #include <libmalcontent/app-filter.h>
+#include <libmalcontent/enums.h>
 #include <libmalcontent/manager.h>
 #include <libmalcontent/session-limits.h>

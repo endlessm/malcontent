@@ -21,6 +21,7 @@ bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 libdir = join_paths(prefix, get_option('libdir'))
 libexecdir = join_paths(prefix, get_option('libexecdir'))
+includedir = join_paths(prefix, get_option('includedir'))
 
 # FIXME: This isn’t exposed in accountsservice.pc
 # See https://gitlab.freedesktop.org/accountsservice/accountsservice/merge_requests/16
