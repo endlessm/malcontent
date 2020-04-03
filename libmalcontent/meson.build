@@ -28,8 +28,14 @@ libmalcontent_private_deps = [
 # FIXME: Would be good to use subdir here: https://github.com/mesonbuild/meson/issues/2969
 libmalcontent_include_subdir = join_paths(libmalcontent_api_name, 'libmalcontent')
 
+enums = gnome.mkenums_simple('enums',
+  sources: libmalcontent_headers,
+  install_header: true,
+  install_dir: join_paths(includedir, libmalcontent_include_subdir),
+)
+
 libmalcontent = library(libmalcontent_api_name,
-  libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers,
+  libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers + enums,
   dependencies: libmalcontent_public_deps + libmalcontent_private_deps,
   include_directories: root_inc,
   install: true,
@@ -39,6 +45,7 @@ libmalcontent = library(libmalcontent_api_name,
 libmalcontent_dep = declare_dependency(
   link_with: libmalcontent,
   include_directories: root_inc,
+  sources: libmalcontent_headers + [enums[1]],
 )
 
 # Public library bits.
@@ -57,7 +64,7 @@ pkgconfig.generate(libmalcontent,
 )
 
 libmalcontent_gir = gnome.generate_gir(libmalcontent,
-  sources: libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers,
+  sources: libmalcontent_sources + libmalcontent_headers + libmalcontent_private_headers + enums,
   nsversion: libmalcontent_api_version,
   namespace: 'Malcontent',
   symbol_prefix: 'mct_',
