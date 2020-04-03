@@ -1,4 +1,5 @@
 usr/bin/malcontent-control
+usr/share/help/*/malcontent
 usr/share/icons/hicolor/symbolic/apps/org.freedesktop.MalcontentControl-symbolic.svg
 usr/share/icons/hicolor/scalable/apps/org.freedesktop.MalcontentControl.svg
 usr/share/metainfo/org.freedesktop.MalcontentControl.appdata.xml
