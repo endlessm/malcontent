@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: malcontent master\n"
 "Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/issu"
 "es\n"
-"POT-Creation-Date: 2020-03-29 10:37+0000\n"
-"PO-Revision-Date: 2020-04-02 09:17+0300\n"
+"POT-Creation-Date: 2020-04-06 15:27+0000\n"
+"PO-Revision-Date: 2020-04-07 09:03+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -128,7 +128,6 @@ msgstr ""
 
 #: libmalcontent/app-filter.c:694
 #, c-format
-#| msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgid "App filter for user %u was in an unrecognized format"
 msgstr "Фільтр програм для користувача %u записано у невідомому форматі"
 
@@ -164,7 +163,6 @@ msgstr ""
 
 #: libmalcontent/session-limits.c:306
 #, c-format
-#| msgid "Session limit for user %u has an unrecognized type ‘%u’"
 msgid "Session limit for user %u was in an unrecognized format"
 msgstr "Обмеження сеансів для користувача %u записано у невідомому форматі"
 
@@ -689,7 +687,7 @@ msgstr "Обмежити для %s користування вказаними �
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
 msgid "Restrict Applications"
-msgstr "Обмеження доступ до програм"
+msgstr "Обмеження доступу до програм"
 
 #: libmalcontent-ui/restrict-applications-selector.ui:24
 msgid "No applications found to restrict."
@@ -769,18 +767,35 @@ msgstr ""
 "Обмежує перелік програм, які користувач може бачити або встановлювати, до "
 "програм, доступних певній віковій групі."
 
+#. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:102
+#: malcontent-control/application.c:105 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Батьківський контроль"
 
-#: malcontent-control/application.c:250
+#: malcontent-control/application.c:270
+msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
+msgstr "© Endless Mobile, Inc., 2019, 2020"
+
+#: malcontent-control/application.c:272
+msgid "translator-credits"
+msgstr "Юрій Чорноіван <yurchor@ukr.net>"
+
+#: malcontent-control/application.c:276
+msgid "Malcontent Website"
+msgstr "Сайт Malcontent"
+
+#: malcontent-control/application.c:294
+msgid "The help contents could not be displayed"
+msgstr "Неможливо показати вміст довідки"
+
+#: malcontent-control/application.c:331
 msgid "Failed to load user data from the system"
 msgstr "Не вдалося завантажити дані користувача з системи"
 
-#: malcontent-control/application.c:252
+#: malcontent-control/application.c:333
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr "Будь ласка, переконайтеся, що встановлено і увімкнено AccountsService."
 
@@ -792,25 +807,22 @@ msgstr "Попередня сторінка"
 msgid "Next Page"
 msgstr "Наступна сторінка"
 
-#: malcontent-control/main.ui:68
+#: malcontent-control/main.ui:92
 msgid "Permission Required"
 msgstr "Потрібні права доступу"
 
-#: malcontent-control/main.ui:82
-#| msgid ""
-#| "Permission is required to view and change parental controls settings for "
-#| "other users."
+#: malcontent-control/main.ui:106
 msgid ""
 "Permission is required to view and change user parental controls settings."
 msgstr ""
-"Для перегляду і внесення змін до параметрів батьківського контролю для"
-" користувача потрібні відповідні права доступу."
+"Для перегляду і внесення змін до параметрів батьківського контролю для "
+"користувача потрібні відповідні права доступу."
 
-#: malcontent-control/main.ui:123
+#: malcontent-control/main.ui:147
 msgid "No Child Users Configured"
 msgstr "Не налаштовано жодного користувача-дитини"
 
-#: malcontent-control/main.ui:137
+#: malcontent-control/main.ui:161
 msgid ""
 "No child users are currently set up on the system. Create one before setting "
 "up their parental controls."
@@ -818,13 +830,22 @@ msgstr ""
 "У системі зараз не налаштовано жодного дитячого облікового запису. Створіть "
 "такий запис, перш ніж налаштовувати батьківський контроль для нього."
 
-#: malcontent-control/main.ui:149
+#: malcontent-control/main.ui:173
 msgid "Create _Child User"
 msgstr "Створити користува_ча-дитину"
 
-#: malcontent-control/main.ui:177
+#: malcontent-control/main.ui:201
 msgid "Loading…"
 msgstr "Завантаження…"
+
+#: malcontent-control/main.ui:264
+msgid "_Help"
+msgstr "_Довідка"
+
+#: malcontent-control/main.ui:268
+#| msgid "Parental Controls"
+msgid "_About Parental Controls"
+msgstr "_Про «Батьківський контроль»"
 
 #. Translators: the brief summary of the application as it appears in a software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
