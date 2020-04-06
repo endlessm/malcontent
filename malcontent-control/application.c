@@ -248,8 +248,6 @@ mct_application_shutdown (GApplication *application)
   EmtrEventRecorder *recorder;
   g_autoptr(MctManager) mct_manager = NULL;
   g_autoptr(GSList) users = NULL;  /* (element-type ActUser) */
-  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("aa{sv}"));
-  guint n_entries = 0;
 
   /* Endless-specific code to send metrics containing all the parental controls
    * for all users, so we can see how different parental controls features are
@@ -265,6 +263,7 @@ mct_application_shutdown (GApplication *application)
 
   users = act_user_manager_list_users (self->user_manager);
   mct_manager = mct_manager_new (self->dbus_connection);
+  recorder = emtr_event_recorder_get_default ();
 
   for (GSList *l = users; l != NULL; l = l->next)
     {
@@ -310,17 +309,12 @@ mct_application_shutdown (GApplication *application)
 
       g_variant_dict_init (&dict, serialised_filter);
       g_variant_dict_insert (&dict, "IsAdministrator", "b", is_administrator);
-      g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
-      n_entries++;
-    }
+      g_variant_dict_insert (&dict, "IsInitialSetup", "b", FALSE);
 
-  /* Send them, but only if we have something to send. */
-  if (n_entries > 0)
-    {
-      recorder = emtr_event_recorder_get_default ();
+      /* Send the metrics for this user. */
       emtr_event_recorder_record_event (recorder,
                                         MCT_PARENTAL_CONTROLS_EVENT,
-                                        g_variant_builder_end (&builder));
+                                        g_variant_dict_end (&dict));
     }
 
   /* Chain up. */
