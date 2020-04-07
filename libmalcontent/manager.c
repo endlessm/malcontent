@@ -98,7 +98,7 @@ mct_manager_set_property (GObject      *object,
   switch ((MctManagerProperty) property_id)
     {
     case PROP_CONNECTION:
-      /* Construct-only. May be %NULL. */
+      /* Construct-only. May not be %NULL. */
       g_assert (self->connection == NULL);
       self->connection = g_value_dup_object (value);
       g_assert (self->connection != NULL);
@@ -167,7 +167,7 @@ mct_manager_class_init (MctManagerClass *klass)
   object_class->set_property = mct_manager_set_property;
 
   /**
-   * MctManager:connection:
+   * MctManager:connection: (not nullable)
    *
    * A connection to the system bus, where accounts-service runs. It’s provided
    * mostly for testing purposes, or to allow an existing connection to be
