@@ -728,6 +728,17 @@ mct_user_controls_constructed (GObject *object)
   /* Chain up. */
   G_OBJECT_CLASS (mct_user_controls_parent_class)->constructed (object);
 
+  /* FIXME: Ideally there wouldn’t be this sync call in a constructor, but there
+   * seems to be no way around it if #MctUserControls is to be used from a
+   * GtkBuilder template: templates are initialised from within the parent
+   * widget’s init() function (not its constructed() function), so none of its
+   * properties will have been set and it won’t reasonably have been able to
+   * make an async call to initialise the bus connection itself. Binding
+   * construct-only properties in GtkBuilder doesn’t work (and wouldn’t help if
+   * it did). */
+  if (self->dbus_connection == NULL)
+    self->dbus_connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
+
   g_assert (self->dbus_connection != NULL);
   self->manager = mct_manager_new (self->dbus_connection);
 }
