@@ -41,11 +41,6 @@ polkit_gobject = dependency('polkit-gobject-1')
 polkitpolicydir = polkit_gobject.get_pkgconfig_variable('policydir',
   define_variable: ['prefix', prefix])
 
-libglib_testing_dep = dependency(
-  'glib-testing-0',
-  fallback: ['libglib-testing', 'libglib_testing_dep'],
-)
-
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', 'malcontent')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('localedir')))

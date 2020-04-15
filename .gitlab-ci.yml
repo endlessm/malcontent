@@ -1,11 +1,12 @@
-image: fedora:30
+image: debian:unstable
 
 before_script:
-  - dnf install -y meson pkgconf-pkg-config gtk-doc
-                   libxml2-devel dbus-daemon
-                   glib2-devel dbus-devel gobject-introspection-devel
-                   gettext-devel polkit-devel polkit-gnome git
-                   lcov pam-devel gtk3-devel accountsservice-devel flatpak-devel
+  - apt update
+  - apt install -y meson pkg-config gtk-doc-tools libxml2-utils
+                   libglib2.0-dev libgirepository1.0-dev libpam0g-dev
+                   gettext policykit-1 libpolkit-gobject-1-dev git
+                   lcov libgtk-3-dev libaccountsservice-dev libflatpak-dev
+                   libglib-testing-0-dev
   - export LANG=C.UTF-8
 
 stages:
@@ -16,12 +17,11 @@ cache:
   paths:
     - _ccache/
 
-fedora:
+debian:
   stage: build
   except:
     - tags
   script:
-    - git submodule update --init
     - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true _build .
     - meson test -C _build
     # FIXME: lcov doesn't support gcc9 yet:
