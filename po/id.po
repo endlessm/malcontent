@@ -1,22 +1,25 @@
-# Indonesian translation for malcontent.
-# Copyright (C) 2020 malcontent's COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Andika Triwidada <atriwidada@gnome.org>, 2020.
-#
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Will Thompson <wjt@endlessm.com>, 2020
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: malcontent master\n"
-"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
-"issues\n"
-"POT-Creation-Date: 2020-03-31 03:29+0000\n"
-"PO-Revision-Date: 2020-03-31 19:22+0700\n"
-"Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
-"Language: id\n"
+"Project-Id-Version: malcontent\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 23:13+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Indonesian (https://www.transifex.com/endless-os/teams/9016/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
-"X-Generator: Poedit 2.3\n"
+"Language: id\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -124,7 +127,7 @@ msgstr "Filter aplikasi untuk pengguna %u dalam format yang tidak dikenal"
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "Filter OARS untuk pengguna %u memiliki jenis yang tidak dikenal '%s'"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr "Tidak diizinkan untuk meminta data filter aplikasi untuk pengguna %u"
@@ -134,15 +137,15 @@ msgstr "Tidak diizinkan untuk meminta data filter aplikasi untuk pengguna %u"
 msgid "User %u does not exist"
 msgstr "Pengguna %u tidak ada"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
 msgstr "Penyaringan aplikasi dinonaktifkan secara global"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
 msgstr "Batas sesi dinonaktifkan secara global"
 
-#: libmalcontent/manager.c:795
+#: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
 msgstr "Tidak diizinkan untuk meminta data batasan sesi untuk pengguna %u"
@@ -689,8 +692,8 @@ msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
 "available in other applications."
 msgstr ""
-"Mencegah %s dari menjalankan peramban web. Konten web terbatas mungkin masih "
-"tersedia di aplikasi lain."
+"Mencegah %s dari menjalankan peramban web. Konten web terbatas mungkin masih"
+" tersedia di aplikasi lain."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:496
@@ -746,18 +749,35 @@ msgstr ""
 "Membatasi penjelajahan atau pemasangan aplikasi ke aplikasi yang sesuai "
 "untuk usia tertentu atau di atas."
 
+#. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:102
+#: malcontent-control/application.c:106 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Pengawasan Orang Tua"
 
-#: malcontent-control/application.c:250
+#: malcontent-control/application.c:352
+msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
+msgstr ""
+
+#: malcontent-control/application.c:354
+msgid "translator-credits"
+msgstr ""
+
+#: malcontent-control/application.c:358
+msgid "Malcontent Website"
+msgstr ""
+
+#: malcontent-control/application.c:376
+msgid "The help contents could not be displayed"
+msgstr ""
+
+#: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
 msgstr "Gagal memuat data pengguna dari sistem"
 
-#: malcontent-control/application.c:252
+#: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr "Harap pastikan bahwa AccountsService diinstal dan diaktifkan."
 
@@ -769,44 +789,54 @@ msgstr "Halaman Sebelumnya"
 msgid "Next Page"
 msgstr "Halaman Selanjutnya"
 
-#: malcontent-control/main.ui:68
+#: malcontent-control/main.ui:92
 msgid "Permission Required"
 msgstr "Diperlukan Izin"
 
-#: malcontent-control/main.ui:82
+#: malcontent-control/main.ui:106
 msgid ""
 "Permission is required to view and change user parental controls settings."
 msgstr ""
 "Diperlukan izin untuk melihat dan mengubah pengaturan kontrol orang tua "
 "pengguna."
 
-#: malcontent-control/main.ui:123
+#: malcontent-control/main.ui:147
 msgid "No Child Users Configured"
 msgstr "Tidak Ada Pengguna Anak yang Dikonfigurasi"
 
-#: malcontent-control/main.ui:137
+#: malcontent-control/main.ui:161
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"No child users are currently set up on the system. Create one before setting"
+" up their parental controls."
 msgstr ""
 "Tidak ada pengguna anak yang saat ini diatur pada sistem. Buat satu sebelum "
 "menyiapkan kontrol orangtua mereka."
 
-#: malcontent-control/main.ui:149
+#: malcontent-control/main.ui:173
 msgid "Create _Child User"
 msgstr "Buat Pengguna _Anak"
 
-#: malcontent-control/main.ui:177
+#: malcontent-control/main.ui:201
 msgid "Loading…"
 msgstr "Memuat…"
 
-#. Translators: the brief summary of the application as it appears in a software center.
+#: malcontent-control/main.ui:264
+msgid "_Help"
+msgstr ""
+
+#: malcontent-control/main.ui:268
+msgid "_About Parental Controls"
+msgstr ""
+
+#. Translators: the brief summary of the application as it appears in a
+#. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
 msgstr "Tata kontrol orangtua dan pantau pemakaian oleh pengguna"
 
-#. Translators: These are the application description paragraphs in the AppData file.
+#. Translators: These are the application description paragraphs in the
+#. AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
 msgid ""
 "Manage users’ parental controls restrictions, controlling how long they can "
@@ -817,18 +847,15 @@ msgstr ""
 "dapat menggunakan komputer, perangkat lunak apa yang dapat mereka instal, "
 "dan perangkat lunak terinstal mana yang dapat mereka jalankan."
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
-msgid "The GNOME Project"
-msgstr "Projek GNOME"
-
-#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
-"kontrol orang tua;waktu layar;pembatasan aplikasi;pembatasan peramban web;"
-"oars;penggunaan;batas penggunaan;anak;"
+"kontrol orang tua;waktu layar;pembatasan aplikasi;pembatasan peramban "
+"web;oars;penggunaan;batas penggunaan;anak;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"

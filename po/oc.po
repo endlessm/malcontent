@@ -1,20 +1,25 @@
-# Occitan translations for malcontent package.
-# Copyright (C) 2020 THE malcontent'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Automatically generated, 2020.
-#
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Will Thompson <wjt@endlessm.com>, 2020
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 13:45+0100\n"
-"PO-Revision-Date: 2020-04-15 13:42+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: oc\n"
+"POT-Creation-Date: 2020-04-17 23:13+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Occitan (post 1500) (https://www.transifex.com/endless-os/teams/9016/oc/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: oc\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -122,7 +127,7 @@ msgstr ""
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr ""
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr ""
@@ -132,15 +137,15 @@ msgstr ""
 msgid "User %u does not exist"
 msgstr ""
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
 msgstr ""
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
 msgstr ""
 
-#: libmalcontent/manager.c:795
+#: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
 msgstr ""
@@ -746,33 +751,33 @@ msgstr ""
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:105 malcontent-control/main.ui:12
+#: malcontent-control/application.c:106 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr ""
 
-#: malcontent-control/application.c:270
+#: malcontent-control/application.c:352
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
 msgstr ""
 
-#: malcontent-control/application.c:272
+#: malcontent-control/application.c:354
 msgid "translator-credits"
 msgstr ""
 
-#: malcontent-control/application.c:276
+#: malcontent-control/application.c:358
 msgid "Malcontent Website"
 msgstr ""
 
-#: malcontent-control/application.c:294
+#: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
 msgstr ""
 
-#: malcontent-control/application.c:331
+#: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
 msgstr ""
 
-#: malcontent-control/application.c:333
+#: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr ""
 
@@ -799,8 +804,8 @@ msgstr ""
 
 #: malcontent-control/main.ui:161
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"No child users are currently set up on the system. Create one before setting"
+" up their parental controls."
 msgstr ""
 
 #: malcontent-control/main.ui:173
@@ -819,13 +824,15 @@ msgstr "_Ajuda"
 msgid "_About Parental Controls"
 msgstr ""
 
-#. Translators: the brief summary of the application as it appears in a software center.
+#. Translators: the brief summary of the application as it appears in a
+#. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
 msgstr ""
 
-#. Translators: These are the application description paragraphs in the AppData file.
+#. Translators: These are the application description paragraphs in the
+#. AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
 msgid ""
 "Manage users’ parental controls restrictions, controlling how long they can "
@@ -833,43 +840,12 @@ msgid ""
 "software they can run."
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
-msgid "The GNOME Project"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:50
-msgid "Minor improvements to parental controls application UI"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:51
-msgid "Translations to Ukrainian and Polish"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:58
-msgid "Improve parental controls application UI and add icon"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:59
-msgid "Support for indicating which accounts are parent accounts"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:66
-msgid "Initial release of basic parental controls application"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:67
-msgid "Support for setting app installation and run restrictions on users"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:74
-msgid "Maintenance release of underlying parental controls library"
-msgstr ""
-
-#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9

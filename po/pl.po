@@ -1,24 +1,25 @@
-# Polish translation for malcontent.
-# Copyright © 2020 the malcontent authors.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Piotr Drąg <piotrdrag@gmail.com>, 2020.
-# Aviary.pl <community-poland@mozilla.org>, 2020.
-#
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Will Thompson <wjt@endlessm.com>, 2020
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
-"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
-"issues\n"
-"POT-Creation-Date: 2020-04-07 15:29+0000\n"
-"PO-Revision-Date: 2020-04-12 11:39+0200\n"
-"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <community-poland@mozilla.org>\n"
-"Language: pl\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 23:13+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Polish (https://www.transifex.com/endless-os/teams/9016/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -62,7 +63,8 @@ msgstr "Zmiana własnych ograniczeń sesji"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."
-msgstr "Wymagane jest uwierzytelnienie, aby zmienić własne ograniczenia sesji."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby zmienić własne ograniczenia sesji."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:54
 msgid "Read your own session limits"
@@ -141,7 +143,7 @@ msgstr "Filtr programów użytkownika %u jest w nieznanym formacie"
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "Filtr OARS użytkownika %u ma nieznany rodzaj „%s”"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr "Brak zezwolenia na odpytanie danych filtru programów użytkownika %u"
@@ -151,15 +153,15 @@ msgstr "Brak zezwolenia na odpytanie danych filtru programów użytkownika %u"
 msgid "User %u does not exist"
 msgstr "Użytkownik %u nie istnieje"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
 msgstr "Filtrowanie programów jest wyłączone globalnie"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
 msgstr "Ograniczenia sesji są wyłączone globalnie"
 
-#: libmalcontent/manager.c:795
+#: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
 msgstr "Brak zezwolenia na odpytanie danych ograniczeń sesji użytkownika %u"
@@ -214,7 +216,8 @@ msgstr ""
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:94
 msgid "Characters in aggressive conflict easily distinguishable from reality"
-msgstr "Postacie w agresywnym konflikcie, łatwo odróżnialnym od rzeczywistości"
+msgstr ""
+"Postacie w agresywnym konflikcie, łatwo odróżnialnym od rzeczywistości"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:97
@@ -506,7 +509,8 @@ msgstr ""
 #: libmalcontent-ui/gs-content-rating.c:265
 msgid "Sharing social network usernames or email addresses"
 msgstr ""
-"Udostępnianie nazw użytkowników serwisów społecznościowych lub adresów e-mail"
+"Udostępnianie nazw użytkowników serwisów społecznościowych lub adresów "
+"e-mail"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:268
@@ -772,35 +776,35 @@ msgstr ""
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:105 malcontent-control/main.ui:12
+#: malcontent-control/application.c:106 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Kontrola rodzicielska"
 
-#: malcontent-control/application.c:270
+#: malcontent-control/application.c:352
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
 msgstr "Copyright © 2019, 2020 Endless Mobile, Inc."
 
-#: malcontent-control/application.c:272
+#: malcontent-control/application.c:354
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2020\n"
 "Aviary.pl <community-poland@mozilla.org>, 2020"
 
-#: malcontent-control/application.c:276
+#: malcontent-control/application.c:358
 msgid "Malcontent Website"
 msgstr "Witryna projektu Malcontent"
 
-#: malcontent-control/application.c:294
+#: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
 msgstr "Nie można wyświetlić treści pomocy"
 
-#: malcontent-control/application.c:331
+#: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
 msgstr "Wczytanie danych użytkownika z systemu się nie powiodło"
 
-#: malcontent-control/application.c:333
+#: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr ""
 "Proszę się upewnić, że usługa AccountsService jest zainstalowana i włączona."
@@ -830,8 +834,8 @@ msgstr "Nie skonfigurowano żadnych kont dzieci"
 
 #: malcontent-control/main.ui:161
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"No child users are currently set up on the system. Create one before setting"
+" up their parental controls."
 msgstr ""
 "Na komputerze obecnie nie skonfigurowano żadnego konta dziecka. Należy "
 "utworzyć takie konto, aby móc skonfigurować jego kontrolę rodzicielską."
@@ -852,13 +856,15 @@ msgstr "Pomo_c"
 msgid "_About Parental Controls"
 msgstr "_O programie"
 
-#. Translators: the brief summary of the application as it appears in a software center.
+#. Translators: the brief summary of the application as it appears in a
+#. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
 msgstr "Kontrola rodzicielska i monitorowanie użycia"
 
-#. Translators: These are the application description paragraphs in the AppData file.
+#. Translators: These are the application description paragraphs in the
+#. AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
 msgid ""
 "Manage users’ parental controls restrictions, controlling how long they can "
@@ -869,20 +875,17 @@ msgstr ""
 "kontrolowanie jak długo mogą używać komputera, jakie oprogramowanie mogą "
 "instalować oraz którego zainstalowanego oprogramowania mogą używać."
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
-msgid "The GNOME Project"
-msgstr "Projekt GNOME"
-
-#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
-"kontrola rodzicielska;ograniczanie;restrykcje;ograniczenia programów;"
-"ograniczenia aplikacji;ograniczenia przeglądarki internetowej;www;oars;"
-"użycie;użytek;czas korzystania;limit korzystania;dziecko;dzieciak;dzieci;"
-"children;kids;"
+"kontrola rodzicielska;ograniczanie;restrykcje;ograniczenia "
+"programów;ograniczenia aplikacji;ograniczenia przeglądarki "
+"internetowej;www;oars;użycie;użytek;czas korzystania;limit "
+"korzystania;dziecko;dzieciak;dzieci;children;kids;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"

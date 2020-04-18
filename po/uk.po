@@ -1,24 +1,25 @@
-# Ukrainian translation for malcontent.
-# Copyright (C) 2020 malcontent's COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-#
-# yurchor <yurchor@ukr.net>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Will Thompson <wjt@endlessm.com>, 2020
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: malcontent master\n"
-"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/issu"
-"es\n"
-"POT-Creation-Date: 2020-04-06 15:27+0000\n"
-"PO-Revision-Date: 2020-04-07 09:03+0300\n"
-"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
-"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
-"Language: uk\n"
+"Project-Id-Version: malcontent\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 23:13+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Ukrainian (https://www.transifex.com/endless-os/teams/9016/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
-"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 20.07.70\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -68,7 +69,8 @@ msgstr "Читання обмежень власного сеансу"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:55
 msgid "Authentication is required to read your session limits."
-msgstr "Для читання обмежень вашого власного сеансу слід пройти розпізнавання."
+msgstr ""
+"Для читання обмежень вашого власного сеансу слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:64
 msgid "Change another user’s session limits"
@@ -136,7 +138,7 @@ msgstr "Фільтр програм для користувача %u запис�
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "Фільтр OARS для користувача %u належить до невідомого типу «%s»"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr ""
@@ -147,19 +149,20 @@ msgstr ""
 msgid "User %u does not exist"
 msgstr "Запису користувача %u не існує"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
 msgstr "Фільтрування програм вимкнено на загальному рівні"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
 msgstr "Обмеження сеансів вимкнено на загальному рівні"
 
-#: libmalcontent/manager.c:795
+#: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
 msgstr ""
-"Не дозволено опитувати систему щодо даних обмежень сеансів для користувача %u"
+"Не дозволено опитувати систему щодо даних обмежень сеансів для користувача "
+"%u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
@@ -420,8 +423,8 @@ msgstr "Реклама товарів"
 #: libmalcontent-ui/gs-content-rating.c:217
 msgid "Explicit references to specific brands or trademarked products"
 msgstr ""
-"Явні згадування певних торговельних марок та продуктів, захищених авторським "
-"правом"
+"Явні згадування певних торговельних марок та продуктів, захищених авторським"
+" правом"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:220
@@ -436,7 +439,8 @@ msgstr "Без будь-яких азартних ігор"
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:226
 msgid "Gambling on random events using tokens or credits"
-msgstr "Азартні ігри або випадкові події із використанням жетонів або кредитів"
+msgstr ""
+"Азартні ігри або випадкові події із використанням жетонів або кредитів"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:229
@@ -493,14 +497,15 @@ msgstr "Без можливості звукового спілкування і
 #: libmalcontent-ui/gs-content-rating.c:259
 msgid "Uncontrolled audio or video chat functionality between users"
 msgstr ""
-"Неконтрольовані можливості із звукового та відеоспілкування між користувачами"
+"Неконтрольовані можливості із звукового та відеоспілкування між "
+"користувачами"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:262
 msgid "No sharing of social network usernames or email addresses"
 msgstr ""
-"Без оприлюднення імен користувачів у соціальних мережах та адрес електронної "
-"пошти"
+"Без оприлюднення імен користувачів у соціальних мережах та адрес електронної"
+" пошти"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:265
@@ -682,7 +687,8 @@ msgstr "Відверте зображення сучасного рабства"
 #: libmalcontent-ui/restrict-applications-dialog.c:220
 #, c-format
 msgid "Restrict %s from using the following installed applications."
-msgstr "Обмежити для %s користування вказаними нижче встановленими програмами."
+msgstr ""
+"Обмежити для %s користування вказаними нижче встановленими програмами."
 
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
@@ -769,35 +775,36 @@ msgstr ""
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:105 malcontent-control/main.ui:12
+#: malcontent-control/application.c:106 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Батьківський контроль"
 
-#: malcontent-control/application.c:270
+#: malcontent-control/application.c:352
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
 msgstr "© Endless Mobile, Inc., 2019, 2020"
 
-#: malcontent-control/application.c:272
+#: malcontent-control/application.c:354
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
-#: malcontent-control/application.c:276
+#: malcontent-control/application.c:358
 msgid "Malcontent Website"
 msgstr "Сайт Malcontent"
 
-#: malcontent-control/application.c:294
+#: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
 msgstr "Неможливо показати вміст довідки"
 
-#: malcontent-control/application.c:331
+#: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
 msgstr "Не вдалося завантажити дані користувача з системи"
 
-#: malcontent-control/application.c:333
+#: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
-msgstr "Будь ласка, переконайтеся, що встановлено і увімкнено AccountsService."
+msgstr ""
+"Будь ласка, переконайтеся, що встановлено і увімкнено AccountsService."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
@@ -824,8 +831,8 @@ msgstr "Не налаштовано жодного користувача-дит
 
 #: malcontent-control/main.ui:161
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"No child users are currently set up on the system. Create one before setting"
+" up their parental controls."
 msgstr ""
 "У системі зараз не налаштовано жодного дитячого облікового запису. Створіть "
 "такий запис, перш ніж налаштовувати батьківський контроль для нього."
@@ -843,17 +850,18 @@ msgid "_Help"
 msgstr "_Довідка"
 
 #: malcontent-control/main.ui:268
-#| msgid "Parental Controls"
 msgid "_About Parental Controls"
 msgstr "_Про «Батьківський контроль»"
 
-#. Translators: the brief summary of the application as it appears in a software center.
+#. Translators: the brief summary of the application as it appears in a
+#. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
 msgstr "Встановити батьківський контроль і стежити за користувачами"
 
-#. Translators: These are the application description paragraphs in the AppData file.
+#. Translators: These are the application description paragraphs in the
+#. AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
 msgid ""
 "Manage users’ parental controls restrictions, controlling how long they can "
@@ -865,20 +873,17 @@ msgstr ""
 "забезпечення, яке можна встановлювати, та переліком програмного "
 "забезпечення, яке можна запускати."
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
-msgid "The GNOME Project"
-msgstr "Проєкт GNOME"
-
-#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;батьківський контроль;час за комп'ютером;"
-"обмеження програм;обмеження інтернету;користування;використання;обмеження "
-"користування;дитина;дитячий;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;батьківський контроль;час за "
+"комп'ютером;обмеження програм;обмеження "
+"інтернету;користування;використання;обмеження користування;дитина;дитячий;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
@@ -916,4 +921,5 @@ msgstr "У користувача «%s» більше не лишилося ча
 #: pam/pam_malcontent.c:200
 #, c-format
 msgid "Error setting time limit on login session: %s"
-msgstr "Помилка під час спроби встановити часове обмеження на сеанс роботи: %s"
+msgstr ""
+"Помилка під час спроби встановити часове обмеження на сеанс роботи: %s"
