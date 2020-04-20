@@ -14,700 +14,678 @@ msgstr ""
 "POT-Creation-Date: 2020-04-17 23:13+0100\n"
 "PO-Revision-Date: 2020-04-17 21:58+0000\n"
 "Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
-"Language-Team: Ukrainian (https://www.transifex.com/endless-os/teams/9016/uk/)\n"
+"Language-Team: Galician (https://www.transifex.com/endless-os/teams/9016/gl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: uk\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Language: gl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr "Зміна власного фільтра програм"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr "Для зміни власного фільтра програм слід пройти розпізнавання."
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr "Читання власного фільтра програм"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
-msgstr "Для читання власного фільтра програм слід пройти розпізнавання."
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr "Зміна фільтра програм іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
 msgstr ""
-"Для зміни фільтра програм іншого користувача слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr "Читання фільтра програм іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
 msgstr ""
-"Для читання фільтра програм іншого користувача слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"
-msgstr "Зміна обмежень власного сеансу"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."
-msgstr "Для зміни обмежень вашого власного сеансу слід пройти розпізнавання."
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:54
 msgid "Read your own session limits"
-msgstr "Читання обмежень власного сеансу"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:55
 msgid "Authentication is required to read your session limits."
 msgstr ""
-"Для читання обмежень вашого власного сеансу слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:64
 msgid "Change another user’s session limits"
-msgstr "Зміна обмежень сеансу іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:65
 msgid "Authentication is required to change another user’s session limits."
 msgstr ""
-"Для зміни обмежень сеансу іншого користувача слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:74
 msgid "Read another user’s session limits"
-msgstr "Читання обмежень сеансу іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:75
 msgid "Authentication is required to read another user’s session limits."
 msgstr ""
-"Для читання обмежень сеансу іншого користувача слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:84
 msgid "Change your own account info"
-msgstr "Зміна даних щодо власного облікового запису"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:85
 msgid "Authentication is required to change your account info."
 msgstr ""
-"Для зміни даних щодо вашого облікового запису слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:94
 msgid "Read your own account info"
-msgstr "Читання даних щодо власного облікового запису"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:95
 msgid "Authentication is required to read your account info."
 msgstr ""
-"Для читання даних щодо вашого облікового запису слід пройти розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:104
 msgid "Change another user’s account info"
-msgstr "Зміна даних щодо облікового запису іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:105
 msgid "Authentication is required to change another user’s account info."
 msgstr ""
-"Для зміни даних щодо облікового запису іншого користувача слід пройти "
-"розпізнавання."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:114
 msgid "Read another user’s account info"
-msgstr "Читання даних щодо облікового запису іншого користувача"
+msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:115
 msgid "Authentication is required to read another user’s account info."
 msgstr ""
-"Для читання даних щодо облікового запису іншого користувача слід пройти "
-"розпізнавання."
 
 #: libmalcontent/app-filter.c:694
 #, c-format
 msgid "App filter for user %u was in an unrecognized format"
-msgstr "Фільтр програм для користувача %u записано у невідомому форматі"
+msgstr ""
 
 #: libmalcontent/app-filter.c:725
 #, c-format
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
-msgstr "Фільтр OARS для користувача %u належить до невідомого типу «%s»"
+msgstr ""
 
 #: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr ""
-"Не дозволено опитувати систему щодо даних фільтра програм для користувача %u"
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
-msgstr "Запису користувача %u не існує"
+msgstr ""
 
 #: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
-msgstr "Фільтрування програм вимкнено на загальному рівні"
+msgstr ""
 
 #: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
-msgstr "Обмеження сеансів вимкнено на загальному рівні"
+msgstr ""
 
 #: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
 msgstr ""
-"Не дозволено опитувати систему щодо даних обмежень сеансів для користувача "
-"%u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
 msgid "Session limit for user %u was in an unrecognized format"
-msgstr "Обмеження сеансів для користувача %u записано у невідомому форматі"
+msgstr ""
 
 #: libmalcontent/session-limits.c:328
 #, c-format
 msgid "Session limit for user %u has an unrecognized type ‘%u’"
-msgstr "Обмеження сеансів для користувача %u належить до невідомого типу «%u»"
+msgstr ""
 
 #: libmalcontent/session-limits.c:346
 #, c-format
 msgid "Session limit for user %u has invalid daily schedule %u–%u"
 msgstr ""
-"Обмеження сеансу для користувача %u має некоректний щоденний розклад %u–%u"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:76
 msgid "No cartoon violence"
-msgstr "Без насильства у мультфільмах"
+msgstr "Sen violencia con personaxes animados"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:79
 msgid "Cartoon characters in unsafe situations"
-msgstr "Персонажі мультфільмів у небезпечних ситуаціях"
+msgstr "Personaxes de banda deseñada en situacións non seguras"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:82
 msgid "Cartoon characters in aggressive conflict"
-msgstr "Персонажі мультфільмів у агресивному конфлікті"
+msgstr "Personaxes animados en conflitos agresivos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:85
 msgid "Graphic violence involving cartoon characters"
-msgstr "Відверте насильство за участі персонажів мультфільмів"
+msgstr "Violencia gráfica con personaxes animados  "
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:88
 msgid "No fantasy violence"
-msgstr "Без насильства у фентезі"
+msgstr "Sen violencia fantástica"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:91
 msgid "Characters in unsafe situations easily distinguishable from reality"
 msgstr ""
-"Персонажі у небезпечних ситуаціях, які просто відрізнити від реальності"
+"Personaxes en situacións non seguras distinguíbeis facilmante da realidade"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:94
 msgid "Characters in aggressive conflict easily distinguishable from reality"
 msgstr ""
-"Персонажі у агресивному конфлікті, який просто відрізнити від реальності"
+"Personaxes en conflitos agresivos distinguíbeis facilmente da realidade"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:97
 msgid "Graphic violence easily distinguishable from reality"
-msgstr "Відверте насильство, яке просто відрізнити від реальності"
+msgstr "Violencia gráfica distinguíbel facilmente da realidade"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:100
 msgid "No realistic violence"
-msgstr "Без реалістичного насильства"
+msgstr "Sen violencia realista"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:103
 msgid "Mildly realistic characters in unsafe situations"
-msgstr "Помірно реалістичні персонажі у небезпечних ситуаціях"
+msgstr "Personaxes semi-realistas en situacións non seguras"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:106
 msgid "Depictions of realistic characters in aggressive conflict"
-msgstr "Зображення реалістичних персонажів у агресивному конфлікті"
+msgstr "Representacións de personaxes realistas en conflitos agresivos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:109
 msgid "Graphic violence involving realistic characters"
-msgstr "Відверте насильство за участі реалістичних персонажів"
+msgstr "Violencia gráfica con personaes realistas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:112
 msgid "No bloodshed"
-msgstr "Без кривавих сцен"
+msgstr "Sen masacres"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:115
 msgid "Unrealistic bloodshed"
-msgstr "Нереалістичні криваві сцени"
+msgstr "Masacre non realista"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:118
 msgid "Realistic bloodshed"
-msgstr "Реалістичні криваві сцени"
+msgstr "Masacre realista"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:121
 msgid "Depictions of bloodshed and the mutilation of body parts"
-msgstr "Зображення кривавих сцен і каліцтва"
+msgstr "Representacións de masacres e mutilación de partes do corpo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:124
 msgid "No sexual violence"
-msgstr "Без сексуального насильства"
+msgstr "Sen violencia sexual"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:127
 msgid "Rape or other violent sexual behavior"
-msgstr "Зґвалтування та інша насильницька сексуальна поведінка"
+msgstr "Violación ou outro comportamento sexual violento"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:130
 msgid "No references to alcohol"
-msgstr "Без згадування алкоголю"
+msgstr "Sen referencias a bebidas alcohólicas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:133
 msgid "References to alcoholic beverages"
-msgstr "Згадки про алкогольні напої"
+msgstr "Referencias a bebeidas alcohólicas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:136
 msgid "Use of alcoholic beverages"
-msgstr "Вживання алкогольних напоїв"
+msgstr "Use de bebidas alcohólicas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:139
 msgid "No references to illicit drugs"
-msgstr "Без згадування заборонених наркотиків"
+msgstr "Sen referencias a drogas ilegais"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:142
 msgid "References to illicit drugs"
-msgstr "Згадування заборонених наркотиків"
+msgstr "Referencias a drogas ilegais"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:145
 msgid "Use of illicit drugs"
-msgstr "Вживання заборонених наркотиків"
+msgstr "Uso de drogas ilegais"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:148
 msgid "References to tobacco products"
-msgstr "Згадування тютюнових продуктів"
+msgstr "Referencias ao tabaco"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:151
 msgid "Use of tobacco products"
-msgstr "Вживання тютюнових продуктів"
+msgstr "Uso de tabaco"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:154
 msgid "No nudity of any sort"
-msgstr "Без оголення інтимних частин тіла"
+msgstr "Sen desnudos de ningún tipo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:157
 msgid "Brief artistic nudity"
-msgstr "Незначні художні оголення"
+msgstr "Desnudez artística breve"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:160
 msgid "Prolonged nudity"
-msgstr "Тривалі сцени із оголенням"
+msgstr "Desnudez prolongada"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:163
 msgid "No references or depictions of sexual nature"
-msgstr "Без згадок або зображення сексуальної природи"
+msgstr "Sen representacións ou referencias sexuais"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:166
 msgid "Provocative references or depictions"
-msgstr "Провокативні згадки або зображення"
+msgstr "Representacións ou referencias provocativas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:169
 msgid "Sexual references or depictions"
-msgstr "Сексуальні згадки або зображення"
+msgstr "Representacións ou referencias sexuais"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:172
 msgid "Graphic sexual behavior"
-msgstr "Відверта сексуальна поведінка"
+msgstr "Comportamento sexual gráfico"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:175
 msgid "No profanity of any kind"
-msgstr "Без будь-якої лайки"
+msgstr "Sen blasfemia de ningún tipo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:178
 msgid "Mild or infrequent use of profanity"
-msgstr "Помірне або нечасте вживання лайки"
+msgstr "Uso moderado ou pouco frecuente da blasfemia"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:181
 msgid "Moderate use of profanity"
-msgstr "Помірне вживання лайки"
+msgstr "Uso moderado da blasfemia"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:184
 msgid "Strong or frequent use of profanity"
-msgstr "Відверте або часте вживання лайки"
+msgstr "Uso amplio ou frecuente da blasfemia"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:187
 msgid "No inappropriate humor"
-msgstr "Без сумнівного гумору"
+msgstr "Sen humor non axeitado"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:190
 msgid "Slapstick humor"
-msgstr "Грубий гумор"
+msgstr "Humor "
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:193
 msgid "Vulgar or bathroom humor"
-msgstr "Вульгарний або туалетний гумор"
+msgstr "Humor vulgar ou estolóxico"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:196
 msgid "Mature or sexual humor"
-msgstr "Гумор для дорослих або сексуальний гумор"
+msgstr "Humor adulto ou sexual"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:199
 msgid "No discriminatory language of any kind"
-msgstr "Без принизливих згадок суспільних груп"
+msgstr "Sen idioma discriminatorio de calqueira tipo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:202
 msgid "Negativity towards a specific group of people"
-msgstr "Негатив щодо певної суспільної групи"
+msgstr "Negatividade cara un determinado grupo de persoas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:205
 msgid "Discrimination designed to cause emotional harm"
-msgstr "Принизливі вислови для спричинення емоційної шкоди"
+msgstr "Discriminación para causar dano emocional"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:208
 msgid "Explicit discrimination based on gender, sexuality, race or religion"
 msgstr ""
-"Явне вербальне приниження на основі статі, сексуальної орієнтації, раси або "
-"релігійної приналежності"
+"Discriminación explícita baseada en xénero, sexualidade, raza ou relixión"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:211
 msgid "No advertising of any kind"
-msgstr "Без будь-якої реклами"
+msgstr "Sen publicidade de ningún tipo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:214
 msgid "Product placement"
-msgstr "Реклама товарів"
+msgstr "Venta de produtos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:217
 msgid "Explicit references to specific brands or trademarked products"
 msgstr ""
-"Явні згадування певних торговельних марок та продуктів, захищених авторським"
-" правом"
+"Referencias explícitas a marcas concretas ou produtos de marcas rexistradas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:220
 msgid "Users are encouraged to purchase specific real-world items"
-msgstr "Користувачам пропонують придбати певні матеріальні товари"
+msgstr ""
+"Incítase aos xogadores a comprar determian dos elementos do mundo real"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:223
 msgid "No gambling of any kind"
-msgstr "Без будь-яких азартних ігор"
+msgstr "Sen apostas de ningún tipo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:226
 msgid "Gambling on random events using tokens or credits"
-msgstr ""
-"Азартні ігри або випадкові події із використанням жетонів або кредитів"
+msgstr "Xogo en eventos aleatorios usando créditos ou vidas"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:229
 msgid "Gambling using “play” money"
-msgstr "Азартні ігри із використанням ігрових грошей"
+msgstr "Xogo usando diñeiro virtual"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:232
 msgid "Gambling using real money"
-msgstr "Азартні ігри із використанням справжніх грошей"
+msgstr "Xogo usando diñeiro real"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:235
 msgid "No ability to spend money"
-msgstr "Без можливості витрачання грошей"
+msgstr "Sen posibilidade de gastar"
 
 #. v1.1
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:238
 msgid "Users are encouraged to donate real money"
-msgstr "Користувачам пропонують вкладати реальні гроші"
+msgstr "Incítase aos xogadores a donar diñeiro real"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:241
 msgid "Ability to spend real money in-game"
-msgstr "Можливість вкладання реальних грошей під час ігрового процесу"
+msgstr "Posibilidade de gastar diñeiro real no xogo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:244
 msgid "No way to chat with other users"
-msgstr "Не можна спілкуватися із іншими користувачами"
+msgstr "Sen posibilidade de chatear con outros usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:247
 msgid "User-to-user game interactions without chat functionality"
-msgstr "Безпосередня гра між користувачами без можливостей спілкування"
+msgstr ""
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:250
 msgid "Moderated chat functionality between users"
-msgstr "Можливості зі спілкування між користувачами із модерацією"
+msgstr "Funcionalidade de chat moderado entre usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:253
 msgid "Uncontrolled chat functionality between users"
-msgstr "Неконтрольовані можливості із спілкування між користувачами"
+msgstr "Funcionalidade de chat sen controlar entre usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:256
 msgid "No way to talk with other users"
-msgstr "Без можливості звукового спілкування із іншими користувачами"
+msgstr "Sen posibilidade de falar con outros usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:259
 msgid "Uncontrolled audio or video chat functionality between users"
-msgstr ""
-"Неконтрольовані можливості із звукового та відеоспілкування між "
-"користувачами"
+msgstr "Funcionalidade de son ou vídeo sen controlar entre usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:262
 msgid "No sharing of social network usernames or email addresses"
 msgstr ""
-"Без оприлюднення імен користувачів у соціальних мережах та адрес електронної"
-" пошти"
+"Non comparte nas redes socaiais de nomes de usuario ou enderezos de correo-e"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:265
 msgid "Sharing social network usernames or email addresses"
 msgstr ""
-"Оприлюднення імен користувачів у соціальних мережах та адрес електронної "
-"пошти"
+"Compartición en redes sociais de nomes de usuario ou enderezos de correo-e"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:268
 msgid "No sharing of user information with 3rd parties"
-msgstr "Без надання даних щодо користувача стороннім особам"
+msgstr "Non comnparte a información do usuario con terceiros"
 
 #. v1.1
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:271
 msgid "Checking for the latest application version"
-msgstr "Пошук найсвіжішої версії програми"
+msgstr "Buscando a última versión do aplicativo"
 
 #. v1.1
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:274
 msgid "Sharing diagnostic data that does not let others identify the user"
 msgstr ""
-"Оприлюднення діагностичних даних, які не надають безпосередньої змоги "
-"ідентифікувати користувача"
+"Compartición de datos de diagnóstico que non lle permite a outros "
+"identificar ao usuario"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:277
 msgid "Sharing information that lets others identify the user"
-msgstr "Оприлюднення даних, які уможливлюють ідентифікацію користувача"
+msgstr "Compartición de información identificable ao usuario"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:280
 msgid "No sharing of physical location to other users"
-msgstr "Без відкриття доступу щодо місця перебування іншим користувачам"
+msgstr "Non comparte a localización física con outros usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:283
 msgid "Sharing physical location to other users"
-msgstr "Відкриття доступу щодо місця перебування іншим користувачам"
+msgstr "Compartición da localización física con outros usuarios"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:288
 msgid "No references to homosexuality"
-msgstr "Без згадування гомосексуальності"
+msgstr "Sen referencias a homosexualidade"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:291
 msgid "Indirect references to homosexuality"
-msgstr "Опосередковане згадування гомосексуальності"
+msgstr "Referencias indirectas á homosexualidade"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:294
 msgid "Kissing between people of the same gender"
-msgstr "Цілунки між людьми однієї статі"
+msgstr "Bicos entre persoas do mesmo xénero"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:297
 msgid "Graphic sexual behavior between people of the same gender"
-msgstr "Відверта сексуальна поведінка між людьми однієї статі"
+msgstr "Comportamento sexual gráfico entre persoas do mesmo sexo"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:300
 msgid "No references to prostitution"
-msgstr "Без згадування проституції"
+msgstr "Sen referencias a prostitución"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:303
 msgid "Indirect references to prostitution"
-msgstr "Опосередковане згадування проституції"
+msgstr "Referencias indirectas á prostitución"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:306
 msgid "Direct references to prostitution"
-msgstr "Безпосереднє згадування проституції"
+msgstr "Referencias directas á prostitución"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:309
 msgid "Graphic depictions of the act of prostitution"
-msgstr "Відверте зображення акту проституції"
+msgstr "Representacións gráficas do acto da prostitución"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:312
 msgid "No references to adultery"
-msgstr "Без згадування перелюбу"
+msgstr "Sen referencias ao adulterio"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:315
 msgid "Indirect references to adultery"
-msgstr "Опосередковані згадування перелюбу"
+msgstr "Referencias indirectas ao adulterio"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:318
 msgid "Direct references to adultery"
-msgstr "Безпосередні згадування перелюбу"
+msgstr "Referencias directas ao adulterio"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:321
 msgid "Graphic depictions of the act of adultery"
-msgstr "Відверті зображення актів перелюбу"
+msgstr "Representacións gráficas ao acto do adulterio"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:324
 msgid "No sexualized characters"
-msgstr "Без сексуальних персонажів"
+msgstr "Sen personaxes sexualizados"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:327
 msgid "Scantily clad human characters"
-msgstr "Напівоголені людські персонажі"
+msgstr "Personaxes humanos escasamente vestidos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:330
 msgid "Overtly sexualized human characters"
-msgstr "Відверто сексуальні людські персонажі"
+msgstr "Caracteres humanos abertamente sexualizados"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:333
 msgid "No references to desecration"
-msgstr "Без згадування знущання над людьми"
+msgstr "Sen referencias á profanación"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:336
 msgid "Depictions or references to historical desecration"
-msgstr "Зображення або згадування знущання над людьми у минулому"
+msgstr ""
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:339
 msgid "Depictions of modern-day human desecration"
-msgstr "Відверті зображення сучасного знущання над людьми"
+msgstr "Representacións da profanación humana moderna"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:342
 msgid "Graphic depictions of modern-day desecration"
-msgstr "Відверті зображення сучасного знущання над людьми"
+msgstr "Representacións gráficas da profanación moderna"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:345
 msgid "No visible dead human remains"
-msgstr "Без показу решток мертвих людей"
+msgstr "Non hai restos humanos mortos visíbeis"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:348
 msgid "Visible dead human remains"
-msgstr "Показ решток мертвих людей"
+msgstr "Restos humanos mortos visíbeis"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:351
 msgid "Dead human remains that are exposed to the elements"
-msgstr "Докладний показ решток мертвих людей"
+msgstr "Restos humanos mortos que están expostos aos elementos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:354
 msgid "Graphic depictions of desecration of human bodies"
-msgstr "Відверте зображення осквернення людських тіл"
+msgstr "Representacións gráficas de profanación de corpos humanos"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:357
 msgid "No references to slavery"
-msgstr "Без згадування рабства"
+msgstr "Sen referencias á escravitude"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:360
 msgid "Depictions or references to historical slavery"
-msgstr "Зображення або згадки рабства у минулому"
+msgstr ""
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:363
 msgid "Depictions of modern-day slavery"
-msgstr "Зображення сучасного рабства"
+msgstr "Representacións de escravitude moderna"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:366
 msgid "Graphic depictions of modern-day slavery"
-msgstr "Відверте зображення сучасного рабства"
+msgstr "Representacións gráficas de escravitude moderna"
 
 #. Translators: the placeholder is a user’s full name
 #: libmalcontent-ui/restrict-applications-dialog.c:220
 #, c-format
 msgid "Restrict %s from using the following installed applications."
 msgstr ""
-"Обмежити для %s користування вказаними нижче встановленими програмами."
 
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
 msgid "Restrict Applications"
-msgstr "Обмеження доступу до програм"
+msgstr ""
 
 #: libmalcontent-ui/restrict-applications-selector.ui:24
 msgid "No applications found to restrict."
-msgstr "Не знайдено програм, доступ до яких можна обмежити."
+msgstr ""
 
 #. Translators: this is the full name for an unknown user account.
 #: libmalcontent-ui/user-controls.c:234 libmalcontent-ui/user-controls.c:245
 msgid "unknown"
-msgstr "невідомий"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.c:330 libmalcontent-ui/user-controls.c:403
 #: libmalcontent-ui/user-controls.c:676
 msgid "All Ages"
-msgstr "Усі вікові групи"
+msgstr ""
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:491
@@ -716,62 +694,58 @@ msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
 "available in other applications."
 msgstr ""
-"Запобігає запуску користувачем %s браузерів. Обмежений доступ до інтернету "
-"можливий за допомогою інших програм."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:496
 #, c-format
 msgid "Prevents specified applications from being used by %s."
-msgstr "Запобігає користуванню %s вказаними програмами."
+msgstr ""
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:501
 #, c-format
 msgid "Prevents %s from installing applications."
-msgstr "Забороняє %s встановлювати програми."
+msgstr ""
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:506
 #, c-format
 msgid "Applications installed by %s will not appear for other users."
-msgstr "Програми, які встановлено %s, не буде показано іншим користувачам."
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:17
 msgid "Application Usage Restrictions"
-msgstr "Обмеження на користування програмами"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:67
 msgid "Restrict _Web Browsers"
-msgstr "Обмежити _браузери"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:151
 msgid "_Restrict Applications"
-msgstr "_Обмежити доступ до програм"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:230
 msgid "Software Installation Restrictions"
-msgstr "Обмеження на встановлення програмного забезпечення"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:280
 msgid "Restrict Application _Installation"
-msgstr "Обмежити вс_тановлення програм"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:365
 msgid "Restrict Application Installation for _Others"
-msgstr "Обмежити встановлення програм для _інших"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:450
 msgid "Application _Suitability"
-msgstr "П_ридатність програм"
+msgstr ""
 
 #: libmalcontent-ui/user-controls.ui:472
 msgid ""
 "Restricts browsing or installation of applications to applications suitable "
 "for certain ages or above."
 msgstr ""
-"Обмежує перелік програм, які користувач може бачити або встановлювати, до "
-"програм, доступних певній віковій групі."
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
@@ -779,86 +753,81 @@ msgstr ""
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
-msgstr "Батьківський контроль"
+msgstr ""
 
 #: malcontent-control/application.c:352
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
-msgstr "© Endless Mobile, Inc., 2019, 2020"
+msgstr ""
 
 #: malcontent-control/application.c:354
 msgid "translator-credits"
-msgstr "Юрій Чорноіван <yurchor@ukr.net>"
+msgstr ""
 
 #: malcontent-control/application.c:358
 msgid "Malcontent Website"
-msgstr "Сайт Malcontent"
+msgstr ""
 
 #: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
-msgstr "Неможливо показати вміст довідки"
+msgstr ""
 
 #: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
-msgstr "Не вдалося завантажити дані користувача з системи"
+msgstr ""
 
 #: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr ""
-"Будь ласка, переконайтеся, що встановлено і увімкнено AccountsService."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
-msgstr "Попередня сторінка"
+msgstr ""
 
 #: malcontent-control/carousel.ui:74
 msgid "Next Page"
-msgstr "Наступна сторінка"
+msgstr ""
 
 #: malcontent-control/main.ui:92
 msgid "Permission Required"
-msgstr "Потрібні права доступу"
+msgstr ""
 
 #: malcontent-control/main.ui:106
 msgid ""
 "Permission is required to view and change user parental controls settings."
 msgstr ""
-"Для перегляду і внесення змін до параметрів батьківського контролю для "
-"користувача потрібні відповідні права доступу."
 
 #: malcontent-control/main.ui:147
 msgid "No Child Users Configured"
-msgstr "Не налаштовано жодного користувача-дитини"
+msgstr ""
 
 #: malcontent-control/main.ui:161
 msgid ""
 "No child users are currently set up on the system. Create one before setting"
 " up their parental controls."
 msgstr ""
-"У системі зараз не налаштовано жодного дитячого облікового запису. Створіть "
-"такий запис, перш ніж налаштовувати батьківський контроль для нього."
 
 #: malcontent-control/main.ui:173
 msgid "Create _Child User"
-msgstr "Створити користува_ча-дитину"
+msgstr ""
 
 #: malcontent-control/main.ui:201
 msgid "Loading…"
-msgstr "Завантаження…"
+msgstr ""
 
 #: malcontent-control/main.ui:264
 msgid "_Help"
-msgstr "_Довідка"
+msgstr "_Axuda"
 
 #: malcontent-control/main.ui:268
 msgid "_About Parental Controls"
-msgstr "_Про «Батьківський контроль»"
+msgstr ""
 
 #. Translators: the brief summary of the application as it appears in a
 #. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
-msgstr "Встановити батьківський контроль і стежити за користувачами"
+msgstr ""
 
 #. Translators: These are the application description paragraphs in the
 #. AppData file.
@@ -868,10 +837,6 @@ msgid ""
 "use the computer for, what software they can install, and what installed "
 "software they can run."
 msgstr ""
-"Керуйте обмеженнями батьківського контролю користувачів, зокрема часом, "
-"протягом якого можна працювати з комп'ютером, переліком програмного "
-"забезпечення, яке можна встановлювати, та переліком програмного "
-"забезпечення, яке можна запускати."
 
 #. Translators: Search terms to find this application. Do NOT translate or
 #. localise the semicolons! The list MUST also end with a semicolon!
@@ -880,46 +845,37 @@ msgid ""
 "parental controls;screen time;app restrictions;web browser "
 "restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
-"parental controls;screen time;app restrictions;web browser "
-"restrictions;oars;usage;usage limit;kid;child;батьківський контроль;час за "
-"комп'ютером;обмеження програм;обмеження "
-"інтернету;користування;використання;обмеження користування;дитина;дитячий;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
-msgstr "Керування батьківським контролем"
+msgstr ""
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:10
 msgid "Authentication is required to read and change user parental controls"
 msgstr ""
-"Для читання і зміни параметрів батьківського контролю користувача слід "
-"пройти розпізнавання"
 
 #: malcontent-control/user-selector.c:426
 msgid "Your account"
-msgstr "Ваш обліковий запис"
+msgstr "A súa conta"
 
 #. Always allow root, to avoid a situation where this PAM module prevents
 #. * all users logging in with no way of recovery.
 #: pam/pam_malcontent.c:142 pam/pam_malcontent.c:188
 #, c-format
 msgid "User ‘%s’ has no time limits enabled"
-msgstr "Для користувача «%s» часові обмеження не увімкнено"
+msgstr ""
 
 #: pam/pam_malcontent.c:151 pam/pam_malcontent.c:172
 #, c-format
 msgid "Error getting session limits for user ‘%s’: %s"
 msgstr ""
-"Помилка під час спроби отримати дані щодо обмежень сеансу користувача «%s»: "
-"%s"
 
 #: pam/pam_malcontent.c:182
 #, c-format
 msgid "User ‘%s’ has no time remaining"
-msgstr "У користувача «%s» більше не лишилося часу"
+msgstr ""
 
 #: pam/pam_malcontent.c:200
 #, c-format
 msgid "Error setting time limit on login session: %s"
 msgstr ""
-"Помилка під час спроби встановити часове обмеження на сеанс роботи: %s"
