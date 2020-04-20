@@ -269,10 +269,15 @@ about_action_cb (GSimpleAction *action, GVariant *parameters, gpointer user_data
                          "version", VERSION,
                          "copyright", _("Copyright © 2019, 2020 Endless Mobile, Inc."),
                          "authors", authors,
+                         /* Translators: this should be "translated" to the
+                            names of people who have translated Malcontent into
+                            this language, one per line. */
                          "translator-credits", _("translator-credits"),
                          "logo-icon-name", "org.freedesktop.MalcontentControl",
                          "license-type", GTK_LICENSE_GPL_2_0,
                          "wrap-license", TRUE,
+                         /* Translators: "Malcontent" is the brand name of this
+                            project, so should not be translated. */
                          "website-label", _("Malcontent Website"),
                          "website", "https://gitlab.freedesktop.org/pwithnall/malcontent",
                          NULL);
