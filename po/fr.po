@@ -790,11 +790,11 @@ msgstr "Copyright © 2019, 2020 Endless Mobile, Inc."
 
 #: malcontent-control/application.c:354
 msgid "translator-credits"
-msgstr "crédits traducteur"
+msgstr "translator-credits"
 
 #: malcontent-control/application.c:358
 msgid "Malcontent Website"
-msgstr "Site web mécontent"
+msgstr "Site web de Malcontent"
 
 #: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"

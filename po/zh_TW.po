@@ -752,11 +752,11 @@ msgstr "版權所有 © 2019, 2020 Endless Mobile, Inc."
 
 #: malcontent-control/application.c:354
 msgid "translator-credits"
-msgstr "參與的譯者"
+msgstr "translator-credits"
 
 #: malcontent-control/application.c:358
 msgid "Malcontent Website"
-msgstr "不宜內容網站"
+msgstr "Malcontent 網站"
 
 #: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
