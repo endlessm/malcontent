@@ -769,7 +769,7 @@ msgstr "कॉपीराइट © 2019, 2020 Endless Mobile, Inc."
 
 #: malcontent-control/application.c:354
 msgid "translator-credits"
-msgstr "अनुवादक-क्रेडिट"
+msgstr "translator-credits"
 
 #: malcontent-control/application.c:358
 msgid "Malcontent Website"

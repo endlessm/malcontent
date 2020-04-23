@@ -755,7 +755,7 @@ msgstr "حقوق النشر © 2019، 2020 Endless Mobile، Inc."
 
 #: malcontent-control/application.c:354
 msgid "translator-credits"
-msgstr "اعتمادات المترجم"
+msgstr "translator-credits"
 
 #: malcontent-control/application.c:358
 msgid "Malcontent Website"
