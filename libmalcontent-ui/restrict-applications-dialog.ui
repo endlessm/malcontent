@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright © 2020 Endless, Inc. -->
-<interface>
+<interface domain="malcontent">
   <requires lib="gtk+" version="3.12"/>
   <template class="MctRestrictApplicationsDialog" parent="GtkDialog">
     <property name="title" translatable="yes">Restrict Applications</property>
