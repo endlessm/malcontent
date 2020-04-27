@@ -19,12 +19,14 @@
  *  - Philip Withnall <withnall@endlessm.com>
  */
 
+#include "config.h"
+
 #include <flatpak.h>
 #include <gio/gdesktopappinfo.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib-object.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <libmalcontent/app-filter.h>
 

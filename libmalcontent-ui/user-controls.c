@@ -20,11 +20,13 @@
  *  - Philip Withnall <withnall@endlessm.com>
  */
 
+#include "config.h"
+
 #include <libmalcontent/malcontent.h>
 #include <locale.h>
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 #include <strings.h>
 
 #include "gs-content-rating.h"
