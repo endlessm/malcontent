@@ -1,3 +1,88 @@
+Overview of changes in malcontent 0.8.0
+=======================================
+
+* Add user manual (!51)
+
+* Add a header bar and primary menu to the main UI (!58)
+
+* Bump Meson dependency to 0.50.0 (!59)
+
+* Fix translation of libmalcontent-ui widgets when used in other applications (!68)
+
+* Bugs fixed:
+ - !3 Remove use of libglib-testing subproject
+ - !50 Various meson cleanups
+ - !51 Add user manual/documentation
+ - !52 Update Polish translation 200329
+ - !53 Added Indonesian translation
+ - !54 Update Ukrainian translation
+ - !55 libmalcontent: Add enum types to fix introspection of MctManagerError
+ - !56 Update Polish translation 200405
+ - !57 Update Ukrainian translation + docs translation
+ - !58 malcontent-control: Add a header bar and primary menu
+ - !59 meson: bump minimum version to 0.50.0
+ - !60 user-controls: Add a fallback bus connection
+ - !62 Added Indonesian help translation
+ - !63 Import translations from Endless
+ - !64 Import zh_TW translation from Endless
+ - !65 Add translator comments for about dialog strings
+ - !66 Update Brazilian Portuguese translation
+ - !67 Add Brazilian Portuguese translation
+ - !68 Fix translation of libmalcontent-ui
+
+* Translation updates:
+ - Afrikaans
+ - Arabic
+ - Bangla
+ - Basque
+ - Bokmål, Norwegian
+ - Bulgarian
+ - Catalan
+ - Catalan — valencia.UTF-8
+ - Chinese (Taiwan)
+ - Croatian
+ - Czech
+ - Danish
+ - Dutch
+ - Esperanto
+ - Finnish
+ - French
+ - Friulian
+ - Gaelic
+ - Galician
+ - German
+ - Greek, Modern (1453-)
+ - Hebrew
+ - Hindi
+ - Hungarian
+ - Indonesian
+ - Italian
+ - Kazakh
+ - Korean
+ - Latvian
+ - Lithuanian
+ - Malay
+ - Malayalam
+ - Occitan (post 1500)
+ - Panjabi
+ - Persian
+ - Polish
+ - Portuguese
+ - Portuguese (Brazil)
+ - Romanian
+ - Russian
+ - Serbian
+ - Serbian — latin.UTF-8
+ - Slovak
+ - Slovenian
+ - Spanish
+ - Swedish
+ - Thai
+ - Turkish
+ - Ukrainian
+ - Vietnamese
+
+
 Overview of changes in malcontent 0.7.0
 =======================================
 
