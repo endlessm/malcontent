@@ -1,3 +1,9 @@
+malcontent (0.8.0-1) master; urgency=medium
+
+  * Upstream 0.8.0 release (T29913)
+
+ -- Philip Withnall <withnall@endlessm.com>  Tue, 28 Apr 2020 14:16:00 +0100
+
 malcontent (0.7.0-2) master; urgency=medium
 
   * Package the help files backported from upstream (T28746)
