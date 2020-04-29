@@ -1,23 +1,26 @@
-# Brazilian Portuguese translation for malcontent.
-# Copyright (C) 2020 malcontent's COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2020.
-#
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Leandro Stanger <leandrostanger@hotmail.com>, 2020
+# Will Thompson <wjt@endlessm.com>, 2020
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: malcontent master\n"
-"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
-"issues\n"
-"POT-Creation-Date: 2020-04-20 15:29+0000\n"
-"PO-Revision-Date: 2020-04-20 23:12-0300\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
-"Language: pt_BR\n"
+"Project-Id-Version: malcontent\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-17 23:13+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Portuguese (Brazil) (https://www.transifex.com/endless-os/teams/9016/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"X-Generator: Gtranslator 3.36.0\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -78,7 +81,8 @@ msgstr "Alterar os limites de sessão de outro usuário"
 #: accounts-service/com.endlessm.ParentalControls.policy.in:65
 msgid "Authentication is required to change another user’s session limits."
 msgstr ""
-"Autenticação é necessária para alterar os limites de sessão de outro usuário."
+"Autenticação é necessária para alterar os limites de sessão de outro "
+"usuário."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:74
 msgid "Read another user’s session limits"
@@ -137,7 +141,7 @@ msgstr ""
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "O filtro OARS para o usuário %u possui um tipo não reconhecido “%s”"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:437
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
 msgstr ""
@@ -148,18 +152,19 @@ msgstr ""
 msgid "User %u does not exist"
 msgstr "O usuário %u não existe"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:396
 msgid "App filtering is globally disabled"
 msgstr "A filtragem de aplicativos está desabilitada globalmente"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:824
 msgid "Session limits are globally disabled"
 msgstr "Os limites de sessão estão desabilitados globalmente"
 
-#: libmalcontent/manager.c:795
+#: libmalcontent/manager.c:842
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
-msgstr "Não é permitido consultar dados de limites de sessão para o usuário %u"
+msgstr ""
+"Não é permitido consultar dados de limites de sessão para o usuário %u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
@@ -177,7 +182,8 @@ msgstr ""
 #, c-format
 msgid "Session limit for user %u has invalid daily schedule %u–%u"
 msgstr ""
-"O limite de sessão para o usuário %u possui agendamento diário inválido %u–%u"
+"O limite de sessão para o usuário %u possui agendamento diário inválido "
+"%u–%u"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:76
@@ -527,8 +533,8 @@ msgstr "Verificação pela versão mais recente do aplicativo"
 #: libmalcontent-ui/gs-content-rating.c:274
 msgid "Sharing diagnostic data that does not let others identify the user"
 msgstr ""
-"Compartilhamento de dados de diagnóstico que não permitem que identifiquem o "
-"usuário"
+"Compartilhamento de dados de diagnóstico que não permitem que identifiquem o"
+" usuário"
 
 #. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:277
@@ -732,7 +738,8 @@ msgstr "Impede que %s instale aplicativos."
 #: libmalcontent-ui/user-controls.c:506
 #, c-format
 msgid "Applications installed by %s will not appear for other users."
-msgstr "Aplicativos instalados por %s que não aparecerão para outros usuários."
+msgstr ""
+"Aplicativos instalados por %s que não aparecerão para outros usuários."
 
 #: libmalcontent-ui/user-controls.ui:17
 msgid "Application Usage Restrictions"
@@ -772,38 +779,33 @@ msgstr ""
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:105 malcontent-control/main.ui:12
+#: malcontent-control/application.c:106 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Controle parental"
 
-#: malcontent-control/application.c:270
+#: malcontent-control/application.c:352
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
 msgstr "Copyright © 2019, 2020 Endless Mobile, Inc."
 
-#. Translators: this should be "translated" to the
-#. names of people who have translated Malcontent into
-#. this language, one per line.
-#: malcontent-control/application.c:275
+#: malcontent-control/application.c:354
 msgid "translator-credits"
 msgstr "Rafael Fontenelle <rafaelff@gnome.org>"
 
-#. Translators: "Malcontent" is the brand name of this
-#. project, so should not be translated.
-#: malcontent-control/application.c:281
+#: malcontent-control/application.c:358
 msgid "Malcontent Website"
 msgstr "Site do Malcontent"
 
-#: malcontent-control/application.c:299
+#: malcontent-control/application.c:376
 msgid "The help contents could not be displayed"
 msgstr "O conteúdo de ajuda não pôde ser exibido"
 
-#: malcontent-control/application.c:336
+#: malcontent-control/application.c:413
 msgid "Failed to load user data from the system"
 msgstr "Falha ao carregar dados do usuário do sistema"
 
-#: malcontent-control/application.c:338
+#: malcontent-control/application.c:415
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr "Certifique-se que o AccountsService está instalado e habilitado."
 
@@ -832,8 +834,8 @@ msgstr "Nenhum usuário filho configurado"
 
 #: malcontent-control/main.ui:161
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"No child users are currently set up on the system. Create one before setting"
+" up their parental controls."
 msgstr ""
 "Nenhum usuário filho está atualmente configurado no sistema. Crie um antes "
 "de configurar o controle parental."
@@ -854,13 +856,15 @@ msgstr "Aj_uda"
 msgid "_About Parental Controls"
 msgstr "_Sobre o Controle parental"
 
-#. Translators: the brief summary of the application as it appears in a software center.
+#. Translators: the brief summary of the application as it appears in a
+#. software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
 msgstr "Definir controle parental e monitorar uso por usuários"
 
-#. Translators: These are the application description paragraphs in the AppData file.
+#. Translators: These are the application description paragraphs in the
+#. AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
 msgid ""
 "Manage users’ parental controls restrictions, controlling how long they can "
@@ -868,23 +872,20 @@ msgid ""
 "software they can run."
 msgstr ""
 "Gerencie as restrições de controle parental dos usuários, controlando por "
-"quanto tempo eles podem usar o computador, qual software eles podem instalar "
-"e qual software instalado eles podem executar."
+"quanto tempo eles podem usar o computador, qual software eles podem instalar"
+" e qual software instalado eles podem executar."
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
-msgid "The GNOME Project"
-msgstr "O Projeto GNOME"
-
-#. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
-"parental controls;screen time;app restrictions;web browser restrictions;oars;"
-"usage;usage limit;kid;child;"
+"parental controls;screen time;app restrictions;web browser "
+"restrictions;oars;usage;usage limit;kid;child;"
 msgstr ""
 "controle parental;controle dos pais;parental controls;tempo de tela;screen "
-"time;restrições de aplicativos;app restrictions;restrições de navegador web;"
-"web browser restrictions;oars;uso;usage;limite de uso;usage limit;criança;"
-"kid;filho;filha;child;"
+"time;restrições de aplicativos;app restrictions;restrições de navegador "
+"web;web browser restrictions;oars;uso;usage;limite de uso;usage "
+"limit;criança;kid;filho;filha;child;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
@@ -920,9 +921,3 @@ msgstr "O usuário “%s” não possui tempo restante"
 #, c-format
 msgid "Error setting time limit on login session: %s"
 msgstr "Erro ao definir o limite de tempo à sessão: %s"
-
-#~ msgid "_Save"
-#~ msgstr "_Salvar"
-
-#~ msgid "Restricts the user from installing applications for all users"
-#~ msgstr "Restringe o usuário de instalar aplicativos para todos os usuários"
