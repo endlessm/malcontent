@@ -58,6 +58,7 @@
                 <property name="min-content-height">350</property>
                 <child>
                   <object class="MctUserControls" id="user_controls">
+                    <property name="halign">center</property>
                     <property name="visible">True</property>
                     <property name="margin">12</property>
                     <property name="dbus-connection">dbus_connection</property>
