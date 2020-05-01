@@ -38,7 +38,8 @@
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
             <property name="selection_mode">none</property>
-            <property name="activate_on_single_click">False</property>
+            <property name="activate-on-single-click">True</property>
+            <signal name="row-activated" handler="on_application_usage_permissions_listbox_activated_cb" object="MctUserControls" swapped="no" />
             <child>
               <object class="GtkListBoxRow">
                 <property name="visible">True</property>
@@ -124,10 +125,10 @@
               </object>
             </child>
             <child>
-              <object class="GtkListBoxRow">
+              <object class="GtkListBoxRow" id="restrict_applications_row">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="activatable">False</property>
+                <property name="activatable">True</property>
                 <property name="selectable">False</property>
                 <child>
                   <object class="GtkGrid">

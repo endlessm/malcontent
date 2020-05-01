@@ -87,6 +87,7 @@ struct _MctUserControls
   GtkPopover *oars_popover;
   MctRestrictApplicationsDialog *restrict_applications_dialog;
   GtkLabel   *restrict_applications_description;
+  GtkListBoxRow *restrict_applications_row;
 
   GtkListBox *application_usage_permissions_listbox;
   GtkListBox *software_installation_permissions_listbox;
@@ -133,6 +134,10 @@ static gboolean on_restrict_applications_dialog_delete_event_cb (GtkWidget *widg
 static void on_restrict_applications_dialog_response_cb (GtkDialog *dialog,
                                                          gint       response_id,
                                                          gpointer   user_data);
+
+static void on_application_usage_permissions_listbox_activated_cb (GtkListBox    *list_box,
+                                                                   GtkListBoxRow *row,
+                                                                   gpointer       user_data);
 
 static void on_set_age_action_activated (GSimpleAction *action,
                                          GVariant      *param,
@@ -655,6 +660,17 @@ on_restrict_applications_dialog_response_cb (GtkDialog *dialog,
 }
 
 static void
+on_application_usage_permissions_listbox_activated_cb (GtkListBox    *list_box,
+                                                       GtkListBoxRow *row,
+                                                       gpointer       user_data)
+{
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
+
+  if (row == self->restrict_applications_row)
+    on_restrict_applications_button_clicked_cb (NULL, self);
+}
+
+static void
 on_set_age_action_activated (GSimpleAction *action,
                              GVariant      *param,
                              gpointer       user_data)
@@ -1031,6 +1047,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, oars_popover);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_dialog);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_description);
+  gtk_widget_class_bind_template_child (widget_class, MctUserControls, restrict_applications_row);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, application_usage_permissions_listbox);
   gtk_widget_class_bind_template_child (widget_class, MctUserControls, software_installation_permissions_listbox);
 
@@ -1039,6 +1056,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_delete_event_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_response_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_application_usage_permissions_listbox_activated_cb);
 }
 
 static void
