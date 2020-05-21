@@ -50,8 +50,6 @@ typedef enum {
 gchar *gs_utils_content_rating_age_to_str (GsContentRatingSystem system,
 						 guint age);
 GsContentRatingSystem gs_utils_content_rating_system_from_locale (const gchar *locale);
-const gchar *gs_content_rating_key_value_to_str (const gchar *id,
-						 MctAppFilterOarsValue value);
 const gchar *gs_content_rating_system_to_str (GsContentRatingSystem system);
 const gchar * const *gs_utils_content_rating_get_values (GsContentRatingSystem system);
 const guint *gs_utils_content_rating_get_ages (GsContentRatingSystem system);
