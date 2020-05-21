@@ -374,7 +374,7 @@ static void
 update_oars_level (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
-  const gchar *rating_age_category;
+  g_autofree gchar *rating_age_category = NULL;
   guint maximum_age;
   gsize i;
   gboolean all_categories_unset;
@@ -407,7 +407,10 @@ update_oars_level (MctUserControls *self)
 
   /* Unrestricted? */
   if (rating_age_category == NULL || all_categories_unset)
-    rating_age_category = _("All Ages");
+    {
+      g_clear_pointer (&rating_age_category, g_free);
+      rating_age_category = g_strdup (_("All Ages"));
+    }
 
   gtk_label_set_label (self->oars_button_label, rating_age_category);
 }
