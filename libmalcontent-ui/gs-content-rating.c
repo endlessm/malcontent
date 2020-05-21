@@ -64,7 +64,7 @@ gs_content_rating_system_to_str (GsContentRatingSystem system)
 
 /* data obtained from https://en.wikipedia.org/wiki/Video_game_rating_system */
 static char *
-get_esrb_string (gchar *source, gchar *translate)
+get_esrb_string (const gchar *source, const gchar *translate)
 {
 	if (g_strcmp0 (source, translate) == 0)
 		return g_strdup (source);
