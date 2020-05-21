@@ -316,7 +316,7 @@ static void
 update_categories_from_language (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
-  const gchar * const * entries;
+  g_auto(GStrv) entries = NULL;
   const gchar *rating_system_str;
   const guint *ages;
   gsize i;
@@ -680,7 +680,7 @@ on_set_age_action_activated (GSimpleAction *action,
 {
   GsContentRatingSystem rating_system;
   MctUserControls *self;
-  const gchar * const * entries;
+  g_auto(GStrv) entries = NULL;
   const guint *ages;
   guint age;
   guint i;

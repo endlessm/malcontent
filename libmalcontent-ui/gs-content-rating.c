@@ -462,11 +462,31 @@ static const gchar *content_rating_strings[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
 	{ "3+", "7+", "12+", "16+", "18+", NULL }, /* GS_CONTENT_RATING_SYSTEM_IARC */
 };
 
-const gchar * const *
+gchar **
 gs_utils_content_rating_get_values (GsContentRatingSystem system)
 {
-	g_assert (system < GS_CONTENT_RATING_SYSTEM_LAST);
-	return content_rating_strings[system];
+	g_return_val_if_fail ((int) system < GS_CONTENT_RATING_SYSTEM_LAST, NULL);
+
+	/* IARC is the fallback for everything */
+	if (system == GS_CONTENT_RATING_SYSTEM_UNKNOWN)
+		system = GS_CONTENT_RATING_SYSTEM_IARC;
+
+	/* ESRB is special as it requires localised suffixes */
+	if (system == GS_CONTENT_RATING_SYSTEM_ESRB) {
+		g_auto(GStrv) esrb_ages = g_new0 (gchar *, 7);
+
+		esrb_ages[0] = get_esrb_string (content_rating_strings[system][0], _("Early Childhood"));
+		esrb_ages[1] = get_esrb_string (content_rating_strings[system][1], _("Everyone"));
+		esrb_ages[2] = get_esrb_string (content_rating_strings[system][2], _("Everyone 10+"));
+		esrb_ages[3] = get_esrb_string (content_rating_strings[system][3], _("Teen"));
+		esrb_ages[4] = get_esrb_string (content_rating_strings[system][4], _("Mature"));
+		esrb_ages[5] = get_esrb_string (content_rating_strings[system][5], _("Adults Only"));
+		esrb_ages[6] = NULL;
+
+		return g_steal_pointer (&esrb_ages);
+	}
+
+	return g_strdupv ((gchar **) content_rating_strings[system]);
 }
 
 static guint content_rating_ages[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
