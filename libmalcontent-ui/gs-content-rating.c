@@ -21,11 +21,13 @@
 
 #include "config.h"
 
+#include <appstream-glib.h>
 #include <glib/gi18n-lib.h>
 #include <string.h>
 
 #include "gs-content-rating.h"
 
+#if !AS_CHECK_VERSION(0, 7, 18)
 const gchar *
 gs_content_rating_system_to_str (GsContentRatingSystem system)
 {
@@ -573,7 +575,9 @@ static const struct {
 	{ "violence-desecration", OARS_1_1, 0, 13, 15, 18 },
 	{ "violence-slavery",	OARS_1_1, 0, 13, 15, 18 },
 };
+#endif  /* appstream-glib < 0.7.18 */
 
+#if !AS_CHECK_VERSION(0, 7, 15)
 /**
  * as_content_rating_id_value_to_csm_age:
  * @id: the subsection ID e.g. "violence-cartoon"
@@ -616,7 +620,9 @@ as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue va
 	/* @id not found. */
 	return 0;
 }
+#endif  /* appstream-glib < 0.7.15 */
 
+#if !AS_CHECK_VERSION(0, 7, 18)
 /**
  * as_content_rating_id_csm_age_to_value:
  * @id: the subsection ID e.g. "violence-cartoon"
@@ -646,3 +652,4 @@ as_content_rating_id_csm_age_to_value (const gchar *id, guint age)
 
 	return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 }
+#endif  /* appstream-glib < 0.7.18 */

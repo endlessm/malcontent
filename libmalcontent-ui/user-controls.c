@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <appstream-glib.h>
 #include <libmalcontent/malcontent.h>
 #include <locale.h>
 #include <gio/gio.h>
@@ -166,8 +167,7 @@ static const GActionEntry actions[] = {
   { "set-age", on_set_age_action_activated, "u", NULL, NULL, { 0, }}
 };
 
-/* FIXME: Factor this out and rely on code from libappstream-glib or gnome-software
- * to do it. See: https://gitlab.freedesktop.org/pwithnall/malcontent/issues/7 */
+#if !AS_CHECK_VERSION(0, 7, 15)
 static const gchar * const oars_categories[] =
 {
   "violence-cartoon",
@@ -199,6 +199,7 @@ static const gchar * const oars_categories[] =
   "money-gambling",
   NULL
 };
+#endif  /* appstream-glib < 0.7.15 */
 
 /* Auxiliary methods */
 
@@ -372,6 +373,13 @@ oars_value_to_string (MctAppFilterOarsValue oars_value)
     }
 }
 
+/* Ensure the enum casts below are safe. */
+G_STATIC_ASSERT ((int) MCT_APP_FILTER_OARS_VALUE_UNKNOWN == (int) AS_CONTENT_RATING_VALUE_UNKNOWN);
+G_STATIC_ASSERT ((int) MCT_APP_FILTER_OARS_VALUE_NONE == (int) AS_CONTENT_RATING_VALUE_NONE);
+G_STATIC_ASSERT ((int) MCT_APP_FILTER_OARS_VALUE_MILD == (int) AS_CONTENT_RATING_VALUE_MILD);
+G_STATIC_ASSERT ((int) MCT_APP_FILTER_OARS_VALUE_MODERATE == (int) AS_CONTENT_RATING_VALUE_MODERATE);
+G_STATIC_ASSERT ((int) MCT_APP_FILTER_OARS_VALUE_INTENSE == (int) AS_CONTENT_RATING_VALUE_INTENSE);
+
 static void
 update_oars_level (MctUserControls *self)
 {
@@ -380,6 +388,9 @@ update_oars_level (MctUserControls *self)
   guint maximum_age;
   gsize i;
   gboolean all_categories_unset;
+#if AS_CHECK_VERSION(0, 7, 15)
+  g_autofree const gchar **oars_categories = as_content_rating_get_all_rating_ids ();
+#endif
 
   g_assert (self->filter != NULL);
 
@@ -393,7 +404,7 @@ update_oars_level (MctUserControls *self)
 
       oars_value = mct_app_filter_get_oars_value (self->filter, oars_categories[i]);
       all_categories_unset &= (oars_value == MCT_APP_FILTER_OARS_VALUE_UNKNOWN);
-      age = as_content_rating_id_value_to_csm_age (oars_categories[i], oars_value);
+      age = as_content_rating_id_value_to_csm_age (oars_categories[i], (AsContentRatingValue) oars_value);
 
       g_debug ("OARS value for '%s': %s", oars_categories[i], oars_value_to_string (oars_value));
 
@@ -1484,6 +1495,9 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
 {
   gboolean restrict_web_browsers;
   gsize i;
+#if AS_CHECK_VERSION(0, 7, 15)
+  g_autofree const gchar **oars_categories = as_content_rating_get_all_rating_ids ();
+#endif
 
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (builder != NULL);
@@ -1509,7 +1523,7 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
       const gchar *oars_category;
 
       oars_category = oars_categories[i];
-      oars_value = as_content_rating_id_csm_age_to_value (oars_category, self->selected_age);
+      oars_value = (MctAppFilterOarsValue) as_content_rating_id_csm_age_to_value (oars_category, self->selected_age);
 
       g_debug ("\t\t → %s: %s", oars_category, oars_value_to_string (oars_value));
 
