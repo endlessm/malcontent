@@ -319,7 +319,7 @@ update_categories_from_language (MctUserControls *self)
   g_auto(GStrv) entries = NULL;
   const gchar *rating_system_str;
   const guint *ages;
-  gsize i;
+  gsize i, n_ages;
   g_autofree gchar *disabled_action = NULL;
 
   rating_system = get_content_rating_system (self);
@@ -328,7 +328,7 @@ update_categories_from_language (MctUserControls *self)
   g_debug ("Using rating system %s", rating_system_str);
 
   entries = gs_utils_content_rating_get_values (rating_system);
-  ages = gs_utils_content_rating_get_ages (rating_system);
+  ages = gs_utils_content_rating_get_ages (rating_system, &n_ages);
 
   /* Fill in the age menu */
   g_menu_remove_all (self->age_menu);
@@ -346,6 +346,8 @@ update_categories_from_language (MctUserControls *self)
 
       g_menu_append (self->age_menu, entries[i], action);
     }
+
+  g_assert (i == n_ages);
 }
 
 /* Returns a human-readable but untranslated string, not suitable
@@ -684,13 +686,14 @@ on_set_age_action_activated (GSimpleAction *action,
   const guint *ages;
   guint age;
   guint i;
+  gsize n_ages;
 
   self = MCT_USER_CONTROLS (user_data);
   age = g_variant_get_uint32 (param);
 
   rating_system = get_content_rating_system (self);
   entries = gs_utils_content_rating_get_values (rating_system);
-  ages = gs_utils_content_rating_get_ages (rating_system);
+  ages = gs_utils_content_rating_get_ages (rating_system, &n_ages);
 
   /* Update the button */
   if (age == oars_disabled_age)

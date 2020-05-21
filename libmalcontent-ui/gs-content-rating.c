@@ -509,9 +509,16 @@ static guint content_rating_ages[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
 };
 
 const guint *
-gs_utils_content_rating_get_ages (GsContentRatingSystem system)
+gs_utils_content_rating_get_ages (GsContentRatingSystem system, gsize *length_out)
 {
-	g_assert (system < GS_CONTENT_RATING_SYSTEM_LAST);
+	g_return_val_if_fail ((int) system < GS_CONTENT_RATING_SYSTEM_LAST, NULL);
+	g_return_val_if_fail (length_out != NULL, NULL);
+
+	/* IARC is the fallback for everything */
+	if (system == GS_CONTENT_RATING_SYSTEM_UNKNOWN)
+		system = GS_CONTENT_RATING_SYSTEM_IARC;
+
+	*length_out = g_strv_length ((gchar **) content_rating_strings[system]);
 	return content_rating_ages[system];
 }
 
