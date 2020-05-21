@@ -522,125 +522,57 @@ gs_utils_content_rating_get_ages (GsContentRatingSystem system, gsize *length_ou
 	return content_rating_ages[system];
 }
 
-const struct {
-	const gchar		*id;
-	MctAppFilterOarsValue	 value;
-	guint			 csm_age;
-} id_to_csm_age[] =  {
-/* v1.0 */
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MILD,		3 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	4 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	6 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MILD,		3 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	7 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	8 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_MILD,		4 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	9 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MILD,		9 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	11 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MILD,		11 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MILD,		10 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MILD,		8  },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	11 },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MILD,		3  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	8  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_NONE,	0  },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MILD,	9  },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MODERATE,10 },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_INTENSE,	11 },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_MILD,		7  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	8  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	10 },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MILD,		7  },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MILD,		4  },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	12 },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-{ "social-location",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-location",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-/* v1.1 additions */
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MILD,		0  },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MILD,		10 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MILD,		8  },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_NONE,	0  },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MILD,	13 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
+typedef enum
+{
+	OARS_1_0,
+	OARS_1_1,
+} OarsVersion;
 
-/* EOS customisation to add at least one CSM ↔ OARS mapping for ages 16 and 17,
- * as these are used in many locale-specific ratings systems. Without them,
- * mapping (e.g.) OFLCNZ R16 → CSM 16 → OARS → CSM gives CSM 15, which then maps
- * back to OFLCNZ R15, which is not what we want. The addition of these two
- * mappings should not expose younger users to content they would not have seen
- * with the default upstream mappings; it instead slightly raises the age at
- * which users are allowed to see intense content in these two categories.
- *
- * See https://phabricator.endlessm.com/T23897#666769. */
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	16 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	17 },
-{ NULL, 0, 0 } };
+/* The struct definition below assumes we don’t grow more
+ * #AsContentRating values. */
+G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE + 1);
+
+static const struct {
+	const gchar	*id;
+	OarsVersion	 oars_version;  /* when the key was first added */
+	guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
+	guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
+	guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
+	guint		 csm_age_intense;  /* for %AS_CONTENT_RATING_VALUE_INTENSE */
+} oars_to_csm_mappings[] =  {
+	/* Each @id must only appear once. The set of @csm_age_* values for a
+	 * given @id must be complete and non-decreasing. */
+	/* v1.0 */
+	{ "violence-cartoon",	OARS_1_0, 0, 3, 4, 6 },
+	{ "violence-fantasy",	OARS_1_0, 0, 3, 7, 8 },
+	{ "violence-realistic",	OARS_1_0, 0, 4, 9, 14 },
+	{ "violence-bloodshed",	OARS_1_0, 0, 9, 11, 18 },
+	{ "violence-sexual",	OARS_1_0, 0, 18, 18, 18 },
+	{ "drugs-alcohol",	OARS_1_0, 0, 11, 13, 16 },
+	{ "drugs-narcotics",	OARS_1_0, 0, 12, 14, 17 },
+	{ "drugs-tobacco",	OARS_1_0, 0, 10, 13, 13 },
+	{ "sex-nudity",		OARS_1_0, 0, 12, 14, 14 },
+	{ "sex-themes",		OARS_1_0, 0, 13, 14, 15 },
+	{ "language-profanity",	OARS_1_0, 0, 8, 11, 14 },
+	{ "language-humor",	OARS_1_0, 0, 3, 8, 14 },
+	{ "language-discrimination", OARS_1_0, 0, 9, 10, 11 },
+	{ "money-advertising",	OARS_1_0, 0, 7, 8, 10 },
+	{ "money-gambling",	OARS_1_0, 0, 7, 10, 18 },
+	{ "money-purchasing",	OARS_1_0, 0, 12, 14, 15 },
+	{ "social-chat",	OARS_1_0, 0, 4, 10, 13 },
+	{ "social-audio",	OARS_1_0, 0, 15, 15, 15 },
+	{ "social-contacts",	OARS_1_0, 0, 12, 12, 12 },
+	{ "social-info",	OARS_1_0, 0, 0, 13, 13 },
+	{ "social-location",	OARS_1_0, 0, 13, 13, 13 },
+	/* v1.1 additions */
+	{ "sex-homosexuality",	OARS_1_1, 0, 10, 13, 18 },
+	{ "sex-prostitution",	OARS_1_1, 0, 12, 14, 18 },
+	{ "sex-adultery",	OARS_1_1, 0, 8, 10, 18 },
+	{ "sex-appearance",	OARS_1_1, 0, 10, 10, 15 },
+	{ "violence-worship",	OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-desecration", OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-slavery",	OARS_1_1, 0, 13, 15, 18 },
+};
 
 /**
  * as_content_rating_id_value_to_csm_age:
@@ -656,12 +588,32 @@ const struct {
 guint
 as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue value)
 {
-	guint i;
-	for (i = 0; id_to_csm_age[i].id != NULL; i++) {
-		if (value == id_to_csm_age[i].value &&
-		    g_strcmp0 (id, id_to_csm_age[i].id) == 0)
-			return id_to_csm_age[i].csm_age;
+	if (value == AS_CONTENT_RATING_VALUE_UNKNOWN ||
+	    value == AS_CONTENT_RATING_VALUE_LAST)
+		return 0;
+
+	for (gsize i = 0; i < G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_str_equal (id, oars_to_csm_mappings[i].id)) {
+			switch (value) {
+			case AS_CONTENT_RATING_VALUE_NONE:
+				return oars_to_csm_mappings[i].csm_age_none;
+			case AS_CONTENT_RATING_VALUE_MILD:
+				return oars_to_csm_mappings[i].csm_age_mild;
+			case AS_CONTENT_RATING_VALUE_MODERATE:
+				return oars_to_csm_mappings[i].csm_age_moderate;
+			case AS_CONTENT_RATING_VALUE_INTENSE:
+				return oars_to_csm_mappings[i].csm_age_intense;
+			case AS_CONTENT_RATING_VALUE_UNKNOWN:
+			case AS_CONTENT_RATING_VALUE_LAST:
+			default:
+				/* Handled above. */
+				g_assert_not_reached ();
+				return 0;
+			}
+		}
 	}
+
+	/* @id not found. */
 	return 0;
 }
 
@@ -677,15 +629,20 @@ as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue va
 MctAppFilterOarsValue
 as_content_rating_id_csm_age_to_value (const gchar *id, guint age)
 {
-	MctAppFilterOarsValue value;
-	guint i;
-
-	value = MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
-
-	for (i = 0; id_to_csm_age[i].id != NULL; i++) {
-		if (age >= id_to_csm_age[i].csm_age &&
-		    g_strcmp0 (id, id_to_csm_age[i].id) == 0)
-			value = MAX (value, id_to_csm_age[i].value);
+	for (gsize i = 0; G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_strcmp0 (id, oars_to_csm_mappings[i].id) == 0) {
+			if (age >= oars_to_csm_mappings[i].csm_age_intense)
+				return MCT_APP_FILTER_OARS_VALUE_INTENSE;
+			else if (age >= oars_to_csm_mappings[i].csm_age_moderate)
+				return MCT_APP_FILTER_OARS_VALUE_MODERATE;
+			else if (age >= oars_to_csm_mappings[i].csm_age_mild)
+				return MCT_APP_FILTER_OARS_VALUE_MILD;
+			else if (age >= oars_to_csm_mappings[i].csm_age_none)
+				return MCT_APP_FILTER_OARS_VALUE_NONE;
+			else
+				return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+		}
 	}
-	return value;
+
+	return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 }
