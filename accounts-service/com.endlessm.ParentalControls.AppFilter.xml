@@ -24,8 +24,8 @@
 
       The string list contains flatpak application IDs (containing at least one
       dot and no leading slash) and absolute binary paths (containing a leading
-      slash). The boolean value indicates whether this is a whitelist (true) or
-      blacklist (false).
+      slash). The boolean value indicates whether this is an allowlist (true)
+      or blocklist (false).
     -->
     <property name="AppFilter" type="(bas)" access="readwrite">
       <annotation name="org.freedesktop.Accounts.DefaultValue"

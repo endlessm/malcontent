@@ -107,7 +107,7 @@ struct _MctUserControls
   MctAppFilter *filter; /* (owned) (nullable) */
   guint         selected_age; /* @oars_disabled_age to disable OARS */
 
-  guint         blacklist_apps_source_id;
+  guint         blocklist_apps_source_id;
   gboolean      flushed_on_dispose;
 
   ActUserAccountType  user_account_type;
@@ -115,7 +115,7 @@ struct _MctUserControls
   gchar              *user_display_name;  /* (nullable) (owned) */
 };
 
-static gboolean blacklist_apps_cb (gpointer data);
+static gboolean blocklist_apps_cb (gpointer data);
 
 static void on_restrict_installation_switch_active_changed_cb (GtkSwitch        *s,
                                                                GParamSpec       *pspec,
@@ -254,26 +254,26 @@ get_user_display_name (ActUser *user)
 }
 
 static void
-schedule_update_blacklisted_apps (MctUserControls *self)
+schedule_update_blocklisted_apps (MctUserControls *self)
 {
-  if (self->blacklist_apps_source_id > 0)
+  if (self->blocklist_apps_source_id > 0)
     return;
 
   /* Use a timeout to batch multiple quick changes into a single
    * update. 1 second is an arbitrary sufficiently small number */
-  self->blacklist_apps_source_id = g_timeout_add_seconds (1, blacklist_apps_cb, self);
+  self->blocklist_apps_source_id = g_timeout_add_seconds (1, blocklist_apps_cb, self);
 }
 
 static void
-flush_update_blacklisted_apps (MctUserControls *self)
+flush_update_blocklisted_apps (MctUserControls *self)
 {
-  if (self->blacklist_apps_source_id > 0)
+  if (self->blocklist_apps_source_id > 0)
     {
       /* Remove the timer and forcefully call the timer callback. */
-      g_source_remove (self->blacklist_apps_source_id);
-      self->blacklist_apps_source_id = 0;
+      g_source_remove (self->blocklist_apps_source_id);
+      self->blocklist_apps_source_id = 0;
 
-      blacklist_apps_cb (self);
+      blocklist_apps_cb (self);
     }
 }
 
@@ -560,14 +560,14 @@ setup_parental_control_settings (MctUserControls *self)
 /* Callbacks */
 
 static gboolean
-blacklist_apps_cb (gpointer data)
+blocklist_apps_cb (gpointer data)
 {
   g_auto(MctAppFilterBuilder) builder = MCT_APP_FILTER_BUILDER_INIT ();
   g_autoptr(MctAppFilter) new_filter = NULL;
   g_autoptr(GError) error = NULL;
   MctUserControls *self = data;
 
-  self->blacklist_apps_source_id = 0;
+  self->blocklist_apps_source_id = 0;
 
   if (self->user == NULL)
     {
@@ -615,7 +615,7 @@ on_restrict_installation_switch_active_changed_cb (GtkSwitch        *s,
     }
 
   /* Save the changes. */
-  schedule_update_blacklisted_apps (self);
+  schedule_update_blocklisted_apps (self);
 }
 
 static void
@@ -624,7 +624,7 @@ on_restrict_web_browsers_switch_active_changed_cb (GtkSwitch        *s,
                                                    MctUserControls *self)
 {
   /* Save the changes. */
-  schedule_update_blacklisted_apps (self);
+  schedule_update_blocklisted_apps (self);
 }
 
 static void
@@ -660,7 +660,7 @@ on_restrict_applications_dialog_delete_event_cb (GtkWidget *widget,
   gtk_widget_hide (GTK_WIDGET (self->restrict_applications_dialog));
 
   /* Schedule an update to the saved state. */
-  schedule_update_blacklisted_apps (self);
+  schedule_update_blocklisted_apps (self);
 
   return TRUE;
 }
@@ -728,7 +728,7 @@ on_set_age_action_activated (GSimpleAction *action,
 
   self->selected_age = age;
 
-  schedule_update_blacklisted_apps (self);
+  schedule_update_blocklisted_apps (self);
 }
 
 static void
@@ -783,7 +783,7 @@ mct_user_controls_finalize (GObject *object)
 {
   MctUserControls *self = (MctUserControls *)object;
 
-  g_assert (self->blacklist_apps_source_id == 0);
+  g_assert (self->blocklist_apps_source_id == 0);
 
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->action_group);
@@ -823,7 +823,7 @@ mct_user_controls_dispose (GObject *object)
    * do it multiple times, and after the first g_object_run_dispose() call,
    * none of our child widgets are still around to extract data from anyway. */
   if (!self->flushed_on_dispose)
-    flush_update_blacklisted_apps (self);
+    flush_update_blocklisted_apps (self);
   self->flushed_on_dispose = TRUE;
 
   G_OBJECT_CLASS (mct_user_controls_parent_class)->dispose (object);
@@ -1171,7 +1171,7 @@ mct_user_controls_set_user (MctUserControls *self,
 
   /* If we have pending unsaved changes from the previous user, force them to be
    * saved first. */
-  flush_update_blacklisted_apps (self);
+  flush_update_blocklisted_apps (self);
 
   old_user = (self->user != NULL) ? g_object_ref (self->user) : NULL;
 
@@ -1314,7 +1314,7 @@ mct_user_controls_set_app_filter (MctUserControls *self,
 
   /* If we have pending unsaved changes from the previous configuration, force
    * them to be saved first. */
-  flush_update_blacklisted_apps (self);
+  flush_update_blocklisted_apps (self);
 
   if (self->filter == app_filter)
     return;
@@ -1363,7 +1363,7 @@ mct_user_controls_set_user_account_type (MctUserControls    *self,
 
   /* If we have pending unsaved changes from the previous user, force them to be
    * saved first. */
-  flush_update_blacklisted_apps (self);
+  flush_update_blocklisted_apps (self);
 
   if (self->user_account_type == user_account_type)
     return;
@@ -1414,7 +1414,7 @@ mct_user_controls_set_user_locale (MctUserControls *self,
 
   /* If we have pending unsaved changes from the previous user, force them to be
    * saved first. */
-  flush_update_blacklisted_apps (self);
+  flush_update_blocklisted_apps (self);
 
   if (g_strcmp0 (self->user_locale, user_locale) == 0)
     return;
@@ -1466,7 +1466,7 @@ mct_user_controls_set_user_display_name (MctUserControls *self,
 
   /* If we have pending unsaved changes from the previous user, force them to be
    * saved first. */
-  flush_update_blacklisted_apps (self);
+  flush_update_blocklisted_apps (self);
 
   if (g_strcmp0 (self->user_display_name, user_display_name) == 0)
     return;
@@ -1504,9 +1504,9 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
 
   g_debug ("Building parental controls settings…");
 
-  /* Blacklist */
+  /* Blocklist */
 
-  g_debug ("\t → Blacklisting apps");
+  g_debug ("\t → Blocklisting apps");
 
   mct_restrict_applications_dialog_build_app_filter (self->restrict_applications_dialog, builder);
 
@@ -1536,7 +1536,7 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
   g_debug ("\t → %s web browsers", restrict_web_browsers ? "Restricting" : "Allowing");
 
   if (restrict_web_browsers)
-    mct_app_filter_builder_blacklist_content_type (builder, WEB_BROWSERS_CONTENT_TYPE);
+    mct_app_filter_builder_blocklist_content_type (builder, WEB_BROWSERS_CONTENT_TYPE);
 
   /* App installation */
   if (self->user_account_type != ACT_USER_ACCOUNT_TYPE_ADMINISTRATOR)

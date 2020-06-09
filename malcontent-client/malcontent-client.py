@@ -385,12 +385,12 @@ def command_set_app_filter(user, allow_user_installation=True,
                       file=sys.stderr)
                 raise SystemExit(EXIT_INVALID_OPTION)
             elif is_maybe_flatpak_ref:
-                builder.blacklist_flatpak_ref(arg)
+                builder.blocklist_flatpak_ref(arg)
             elif is_maybe_content_type:
-                builder.blacklist_content_type(arg)
+                builder.blocklist_content_type(arg)
             elif is_maybe_path:
                 path = os.path.abspath(arg)
-                builder.blacklist_path(path)
+                builder.blocklist_path(path)
             else:
                 raise AssertionError('code should not be reached')
 
@@ -523,7 +523,7 @@ def main():
                                             'flatpak repo')
     parser_set_app_filter.add_argument('app_filter_args', nargs='*',
                                        help='paths, content types or flatpak '
-                                            'refs to blacklist and OARS '
+                                            'refs to blocklist and OARS '
                                             'section=value pairs to store')
     parser_set_app_filter.set_defaults(allow_user_installation=True,
                                        allow_system_installation=False)

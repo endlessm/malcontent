@@ -64,7 +64,7 @@ struct _MctRestrictApplicationsSelector
   GListStore *apps;  /* (owned) */
   GAppInfoMonitor *app_info_monitor;  /* (owned) */
   gulong app_info_monitor_changed_id;
-  GHashTable *blacklisted_apps; /* (owned) (element-type GAppInfo) */
+  GHashTable *blocklisted_apps; /* (owned) (element-type GAppInfo) */
 
   MctAppFilter *app_filter;  /* (owned) */
 
@@ -149,7 +149,7 @@ mct_restrict_applications_selector_dispose (GObject *object)
 {
   MctRestrictApplicationsSelector *self = (MctRestrictApplicationsSelector *)object;
 
-  g_clear_pointer (&self->blacklisted_apps, g_hash_table_unref);
+  g_clear_pointer (&self->blocklisted_apps, g_hash_table_unref);
   g_clear_object (&self->apps);
 
   if (self->app_info_monitor != NULL && self->app_info_monitor_changed_id != 0)
@@ -237,7 +237,7 @@ mct_restrict_applications_selector_init (MctRestrictApplicationsSelector *self)
                            self,
                            NULL);
 
-  self->blacklisted_apps = g_hash_table_new_full (g_direct_hash,
+  self->blocklisted_apps = g_hash_table_new_full (g_direct_hash,
                                                   g_direct_equal,
                                                   g_object_unref,
                                                   NULL);
@@ -266,18 +266,18 @@ on_switch_active_changed_cb (GtkSwitch  *s,
     {
       gboolean removed;
 
-      g_debug ("Removing ‘%s’ from blacklisted apps", g_app_info_get_id (app));
+      g_debug ("Removing ‘%s’ from blocklisted apps", g_app_info_get_id (app));
 
-      removed = g_hash_table_remove (self->blacklisted_apps, app);
+      removed = g_hash_table_remove (self->blocklisted_apps, app);
       g_assert (removed);
     }
   else
     {
       gboolean added;
 
-      g_debug ("Blacklisting ‘%s’", g_app_info_get_id (app));
+      g_debug ("Blocklisting ‘%s’", g_app_info_get_id (app));
 
-      added = g_hash_table_add (self->blacklisted_apps, g_object_ref (app));
+      added = g_hash_table_add (self->blocklisted_apps, g_object_ref (app));
       g_assert (added);
     }
 
@@ -345,9 +345,9 @@ create_row_for_app_cb (gpointer item,
   g_object_set_data_full (G_OBJECT (w), "GAppInfo", g_object_ref (app), g_object_unref);
 
   if (allowed)
-    g_hash_table_remove (self->blacklisted_apps, app);
+    g_hash_table_remove (self->blocklisted_apps, app);
   else
-    g_hash_table_add (self->blacklisted_apps, g_object_ref (app));
+    g_hash_table_add (self->blocklisted_apps, g_object_ref (app));
 
   g_signal_connect (w, "notify::active", G_CALLBACK (on_switch_active_changed_cb), self);
 
@@ -427,7 +427,7 @@ reload_apps (MctRestrictApplicationsSelector *self)
           g_str_has_prefix (g_app_info_get_id (app), "eos-link") ||
           /* FIXME: Only list flatpak apps and apps with X-Parental-Controls
            * key set for now; we really need a system-wide MAC to be able to
-           * reliably support blacklisting system programs. */
+           * reliably support blocklisting system programs. */
           (!g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Flatpak") &&
            !g_desktop_app_info_has_key (G_DESKTOP_APP_INFO (app), "X-Parental-Controls")) ||
           /* Web browsers are special cased */
@@ -587,7 +587,7 @@ mct_restrict_applications_selector_build_app_filter (MctRestrictApplicationsSele
   g_return_if_fail (MCT_IS_RESTRICT_APPLICATIONS_SELECTOR (self));
   g_return_if_fail (builder != NULL);
 
-  g_hash_table_iter_init (&iter, self->blacklisted_apps);
+  g_hash_table_iter_init (&iter, self->blocklisted_apps);
   while (g_hash_table_iter_next (&iter, (gpointer) &app, NULL))
     {
       g_autofree gchar *flatpak_id = NULL;
@@ -602,12 +602,12 @@ mct_restrict_applications_selector_build_app_filter (MctRestrictApplicationsSele
 
           if (!flatpak_ref)
             {
-              g_warning ("Skipping blacklisting Flatpak ID ‘%s’ due to it not being installed", flatpak_id);
+              g_warning ("Skipping blocklisting Flatpak ID ‘%s’ due to it not being installed", flatpak_id);
               continue;
             }
 
-          g_debug ("\t\t → Blacklisting Flatpak ref: %s", flatpak_ref);
-          mct_app_filter_builder_blacklist_flatpak_ref (builder, flatpak_ref);
+          g_debug ("\t\t → Blocklisting Flatpak ref: %s", flatpak_ref);
+          mct_app_filter_builder_blocklist_flatpak_ref (builder, flatpak_ref);
         }
       else
         {
@@ -616,12 +616,12 @@ mct_restrict_applications_selector_build_app_filter (MctRestrictApplicationsSele
 
           if (!path)
             {
-              g_warning ("Skipping blacklisting executable ‘%s’ due to it not being found", executable);
+              g_warning ("Skipping blocklisting executable ‘%s’ due to it not being found", executable);
               continue;
             }
 
-          g_debug ("\t\t → Blacklisting path: %s", path);
-          mct_app_filter_builder_blacklist_path (builder, path);
+          g_debug ("\t\t → Blocklisting path: %s", path);
+          mct_app_filter_builder_blocklist_path (builder, path);
         }
     }
 }

@@ -275,13 +275,13 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   g_autoptr(MctAppFilter) filter = NULL;
   g_autofree const gchar **sections = NULL;
 
-  mct_app_filter_builder_blacklist_path (fixture->builder, "/bin/true");
-  mct_app_filter_builder_blacklist_path (fixture->builder, "/usr/bin/gnome-software");
+  mct_app_filter_builder_blocklist_path (fixture->builder, "/bin/true");
+  mct_app_filter_builder_blocklist_path (fixture->builder, "/usr/bin/gnome-software");
 
-  mct_app_filter_builder_blacklist_flatpak_ref (fixture->builder,
+  mct_app_filter_builder_blocklist_flatpak_ref (fixture->builder,
                                                 "app/org.doom.Doom/x86_64/master");
 
-  mct_app_filter_builder_blacklist_content_type (fixture->builder,
+  mct_app_filter_builder_blocklist_content_type (fixture->builder,
                                                  "x-scheme-handler/http");
 
   mct_app_filter_builder_set_oars_value (fixture->builder, "drugs-alcohol",
@@ -380,8 +380,8 @@ test_app_filter_builder_copy_empty (void)
   builder_copy = mct_app_filter_builder_copy (builder);
 
   mct_app_filter_builder_init (builder_copy);
-  mct_app_filter_builder_blacklist_path (builder_copy, "/bin/true");
-  mct_app_filter_builder_blacklist_content_type (builder_copy,
+  mct_app_filter_builder_blocklist_path (builder_copy, "/bin/true");
+  mct_app_filter_builder_blocklist_content_type (builder_copy,
                                                  "x-scheme-handler/http");
   filter = mct_app_filter_builder_end (builder_copy);
 
@@ -405,8 +405,8 @@ test_app_filter_builder_copy_full (void)
   g_autoptr(MctAppFilterBuilder) builder_copy = NULL;
   g_autoptr(MctAppFilter) filter = NULL;
 
-  mct_app_filter_builder_blacklist_path (builder, "/bin/true");
-  mct_app_filter_builder_blacklist_content_type (builder,
+  mct_app_filter_builder_blocklist_path (builder, "/bin/true");
+  mct_app_filter_builder_blocklist_content_type (builder,
                                                  "x-scheme-handler/http");
   mct_app_filter_builder_set_allow_user_installation (builder, FALSE);
   mct_app_filter_builder_set_allow_system_installation (builder, TRUE);
@@ -545,9 +545,9 @@ test_app_filter_appinfo (void)
         "MimeType=x-scheme-handler/http\n" },
     };
 
-  mct_app_filter_builder_blacklist_path (&builder, "/bin/false");
-  mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
-  mct_app_filter_builder_blacklist_content_type (&builder, "x-scheme-handler/http");
+  mct_app_filter_builder_blocklist_path (&builder, "/bin/false");
+  mct_app_filter_builder_blocklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_blocklist_content_type (&builder, "x-scheme-handler/http");
 
   filter = mct_app_filter_builder_end (&builder);
 
@@ -751,13 +751,13 @@ test_app_filter_bus_get (BusFixture    *fixture,
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Chess"));
 }
 
-/* Test that getting an #MctAppFilter containing a whitelist from the mock D-Bus
- * service works, and that the #MctAppFilter methods handle the whitelist
+/* Test that getting an #MctAppFilter containing a allowlist from the mock D-Bus
+ * service works, and that the #MctAppFilter methods handle the allowlist
  * correctly.
  *
  * The mock D-Bus replies are generated in get_app_filter_server_cb(). */
 static void
-test_app_filter_bus_get_whitelist (BusFixture    *fixture,
+test_app_filter_bus_get_allowlist (BusFixture    *fixture,
                                    gconstpointer  test_data)
 {
   g_autoptr(MctAppFilter) app_filter = NULL;
@@ -769,8 +769,8 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
         "'AllowUserInstallation': <true>,"
         "'AllowSystemInstallation': <true>,"
         "'AppFilter': <(true, ["
-          "'app/org.gnome.Whitelisted1/x86_64/stable',"
-          "'app/org.gnome.Whitelisted2/x86_64/stable',"
+          "'app/org.gnome.Allowlisted1/x86_64/stable',"
+          "'app/org.gnome.Allowlisted2/x86_64/stable',"
           "'/usr/bin/true',"
           "'text/plain'"
         "])>,"
@@ -789,15 +789,15 @@ test_app_filter_bus_get_whitelist (BusFixture    *fixture,
   g_assert_no_error (local_error);
   g_assert_nonnull (app_filter);
 
-  /* Check the app filter properties. The returned filter is a whitelist,
-   * whereas typically a blacklist is returned. */
+  /* Check the app filter properties. The returned filter is a allowlist,
+   * whereas typically a blocklist is returned. */
   g_assert_cmpuint (mct_app_filter_get_user_id (app_filter), ==, fixture->valid_uid);
   g_assert_true (mct_app_filter_is_enabled (app_filter));
   g_assert_false (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Builder"));
-  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted1"));
-  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Whitelisted2"));
-  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/stable"));
-  g_assert_false (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Whitelisted1/x86_64/unknown"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Allowlisted1"));
+  g_assert_true (mct_app_filter_is_flatpak_app_allowed (app_filter, "org.gnome.Allowlisted2"));
+  g_assert_true (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Allowlisted1/x86_64/stable"));
+  g_assert_false (mct_app_filter_is_flatpak_ref_allowed (app_filter, "app/org.gnome.Allowlisted1/x86_64/unknown"));
   g_assert_true (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/true"));
   g_assert_false (mct_app_filter_is_path_allowed (app_filter, "/usr/bin/false"));
   g_assert_true (mct_app_filter_is_content_type_allowed (app_filter,
@@ -1300,10 +1300,10 @@ test_app_filter_bus_set (BusFixture    *fixture,
     };
 
   /* Build an app filter. */
-  mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/false");
-  mct_app_filter_builder_blacklist_path (&builder, "/usr/bin/banned");
-  mct_app_filter_builder_blacklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
-  mct_app_filter_builder_blacklist_content_type (&builder, "x-scheme-handler/http");
+  mct_app_filter_builder_blocklist_path (&builder, "/usr/bin/false");
+  mct_app_filter_builder_blocklist_path (&builder, "/usr/bin/banned");
+  mct_app_filter_builder_blocklist_flatpak_ref (&builder, "app/org.gnome.Nasty/x86_64/stable");
+  mct_app_filter_builder_blocklist_content_type (&builder, "x-scheme-handler/http");
   mct_app_filter_builder_set_oars_value (&builder, "violence-fantasy", MCT_APP_FILTER_OARS_VALUE_INTENSE);
   mct_app_filter_builder_set_allow_user_installation (&builder, TRUE);
   mct_app_filter_builder_set_allow_system_installation (&builder, TRUE);
@@ -1552,8 +1552,8 @@ main (int    argc,
               bus_set_up, test_app_filter_bus_get, bus_tear_down);
   g_test_add ("/app-filter/bus/get/sync", BusFixture, GUINT_TO_POINTER (FALSE),
               bus_set_up, test_app_filter_bus_get, bus_tear_down);
-  g_test_add ("/app-filter/bus/get/whitelist", BusFixture, NULL,
-              bus_set_up, test_app_filter_bus_get_whitelist, bus_tear_down);
+  g_test_add ("/app-filter/bus/get/allowlist", BusFixture, NULL,
+              bus_set_up, test_app_filter_bus_get_allowlist, bus_tear_down);
   g_test_add ("/app-filter/bus/get/all-oars-values", BusFixture, NULL,
               bus_set_up, test_app_filter_bus_get_all_oars_values, bus_tear_down);
   g_test_add ("/app-filter/bus/get/defaults", BusFixture, NULL,

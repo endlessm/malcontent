@@ -31,9 +31,9 @@ G_BEGIN_DECLS
 
 /**
  * MctAppFilterListType:
- * @MCT_APP_FILTER_LIST_BLACKLIST: Any program in the list is not allowed to
+ * @MCT_APP_FILTER_LIST_BLOCKLIST: Any program in the list is not allowed to
  *    be run.
- * @MCT_APP_FILTER_LIST_WHITELIST: Any program not in the list is not allowed
+ * @MCT_APP_FILTER_LIST_ALLOWLIST: Any program not in the list is not allowed
  *    to be run.
  *
  * Different semantics for interpreting an application list.
@@ -42,8 +42,8 @@ G_BEGIN_DECLS
  */
 typedef enum
 {
-  MCT_APP_FILTER_LIST_BLACKLIST,
-  MCT_APP_FILTER_LIST_WHITELIST,
+  MCT_APP_FILTER_LIST_BLOCKLIST,
+  MCT_APP_FILTER_LIST_ALLOWLIST,
 } MctAppFilterListType;
 
 struct _MctAppFilter
