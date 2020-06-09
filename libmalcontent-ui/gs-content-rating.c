@@ -21,11 +21,13 @@
 
 #include "config.h"
 
+#include <appstream-glib.h>
 #include <glib/gi18n-lib.h>
 #include <string.h>
 
 #include "gs-content-rating.h"
 
+#if !AS_CHECK_VERSION(0, 7, 18)
 const gchar *
 gs_content_rating_system_to_str (GsContentRatingSystem system)
 {
@@ -62,482 +64,184 @@ gs_content_rating_system_to_str (GsContentRatingSystem system)
 	return NULL;
 }
 
-const gchar *
-gs_content_rating_key_value_to_str (const gchar *id, MctAppFilterOarsValue value)
+/* data obtained from https://en.wikipedia.org/wiki/Video_game_rating_system */
+static char *
+get_esrb_string (const gchar *source, const gchar *translate)
 {
-	guint i;
-	const struct {
-		const gchar		*id;
-		MctAppFilterOarsValue	 value;
-		const gchar		*desc;
-	} tab[] =  {
-	{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No cartoon violence") },
-	{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Cartoon characters in unsafe situations") },
-	{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Cartoon characters in aggressive conflict") },
-	{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic violence involving cartoon characters") },
-	{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No fantasy violence") },
-	{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Characters in unsafe situations easily distinguishable from reality") },
-	{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Characters in aggressive conflict easily distinguishable from reality") },
-	{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic violence easily distinguishable from reality") },
-	{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No realistic violence") },
-	{ "violence-realistic", MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Mildly realistic characters in unsafe situations") },
-	{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Depictions of realistic characters in aggressive conflict") },
-	{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic violence involving realistic characters") },
-	{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No bloodshed") },
-	{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Unrealistic bloodshed") },
-	{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Realistic bloodshed") },
-	{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Depictions of bloodshed and the mutilation of body parts") },
-	{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No sexual violence") },
-	{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Rape or other violent sexual behavior") },
-	{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to alcohol") },
-	{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("References to alcoholic beverages") },
-	{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Use of alcoholic beverages") },
-	{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to illicit drugs") },
-	{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("References to illicit drugs") },
-	{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Use of illicit drugs") },
-	{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("References to tobacco products") },
-	{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Use of tobacco products") },
-	{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No nudity of any sort") },
-	{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Brief artistic nudity") },
-	{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Prolonged nudity") },
-	{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references or depictions of sexual nature") },
-	{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Provocative references or depictions") },
-	{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Sexual references or depictions") },
-	{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic sexual behavior") },
-	{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No profanity of any kind") },
-	{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Mild or infrequent use of profanity") },
-	{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Moderate use of profanity") },
-	{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Strong or frequent use of profanity") },
-	{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No inappropriate humor") },
-	{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Slapstick humor") },
-	{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Vulgar or bathroom humor") },
-	{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Mature or sexual humor") },
-	{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No discriminatory language of any kind") },
-	{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Negativity towards a specific group of people") },
-	{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Discrimination designed to cause emotional harm") },
-	{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Explicit discrimination based on gender, sexuality, race or religion") },
-	{ "money-advertising", MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No advertising of any kind") },
-	{ "money-advertising", MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Product placement") },
-	{ "money-advertising", MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Explicit references to specific brands or trademarked products") },
-	{ "money-advertising", MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Users are encouraged to purchase specific real-world items") },
-	{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No gambling of any kind") },
-	{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Gambling on random events using tokens or credits") },
-	{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Gambling using “play” money") },
-	{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Gambling using real money") },
-	{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No ability to spend money") },
-	{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_MILD,		/* v1.1 */
-	/* TRANSLATORS: content rating description */
-	_("Users are encouraged to donate real money") },
-	{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Ability to spend real money in-game") },
-	{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No way to chat with other users") },
-	{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("User-to-user game interactions without chat functionality") },
-	{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Moderated chat functionality between users") },
-	{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Uncontrolled chat functionality between users") },
-	{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No way to talk with other users") },
-	{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Uncontrolled audio or video chat functionality between users") },
-	{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No sharing of social network usernames or email addresses") },
-	{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Sharing social network usernames or email addresses") },
-	{ "social-info",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No sharing of user information with 3rd parties") },
-	{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MILD,		/* v1.1 */
-	/* TRANSLATORS: content rating description */
-	_("Checking for the latest application version") },
-	{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	/* v1.1 */
-	/* TRANSLATORS: content rating description */
-	_("Sharing diagnostic data that does not let others identify the user") },
-	{ "social-info",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Sharing information that lets others identify the user") },
-	{ "social-location",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No sharing of physical location to other users") },
-	{ "social-location",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Sharing physical location to other users") },
-
-	/* v1.1 */
-	{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to homosexuality") },
-	{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Indirect references to homosexuality") },
-	{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Kissing between people of the same gender") },
-	{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic sexual behavior between people of the same gender") },
-	{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to prostitution") },
-	{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Indirect references to prostitution") },
-	{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Direct references to prostitution") },
-	{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic depictions of the act of prostitution") },
-	{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to adultery") },
-	{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Indirect references to adultery") },
-	{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Direct references to adultery") },
-	{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic depictions of the act of adultery") },
-	{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No sexualized characters") },
-	{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Scantily clad human characters") },
-	{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Overtly sexualized human characters") },
-	{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to desecration") },
-	{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Depictions or references to historical desecration") },
-	{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Depictions of modern-day human desecration") },
-	{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic depictions of modern-day desecration") },
-	{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No visible dead human remains") },
-	{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Visible dead human remains") },
-	{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Dead human remains that are exposed to the elements") },
-	{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic depictions of desecration of human bodies") },
-	{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_NONE,
-	/* TRANSLATORS: content rating description */
-	_("No references to slavery") },
-	{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MILD,
-	/* TRANSLATORS: content rating description */
-	_("Depictions or references to historical slavery") },
-	{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,
-	/* TRANSLATORS: content rating description */
-	_("Depictions of modern-day slavery") },
-	{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,
-	/* TRANSLATORS: content rating description */
-	_("Graphic depictions of modern-day slavery") },
-	{ NULL, 0, NULL } };
-	for (i = 0; tab[i].id != NULL; i++) {
-		if (g_strcmp0 (tab[i].id, id) == 0 && tab[i].value == value)
-			return tab[i].desc;
-	}
-	return NULL;
+	if (g_strcmp0 (source, translate) == 0)
+		return g_strdup (source);
+	/* TRANSLATORS: This is the formatting of English and localized name
+ 	   of the rating e.g. "Adults Only (solo adultos)" */
+	return g_strdup_printf (_("%s (%s)"), source, translate);
 }
 
 /* data obtained from https://en.wikipedia.org/wiki/Video_game_rating_system */
-const gchar *
+gchar *
 gs_utils_content_rating_age_to_str (GsContentRatingSystem system, guint age)
 {
 	if (system == GS_CONTENT_RATING_SYSTEM_INCAA) {
 		if (age >= 18)
-			return "+18";
+			return g_strdup ("+18");
 		if (age >= 13)
-			return "+13";
-		return "ATP";
+			return g_strdup ("+13");
+		return g_strdup ("ATP");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_ACB) {
 		if (age >= 18)
-			return "R18+";
+			return g_strdup ("R18+");
 		if (age >= 15)
-			return "MA15+";
-		return "PG";
+			return g_strdup ("MA15+");
+		return g_strdup ("PG");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_DJCTQ) {
 		if (age >= 18)
-			return "18";
+			return g_strdup ("18");
 		if (age >= 16)
-			return "16";
+			return g_strdup ("16");
 		if (age >= 14)
-			return "14";
+			return g_strdup ("14");
 		if (age >= 12)
-			return "12";
+			return g_strdup ("12");
 		if (age >= 10)
-			return "10";
-		return "L";
+			return g_strdup ("10");
+		return g_strdup ("L");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_GSRR) {
 		if (age >= 18)
-			return "限制";
+			return g_strdup ("限制");
 		if (age >= 15)
-			return "輔15";
+			return g_strdup ("輔15");
 		if (age >= 12)
-			return "輔12";
+			return g_strdup ("輔12");
 		if (age >= 6)
-			return "保護";
-		return "普通";
+			return g_strdup ("保護");
+		return g_strdup ("普通");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_PEGI) {
 		if (age >= 18)
-			return "18";
+			return g_strdup ("18");
 		if (age >= 16)
-			return "16";
+			return g_strdup ("16");
 		if (age >= 12)
-			return "12";
+			return g_strdup ("12");
 		if (age >= 7)
-			return "7";
+			return g_strdup ("7");
 		if (age >= 3)
-			return "3";
+			return g_strdup ("3");
 		return NULL;
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_KAVI) {
 		if (age >= 18)
-			return "18+";
+			return g_strdup ("18+");
 		if (age >= 16)
-			return "16+";
+			return g_strdup ("16+");
 		if (age >= 12)
-			return "12+";
+			return g_strdup ("12+");
 		if (age >= 7)
-			return "7+";
+			return g_strdup ("7+");
 		if (age >= 3)
-			return "3+";
+			return g_strdup ("3+");
 		return NULL;
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_USK) {
 		if (age >= 18)
-			return "18";
+			return g_strdup ("18");
 		if (age >= 16)
-			return "16";
+			return g_strdup ("16");
 		if (age >= 12)
-			return "12";
+			return g_strdup ("12");
 		if (age >= 6)
-			return "6";
-		return "0";
+			return g_strdup ("6");
+		return g_strdup ("0");
 	}
 	/* Reference: http://www.esra.org.ir/ */
 	if (system == GS_CONTENT_RATING_SYSTEM_ESRA) {
 		if (age >= 18)
-			return "+18";
+			return g_strdup ("+18");
 		if (age >= 15)
-			return "+15";
+			return g_strdup ("+15");
 		if (age >= 12)
-			return "+12";
+			return g_strdup ("+12");
 		if (age >= 7)
-			return "+7";
+			return g_strdup ("+7");
 		if (age >= 3)
-			return "+3";
+			return g_strdup ("+3");
 		return NULL;
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_CERO) {
 		if (age >= 18)
-			return "Z";
+			return g_strdup ("Z");
 		if (age >= 17)
-			return "D";
+			return g_strdup ("D");
 		if (age >= 15)
-			return "C";
+			return g_strdup ("C");
 		if (age >= 12)
-			return "B";
-		return "A";
+			return g_strdup ("B");
+		return g_strdup ("A");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_OFLCNZ) {
 		if (age >= 18)
-			return "R18";
+			return g_strdup ("R18");
 		if (age >= 16)
-			return "R16";
+			return g_strdup ("R16");
 		if (age >= 15)
-			return "R15";
+			return g_strdup ("R15");
 		if (age >= 13)
-			return "R13";
-		return "G";
+			return g_strdup ("R13");
+		return g_strdup ("G");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_RUSSIA) {
 		if (age >= 18)
-			return "18+";
+			return g_strdup ("18+");
 		if (age >= 16)
-			return "16+";
+			return g_strdup ("16+");
 		if (age >= 12)
-			return "12+";
+			return g_strdup ("12+");
 		if (age >= 6)
-			return "6+";
-		return "0+";
+			return g_strdup ("6+");
+		return g_strdup ("0+");
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_MDA) {
 		if (age >= 18)
-			return "M18";
+			return g_strdup ("M18");
 		if (age >= 16)
-			return "ADV";
-		return "General";
+			return g_strdup ("ADV");
+		return get_esrb_string ("General", _("General"));
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_GRAC) {
 		if (age >= 18)
-			return "18";
+			return g_strdup ("18");
 		if (age >= 15)
-			return "15";
+			return g_strdup ("15");
 		if (age >= 12)
-			return "12";
-		return "ALL";
+			return g_strdup ("12");
+		return get_esrb_string ("ALL", _("ALL"));
 	}
 	if (system == GS_CONTENT_RATING_SYSTEM_ESRB) {
 		if (age >= 18)
-			return "Adults Only";
+			return get_esrb_string ("Adults Only", _("Adults Only"));
 		if (age >= 17)
-			return "Mature";
+			return get_esrb_string ("Mature", _("Mature"));
 		if (age >= 13)
-			return "Teen";
+			return get_esrb_string ("Teen", _("Teen"));
 		if (age >= 10)
-			return "Everyone 10+";
+			return get_esrb_string ("Everyone 10+", _("Everyone 10+"));
 		if (age >= 6)
-			return "Everyone";
-		return "Early Childhood";
+			return get_esrb_string ("Everyone", _("Everyone"));
+
+		return get_esrb_string ("Early Childhood", _("Early Childhood"));
 	}
 	/* IARC = everything else */
 	if (age >= 18)
-		return "18+";
+		return g_strdup ("18+");
 	if (age >= 16)
-		return "16+";
+		return g_strdup ("16+");
 	if (age >= 12)
-		return "12+";
+		return g_strdup ("12+");
 	if (age >= 7)
-		return "7+";
+		return g_strdup ("7+");
 	if (age >= 3)
-		return "3+";
+		return g_strdup ("3+");
 	return NULL;
 }
 
@@ -622,125 +326,119 @@ GsContentRatingSystem
 gs_utils_content_rating_system_from_locale (const gchar *locale)
 {
 	g_autofree gchar *locale_copy = g_strdup (locale);
-	const gchar *language, *territory;
+	const gchar *territory;
 
 	/* Default to IARC for locales which can’t be parsed. */
-	if (!parse_locale (locale_copy, &language, &territory, NULL, NULL))
+	if (!parse_locale (locale_copy, NULL, &territory, NULL, NULL))
 		return GS_CONTENT_RATING_SYSTEM_IARC;
 
 	/* Argentina */
-	if (g_strcmp0 (language, "ar") == 0)
+	if (g_strcmp0 (territory, "AR") == 0)
 		return GS_CONTENT_RATING_SYSTEM_INCAA;
 
 	/* Australia */
-	if (g_strcmp0 (language, "au") == 0)
+	if (g_strcmp0 (territory, "AU") == 0)
 		return GS_CONTENT_RATING_SYSTEM_ACB;
 
 	/* Brazil */
-	if (g_strcmp0 (language, "pt") == 0 &&
-	    g_strcmp0 (territory, "BR") == 0)
+	if (g_strcmp0 (territory, "BR") == 0)
 		return GS_CONTENT_RATING_SYSTEM_DJCTQ;
 
 	/* Taiwan */
-	if (g_strcmp0 (language, "zh") == 0 &&
-	    g_strcmp0 (territory, "TW") == 0)
+	if (g_strcmp0 (territory, "TW") == 0)
 		return GS_CONTENT_RATING_SYSTEM_GSRR;
 
 	/* Europe (but not Finland or Germany), India, Israel,
 	 * Pakistan, Quebec, South Africa */
-	if ((g_strcmp0 (language, "en") == 0 &&
-	     g_strcmp0 (territory, "GB") == 0) ||
-	    g_strcmp0 (language, "gb") == 0 ||
-	    g_strcmp0 (language, "al") == 0 ||
-	    g_strcmp0 (language, "ad") == 0 ||
-	    g_strcmp0 (language, "am") == 0 ||
-	    g_strcmp0 (language, "at") == 0 ||
-	    g_strcmp0 (language, "az") == 0 ||
-	    g_strcmp0 (language, "by") == 0 ||
-	    g_strcmp0 (language, "be") == 0 ||
-	    g_strcmp0 (language, "ba") == 0 ||
-	    g_strcmp0 (language, "bg") == 0 ||
-	    g_strcmp0 (language, "hr") == 0 ||
-	    g_strcmp0 (language, "cy") == 0 ||
-	    g_strcmp0 (language, "cz") == 0 ||
-	    g_strcmp0 (language, "dk") == 0 ||
-	    g_strcmp0 (language, "ee") == 0 ||
-	    g_strcmp0 (language, "fr") == 0 ||
-	    g_strcmp0 (language, "ge") == 0 ||
-	    g_strcmp0 (language, "gr") == 0 ||
-	    g_strcmp0 (language, "hu") == 0 ||
-	    g_strcmp0 (language, "is") == 0 ||
-	    g_strcmp0 (language, "it") == 0 ||
-	    g_strcmp0 (language, "kz") == 0 ||
-	    g_strcmp0 (language, "xk") == 0 ||
-	    g_strcmp0 (language, "lv") == 0 ||
-	    g_strcmp0 (language, "fl") == 0 ||
-	    g_strcmp0 (language, "lu") == 0 ||
-	    g_strcmp0 (language, "lt") == 0 ||
-	    g_strcmp0 (language, "mk") == 0 ||
-	    g_strcmp0 (language, "mt") == 0 ||
-	    g_strcmp0 (language, "md") == 0 ||
-	    g_strcmp0 (language, "mc") == 0 ||
-	    g_strcmp0 (language, "me") == 0 ||
-	    g_strcmp0 (language, "nl") == 0 ||
-	    g_strcmp0 (language, "no") == 0 ||
-	    g_strcmp0 (language, "pl") == 0 ||
-	    g_strcmp0 (language, "pt") == 0 ||
-	    g_strcmp0 (language, "ro") == 0 ||
-	    g_strcmp0 (language, "sm") == 0 ||
-	    g_strcmp0 (language, "rs") == 0 ||
-	    g_strcmp0 (language, "sk") == 0 ||
-	    g_strcmp0 (language, "si") == 0 ||
-	    g_strcmp0 (language, "es") == 0 ||
-	    g_strcmp0 (language, "se") == 0 ||
-	    g_strcmp0 (language, "ch") == 0 ||
-	    g_strcmp0 (language, "tr") == 0 ||
-	    g_strcmp0 (language, "ua") == 0 ||
-	    g_strcmp0 (language, "va") == 0 ||
-	    g_strcmp0 (language, "in") == 0 ||
-	    g_strcmp0 (language, "il") == 0 ||
-	    g_strcmp0 (language, "pk") == 0 ||
-	    g_strcmp0 (language, "za") == 0)
+	if ((g_strcmp0 (territory, "GB") == 0) ||
+	    g_strcmp0 (territory, "AL") == 0 ||
+	    g_strcmp0 (territory, "AD") == 0 ||
+	    g_strcmp0 (territory, "AM") == 0 ||
+	    g_strcmp0 (territory, "AT") == 0 ||
+	    g_strcmp0 (territory, "AZ") == 0 ||
+	    g_strcmp0 (territory, "BY") == 0 ||
+	    g_strcmp0 (territory, "BE") == 0 ||
+	    g_strcmp0 (territory, "BA") == 0 ||
+	    g_strcmp0 (territory, "BG") == 0 ||
+	    g_strcmp0 (territory, "HR") == 0 ||
+	    g_strcmp0 (territory, "CY") == 0 ||
+	    g_strcmp0 (territory, "CZ") == 0 ||
+	    g_strcmp0 (territory, "DK") == 0 ||
+	    g_strcmp0 (territory, "EE") == 0 ||
+	    g_strcmp0 (territory, "FR") == 0 ||
+	    g_strcmp0 (territory, "GE") == 0 ||
+	    g_strcmp0 (territory, "GR") == 0 ||
+	    g_strcmp0 (territory, "HU") == 0 ||
+	    g_strcmp0 (territory, "IS") == 0 ||
+	    g_strcmp0 (territory, "IT") == 0 ||
+	    g_strcmp0 (territory, "LZ") == 0 ||
+	    g_strcmp0 (territory, "XK") == 0 ||
+	    g_strcmp0 (territory, "LV") == 0 ||
+	    g_strcmp0 (territory, "FL") == 0 ||
+	    g_strcmp0 (territory, "LU") == 0 ||
+	    g_strcmp0 (territory, "LT") == 0 ||
+	    g_strcmp0 (territory, "MK") == 0 ||
+	    g_strcmp0 (territory, "MT") == 0 ||
+	    g_strcmp0 (territory, "MD") == 0 ||
+	    g_strcmp0 (territory, "MC") == 0 ||
+	    g_strcmp0 (territory, "ME") == 0 ||
+	    g_strcmp0 (territory, "NL") == 0 ||
+	    g_strcmp0 (territory, "NO") == 0 ||
+	    g_strcmp0 (territory, "PL") == 0 ||
+	    g_strcmp0 (territory, "PT") == 0 ||
+	    g_strcmp0 (territory, "RO") == 0 ||
+	    g_strcmp0 (territory, "SM") == 0 ||
+	    g_strcmp0 (territory, "RS") == 0 ||
+	    g_strcmp0 (territory, "SK") == 0 ||
+	    g_strcmp0 (territory, "SI") == 0 ||
+	    g_strcmp0 (territory, "ES") == 0 ||
+	    g_strcmp0 (territory, "SE") == 0 ||
+	    g_strcmp0 (territory, "CH") == 0 ||
+	    g_strcmp0 (territory, "TR") == 0 ||
+	    g_strcmp0 (territory, "UA") == 0 ||
+	    g_strcmp0 (territory, "VA") == 0 ||
+	    g_strcmp0 (territory, "IN") == 0 ||
+	    g_strcmp0 (territory, "IL") == 0 ||
+	    g_strcmp0 (territory, "PK") == 0 ||
+	    g_strcmp0 (territory, "ZA") == 0)
 		return GS_CONTENT_RATING_SYSTEM_PEGI;
 
 	/* Finland */
-	if (g_strcmp0 (language, "fi") == 0)
+	if (g_strcmp0 (territory, "FI") == 0)
 		return GS_CONTENT_RATING_SYSTEM_KAVI;
 
 	/* Germany */
-	if (g_strcmp0 (language, "de") == 0)
+	if (g_strcmp0 (territory, "DE") == 0)
 		return GS_CONTENT_RATING_SYSTEM_USK;
 
 	/* Iran */
-	if (g_strcmp0 (language, "ir") == 0)
+	if (g_strcmp0 (territory, "IR") == 0)
 		return GS_CONTENT_RATING_SYSTEM_ESRA;
 
 	/* Japan */
-	if (g_strcmp0 (language, "jp") == 0)
+	if (g_strcmp0 (territory, "JP") == 0)
 		return GS_CONTENT_RATING_SYSTEM_CERO;
 
 	/* New Zealand */
-	if (g_strcmp0 (language, "nz") == 0)
+	if (g_strcmp0 (territory, "NZ") == 0)
 		return GS_CONTENT_RATING_SYSTEM_OFLCNZ;
 
 	/* Russia: Content rating law */
-	if (g_strcmp0 (language, "ru") == 0)
+	if (g_strcmp0 (territory, "RU") == 0)
 		return GS_CONTENT_RATING_SYSTEM_RUSSIA;
 
 	/* Singapore */
-	if (g_strcmp0 (language, "sg") == 0)
+	if (g_strcmp0 (territory, "SQ") == 0)
 		return GS_CONTENT_RATING_SYSTEM_MDA;
 
 	/* South Korea */
-	if (g_strcmp0 (language, "kr") == 0)
+	if (g_strcmp0 (territory, "KR") == 0)
 		return GS_CONTENT_RATING_SYSTEM_GRAC;
 
 	/* USA, Canada, Mexico */
-	if ((g_strcmp0 (language, "en") == 0 &&
-	     g_strcmp0 (territory, "US") == 0) ||
-	    g_strcmp0 (language, "us") == 0 ||
-	    g_strcmp0 (language, "ca") == 0 ||
-	    g_strcmp0 (language, "mx") == 0)
+	if ((g_strcmp0 (territory, "US") == 0) ||
+	    g_strcmp0 (territory, "CA") == 0 ||
+	    g_strcmp0 (territory, "MX") == 0)
 		return GS_CONTENT_RATING_SYSTEM_ESRB;
 
 	/* everything else is IARC */
@@ -766,11 +464,31 @@ static const gchar *content_rating_strings[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
 	{ "3+", "7+", "12+", "16+", "18+", NULL }, /* GS_CONTENT_RATING_SYSTEM_IARC */
 };
 
-const gchar * const *
+gchar **
 gs_utils_content_rating_get_values (GsContentRatingSystem system)
 {
-	g_assert (system < GS_CONTENT_RATING_SYSTEM_LAST);
-	return content_rating_strings[system];
+	g_return_val_if_fail ((int) system < GS_CONTENT_RATING_SYSTEM_LAST, NULL);
+
+	/* IARC is the fallback for everything */
+	if (system == GS_CONTENT_RATING_SYSTEM_UNKNOWN)
+		system = GS_CONTENT_RATING_SYSTEM_IARC;
+
+	/* ESRB is special as it requires localised suffixes */
+	if (system == GS_CONTENT_RATING_SYSTEM_ESRB) {
+		g_auto(GStrv) esrb_ages = g_new0 (gchar *, 7);
+
+		esrb_ages[0] = get_esrb_string (content_rating_strings[system][0], _("Early Childhood"));
+		esrb_ages[1] = get_esrb_string (content_rating_strings[system][1], _("Everyone"));
+		esrb_ages[2] = get_esrb_string (content_rating_strings[system][2], _("Everyone 10+"));
+		esrb_ages[3] = get_esrb_string (content_rating_strings[system][3], _("Teen"));
+		esrb_ages[4] = get_esrb_string (content_rating_strings[system][4], _("Mature"));
+		esrb_ages[5] = get_esrb_string (content_rating_strings[system][5], _("Adults Only"));
+		esrb_ages[6] = NULL;
+
+		return g_steal_pointer (&esrb_ages);
+	}
+
+	return g_strdupv ((gchar **) content_rating_strings[system]);
 }
 
 static guint content_rating_ages[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
@@ -793,132 +511,73 @@ static guint content_rating_ages[GS_CONTENT_RATING_SYSTEM_LAST][7] = {
 };
 
 const guint *
-gs_utils_content_rating_get_ages (GsContentRatingSystem system)
+gs_utils_content_rating_get_ages (GsContentRatingSystem system, gsize *length_out)
 {
-	g_assert (system < GS_CONTENT_RATING_SYSTEM_LAST);
+	g_return_val_if_fail ((int) system < GS_CONTENT_RATING_SYSTEM_LAST, NULL);
+	g_return_val_if_fail (length_out != NULL, NULL);
+
+	/* IARC is the fallback for everything */
+	if (system == GS_CONTENT_RATING_SYSTEM_UNKNOWN)
+		system = GS_CONTENT_RATING_SYSTEM_IARC;
+
+	*length_out = g_strv_length ((gchar **) content_rating_strings[system]);
 	return content_rating_ages[system];
 }
 
-const struct {
-	const gchar		*id;
-	MctAppFilterOarsValue	 value;
-	guint			 csm_age;
-} id_to_csm_age[] =  {
-/* v1.0 */
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MILD,		3 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	4 },
-{ "violence-cartoon",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	6 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MILD,		3 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	7 },
-{ "violence-fantasy",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	8 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_MILD,		4 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	9 },
-{ "violence-realistic",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MILD,		9 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	11 },
-{ "violence-bloodshed",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "violence-sexual",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MILD,		11 },
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_NONE,		0 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MILD,		10 },
-{ "drugs-tobacco",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "sex-nudity",		MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-themes",		MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MILD,		8  },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	11 },
-{ "language-profanity",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MILD,		3  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	8  },
-{ "language-humor",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	14 },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_NONE,	0  },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MILD,	9  },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_MODERATE,10 },
-{ "language-discrimination", MCT_APP_FILTER_OARS_VALUE_INTENSE,	11 },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_MILD,		7  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	8  },
-{ "money-advertising",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	10 },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MILD,		7  },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "money-gambling",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MILD,		4  },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-audio",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-contacts",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	12 },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-{ "social-location",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "social-location",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	13 },
-/* v1.1 additions */
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MILD,		0  },
-{ "social-info",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "money-purchasing",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "social-chat",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MILD,		10 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	13 },
-{ "sex-homosexuality",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MILD,		12 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	14 },
-{ "sex-prostitution",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MILD,		8  },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "sex-adultery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	10 },
-{ "sex-appearance",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	15 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-worship",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_NONE,	0  },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MILD,	13 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-desecration", MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_NONE,		0  },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MILD,		13 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_MODERATE,	15 },
-{ "violence-slavery",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	18 },
+typedef enum
+{
+	OARS_1_0,
+	OARS_1_1,
+} OarsVersion;
 
-/* EOS customisation to add at least one CSM ↔ OARS mapping for ages 16 and 17,
- * as these are used in many locale-specific ratings systems. Without them,
- * mapping (e.g.) OFLCNZ R16 → CSM 16 → OARS → CSM gives CSM 15, which then maps
- * back to OFLCNZ R15, which is not what we want. The addition of these two
- * mappings should not expose younger users to content they would not have seen
- * with the default upstream mappings; it instead slightly raises the age at
- * which users are allowed to see intense content in these two categories.
- *
- * See https://phabricator.endlessm.com/T23897#666769. */
-{ "drugs-alcohol",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	16 },
-{ "drugs-narcotics",	MCT_APP_FILTER_OARS_VALUE_INTENSE,	17 },
-{ NULL, 0, 0 } };
+/* The struct definition below assumes we don’t grow more
+ * #AsContentRating values. */
+G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE + 1);
 
+static const struct {
+	const gchar	*id;
+	OarsVersion	 oars_version;  /* when the key was first added */
+	guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
+	guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
+	guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
+	guint		 csm_age_intense;  /* for %AS_CONTENT_RATING_VALUE_INTENSE */
+} oars_to_csm_mappings[] =  {
+	/* Each @id must only appear once. The set of @csm_age_* values for a
+	 * given @id must be complete and non-decreasing. */
+	/* v1.0 */
+	{ "violence-cartoon",	OARS_1_0, 0, 3, 4, 6 },
+	{ "violence-fantasy",	OARS_1_0, 0, 3, 7, 8 },
+	{ "violence-realistic",	OARS_1_0, 0, 4, 9, 14 },
+	{ "violence-bloodshed",	OARS_1_0, 0, 9, 11, 18 },
+	{ "violence-sexual",	OARS_1_0, 0, 18, 18, 18 },
+	{ "drugs-alcohol",	OARS_1_0, 0, 11, 13, 16 },
+	{ "drugs-narcotics",	OARS_1_0, 0, 12, 14, 17 },
+	{ "drugs-tobacco",	OARS_1_0, 0, 10, 13, 13 },
+	{ "sex-nudity",		OARS_1_0, 0, 12, 14, 14 },
+	{ "sex-themes",		OARS_1_0, 0, 13, 14, 15 },
+	{ "language-profanity",	OARS_1_0, 0, 8, 11, 14 },
+	{ "language-humor",	OARS_1_0, 0, 3, 8, 14 },
+	{ "language-discrimination", OARS_1_0, 0, 9, 10, 11 },
+	{ "money-advertising",	OARS_1_0, 0, 7, 8, 10 },
+	{ "money-gambling",	OARS_1_0, 0, 7, 10, 18 },
+	{ "money-purchasing",	OARS_1_0, 0, 12, 14, 15 },
+	{ "social-chat",	OARS_1_0, 0, 4, 10, 13 },
+	{ "social-audio",	OARS_1_0, 0, 15, 15, 15 },
+	{ "social-contacts",	OARS_1_0, 0, 12, 12, 12 },
+	{ "social-info",	OARS_1_0, 0, 0, 13, 13 },
+	{ "social-location",	OARS_1_0, 0, 13, 13, 13 },
+	/* v1.1 additions */
+	{ "sex-homosexuality",	OARS_1_1, 0, 10, 13, 18 },
+	{ "sex-prostitution",	OARS_1_1, 0, 12, 14, 18 },
+	{ "sex-adultery",	OARS_1_1, 0, 8, 10, 18 },
+	{ "sex-appearance",	OARS_1_1, 0, 10, 10, 15 },
+	{ "violence-worship",	OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-desecration", OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-slavery",	OARS_1_1, 0, 13, 15, 18 },
+};
+#endif  /* appstream-glib < 0.7.18 */
+
+#if !AS_CHECK_VERSION(0, 7, 15)
 /**
  * as_content_rating_id_value_to_csm_age:
  * @id: the subsection ID e.g. "violence-cartoon"
@@ -933,15 +592,37 @@ const struct {
 guint
 as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue value)
 {
-	guint i;
-	for (i = 0; id_to_csm_age[i].id != NULL; i++) {
-		if (value == id_to_csm_age[i].value &&
-		    g_strcmp0 (id, id_to_csm_age[i].id) == 0)
-			return id_to_csm_age[i].csm_age;
+	if (value == AS_CONTENT_RATING_VALUE_UNKNOWN ||
+	    value == AS_CONTENT_RATING_VALUE_LAST)
+		return 0;
+
+	for (gsize i = 0; i < G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_str_equal (id, oars_to_csm_mappings[i].id)) {
+			switch (value) {
+			case AS_CONTENT_RATING_VALUE_NONE:
+				return oars_to_csm_mappings[i].csm_age_none;
+			case AS_CONTENT_RATING_VALUE_MILD:
+				return oars_to_csm_mappings[i].csm_age_mild;
+			case AS_CONTENT_RATING_VALUE_MODERATE:
+				return oars_to_csm_mappings[i].csm_age_moderate;
+			case AS_CONTENT_RATING_VALUE_INTENSE:
+				return oars_to_csm_mappings[i].csm_age_intense;
+			case AS_CONTENT_RATING_VALUE_UNKNOWN:
+			case AS_CONTENT_RATING_VALUE_LAST:
+			default:
+				/* Handled above. */
+				g_assert_not_reached ();
+				return 0;
+			}
+		}
 	}
+
+	/* @id not found. */
 	return 0;
 }
+#endif  /* appstream-glib < 0.7.15 */
 
+#if !AS_CHECK_VERSION(0, 7, 18)
 /**
  * as_content_rating_id_csm_age_to_value:
  * @id: the subsection ID e.g. "violence-cartoon"
@@ -954,15 +635,21 @@ as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue va
 MctAppFilterOarsValue
 as_content_rating_id_csm_age_to_value (const gchar *id, guint age)
 {
-	MctAppFilterOarsValue value;
-	guint i;
-
-	value = MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
-
-	for (i = 0; id_to_csm_age[i].id != NULL; i++) {
-		if (age >= id_to_csm_age[i].csm_age &&
-		    g_strcmp0 (id, id_to_csm_age[i].id) == 0)
-			value = MAX (value, id_to_csm_age[i].value);
+	for (gsize i = 0; G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_strcmp0 (id, oars_to_csm_mappings[i].id) == 0) {
+			if (age >= oars_to_csm_mappings[i].csm_age_intense)
+				return MCT_APP_FILTER_OARS_VALUE_INTENSE;
+			else if (age >= oars_to_csm_mappings[i].csm_age_moderate)
+				return MCT_APP_FILTER_OARS_VALUE_MODERATE;
+			else if (age >= oars_to_csm_mappings[i].csm_age_mild)
+				return MCT_APP_FILTER_OARS_VALUE_MILD;
+			else if (age >= oars_to_csm_mappings[i].csm_age_none)
+				return MCT_APP_FILTER_OARS_VALUE_NONE;
+			else
+				return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
+		}
 	}
-	return value;
+
+	return MCT_APP_FILTER_OARS_VALUE_UNKNOWN;
 }
+#endif  /* appstream-glib < 0.7.18 */

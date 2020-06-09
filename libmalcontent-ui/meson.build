@@ -36,6 +36,7 @@ libmalcontent_ui_public_deps = [
   libmalcontent_dep,
 ]
 libmalcontent_ui_private_deps = [
+  dependency('appstream-glib'),
   dependency('flatpak'),
 ]
 

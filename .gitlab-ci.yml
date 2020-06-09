@@ -6,7 +6,7 @@ before_script:
                    libglib2.0-dev libgirepository1.0-dev libpam0g-dev
                    gettext policykit-1 libpolkit-gobject-1-dev git
                    lcov libgtk-3-dev libaccountsservice-dev libflatpak-dev
-                   libglib-testing-0-dev
+                   libglib-testing-0-dev libappstream-glib-dev
   - export LANG=C.UTF-8
 
 stages:

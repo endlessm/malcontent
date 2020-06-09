@@ -23,9 +23,37 @@
 
 G_BEGIN_DECLS
 
+#include <appstream-glib.h>
 #include <glib-object.h>
 #include <libmalcontent/malcontent.h>
 
+#if AS_CHECK_VERSION(0, 7, 18)
+#define GS_CONTENT_RATING_SYSTEM_UNKNOWN AS_CONTENT_RATING_SYSTEM_UNKNOWN
+#define GS_CONTENT_RATING_SYSTEM_INCAA AS_CONTENT_RATING_SYSTEM_INCAA
+#define GS_CONTENT_RATING_SYSTEM_ACB AS_CONTENT_RATING_SYSTEM_ACB
+#define GS_CONTENT_RATING_SYSTEM_DJCTQ AS_CONTENT_RATING_SYSTEM_DJCTQ
+#define GS_CONTENT_RATING_SYSTEM_GSRR AS_CONTENT_RATING_SYSTEM_GSRR
+#define GS_CONTENT_RATING_SYSTEM_PEGI AS_CONTENT_RATING_SYSTEM_PEGI
+#define GS_CONTENT_RATING_SYSTEM_KAVI AS_CONTENT_RATING_SYSTEM_KAVI
+#define GS_CONTENT_RATING_SYSTEM_USK AS_CONTENT_RATING_SYSTEM_USK
+#define GS_CONTENT_RATING_SYSTEM_ESRA AS_CONTENT_RATING_SYSTEM_ESRA
+#define GS_CONTENT_RATING_SYSTEM_CERO AS_CONTENT_RATING_SYSTEM_CERO
+#define GS_CONTENT_RATING_SYSTEM_OFLCNZ AS_CONTENT_RATING_SYSTEM_OFLCNZ
+#define GS_CONTENT_RATING_SYSTEM_RUSSIA AS_CONTENT_RATING_SYSTEM_RUSSIA
+#define GS_CONTENT_RATING_SYSTEM_MDA AS_CONTENT_RATING_SYSTEM_MDA
+#define GS_CONTENT_RATING_SYSTEM_GRAC AS_CONTENT_RATING_SYSTEM_GRAC
+#define GS_CONTENT_RATING_SYSTEM_ESRB AS_CONTENT_RATING_SYSTEM_ESRB
+#define GS_CONTENT_RATING_SYSTEM_IARC AS_CONTENT_RATING_SYSTEM_IARC
+#define GS_CONTENT_RATING_SYSTEM_LAST AS_CONTENT_RATING_SYSTEM_LAST
+#define GsContentRatingSystem AsContentRatingSystem
+
+#define gs_utils_content_rating_age_to_str as_content_rating_system_format_age
+#define gs_utils_content_rating_system_from_locale as_content_rating_system_from_locale
+#define gs_content_rating_system_to_str as_content_rating_system_to_string
+#define gs_utils_content_rating_get_values as_content_rating_system_get_formatted_ages
+#define gs_utils_content_rating_get_ages as_content_rating_system_get_csm_ages
+#define as_content_rating_id_csm_age_to_value as_content_rating_attribute_from_csm_age
+#else
 typedef enum {
 	GS_CONTENT_RATING_SYSTEM_UNKNOWN,
 	GS_CONTENT_RATING_SYSTEM_INCAA,
@@ -47,15 +75,19 @@ typedef enum {
 	GS_CONTENT_RATING_SYSTEM_LAST
 } GsContentRatingSystem;
 
-const gchar *gs_utils_content_rating_age_to_str (GsContentRatingSystem system,
+gchar *gs_utils_content_rating_age_to_str (GsContentRatingSystem system,
 						 guint age);
 GsContentRatingSystem gs_utils_content_rating_system_from_locale (const gchar *locale);
-const gchar *gs_content_rating_key_value_to_str (const gchar *id,
-						 MctAppFilterOarsValue value);
 const gchar *gs_content_rating_system_to_str (GsContentRatingSystem system);
-const gchar * const *gs_utils_content_rating_get_values (GsContentRatingSystem system);
-const guint *gs_utils_content_rating_get_ages (GsContentRatingSystem system);
-guint as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue value);
+gchar **gs_utils_content_rating_get_values (GsContentRatingSystem system);
+const guint *gs_utils_content_rating_get_ages (GsContentRatingSystem system, gsize *length_out);
 MctAppFilterOarsValue as_content_rating_id_csm_age_to_value (const gchar *id, guint age);
+#endif  /* appstream-glib < 0.7.18 */
+
+#if AS_CHECK_VERSION(0, 7, 15)
+#define as_content_rating_id_value_to_csm_age as_content_rating_attribute_to_csm_age
+#else
+guint as_content_rating_id_value_to_csm_age (const gchar *id, MctAppFilterOarsValue value);
+#endif  /* appstream-glib < 0.7.15 */
 
 G_END_DECLS
