@@ -7,731 +7,293 @@ msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 13:45+0100\n"
-"PO-Revision-Date: 2020-04-15 13:42+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2020-06-10 12:08+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Arabic (https://www.transifex.com/endless-os/teams/9016/ar/)\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr ""
+msgstr "قُم بتغيير عناصر تصفية تطبيقك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير عناصر تصفية تطبيقك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr ""
+msgstr "اقرأ عناصر تصفية تطبيقك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة عناصر تصفية تطبيقك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr ""
+msgstr "قم بتغيير مرشح تطبيق مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير عناصر تصفية التطبيق الخاص بمستخدمٍ آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr ""
+msgstr "قراءة مرشح تطبيقات مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة مرشح تطبيق مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"
-msgstr ""
+msgstr "تغيير حدود جلستك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير حدود جلستك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:54
 msgid "Read your own session limits"
-msgstr ""
+msgstr "قراءة حدود الجلسة الخاصة بك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:55
 msgid "Authentication is required to read your session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة حدود جلستك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:64
 msgid "Change another user’s session limits"
-msgstr ""
+msgstr "تغيير حدود الجلسات لمستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:65
 msgid "Authentication is required to change another user’s session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير حدود جلسة مستخدمٍ آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:74
 msgid "Read another user’s session limits"
-msgstr ""
+msgstr "اقرأ حدود جلسات مستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:75
 msgid "Authentication is required to read another user’s session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة حدود جلسات مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:84
 msgid "Change your own account info"
-msgstr ""
+msgstr "قُم بتغيير معلومات حسابك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:85
 msgid "Authentication is required to change your account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير معلومات حسابك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:94
 msgid "Read your own account info"
-msgstr ""
+msgstr "قراءة معلومات الحساب الخاص بك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:95
 msgid "Authentication is required to read your account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة معلومات حسابك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:104
 msgid "Change another user’s account info"
-msgstr ""
+msgstr "تغيير معلومات حساب مستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:105
 msgid "Authentication is required to change another user’s account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير معلومات حساب مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:114
 msgid "Read another user’s account info"
-msgstr ""
+msgstr "قراءة معلومات حساب مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:115
 msgid "Authentication is required to read another user’s account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة معلومات حساب مستخدمٍ آخر."
 
 #: libmalcontent/app-filter.c:694
 #, c-format
 msgid "App filter for user %u was in an unrecognized format"
-msgstr ""
+msgstr "عناصر تصفية التطبيق للمستخدم %u كانت بتنسيق غير معروف"
 
 #: libmalcontent/app-filter.c:725
 #, c-format
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
-msgstr ""
+msgstr "يحتوي مرشح OARS للمستخدم %u على ‘%s’ مجهول"
 
 #: libmalcontent/manager.c:283 libmalcontent/manager.c:412
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
-msgstr ""
+msgstr "غير مسموح بالاستعلام عن بيانات فلتر التطبيق للمستخدم %u "
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
-msgstr ""
+msgstr "المستخدم %u غير موجود"
 
 #: libmalcontent/manager.c:394
 msgid "App filtering is globally disabled"
-msgstr ""
+msgstr "تم تعطيل ترشيح التطبيقات بشكل شامل"
 
 #: libmalcontent/manager.c:777
 msgid "Session limits are globally disabled"
-msgstr ""
+msgstr "حدود الجلسات معطلة بصورة شاملة"
 
 #: libmalcontent/manager.c:795
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
-msgstr ""
+msgstr "غير مسموح بالاستعلام عن بيانات حدود الجلسة للمستخدم %u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
 msgid "Session limit for user %u was in an unrecognized format"
-msgstr ""
+msgstr "كان حد الجلسة للمستخدم %u بتنسيق غير معروف"
 
 #: libmalcontent/session-limits.c:328
 #, c-format
 msgid "Session limit for user %u has an unrecognized type ‘%u’"
-msgstr ""
+msgstr "لدى حد جلسة المستخدم %u نوعاً مجهولاً '%u'"
 
 #: libmalcontent/session-limits.c:346
 #, c-format
 msgid "Session limit for user %u has invalid daily schedule %u–%u"
+msgstr "حدود الجلسة للمستخدم %u لها جدول زمني يومي غير صالح %u–%u  "
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. of the rating e.g. "Adults Only (solo adultos)"
+#: libmalcontent-ui/gs-content-rating.c:75
+#, c-format
+msgid "%s (%s)"
 msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:76
-msgid "No cartoon violence"
-msgstr "لا عنف كرتوني"
+#: libmalcontent-ui/gs-content-rating.c:209
+msgid "General"
+msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:79
-msgid "Cartoon characters in unsafe situations"
-msgstr "شخصيات كرتونية في مواقف خطرة"
+#: libmalcontent-ui/gs-content-rating.c:218
+msgid "ALL"
+msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:82
-msgid "Cartoon characters in aggressive conflict"
-msgstr "شخصيات كرتونية تتصراع بعدوانية"
+#: libmalcontent-ui/gs-content-rating.c:222
+#: libmalcontent-ui/gs-content-rating.c:485
+msgid "Adults Only"
+msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:85
-msgid "Graphic violence involving cartoon characters"
-msgstr "عنف رسومي لشخصيات كرتونية"
+#: libmalcontent-ui/gs-content-rating.c:224
+#: libmalcontent-ui/gs-content-rating.c:484
+msgid "Mature"
+msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:88
-msgid "No fantasy violence"
-msgstr "لا عنف خيالي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:91
-msgid "Characters in unsafe situations easily distinguishable from reality"
-msgstr "الشخصيات الكرتونية في مواقف خطرة يمكن تمييزها عن الواقع بسهولة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:94
-msgid "Characters in aggressive conflict easily distinguishable from reality"
-msgstr "الشخصيات الكرتونية وهي تتصارع بعدوانية يمكن تمييزها عن الواقع بسهولة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:97
-msgid "Graphic violence easily distinguishable from reality"
-msgstr "العنف الرسومي سهل تفرقته عن الواقع"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:100
-msgid "No realistic violence"
-msgstr "لا عنف واقعي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:103
-msgid "Mildly realistic characters in unsafe situations"
-msgstr "شخصيات واقعية معتدلة في حالات غير آمنة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:106
-msgid "Depictions of realistic characters in aggressive conflict"
-msgstr "تصوير شخصيات واقعية تتصراع بعدوانية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:109
-msgid "Graphic violence involving realistic characters"
-msgstr "عنف رسومي لشخصيات واقعية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:112
-msgid "No bloodshed"
-msgstr "لا إراقة دماء"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:115
-msgid "Unrealistic bloodshed"
-msgstr "إراقة الدماء غير حقيقة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:118
-msgid "Realistic bloodshed"
-msgstr "إراقة الدماء حقيقة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:121
-msgid "Depictions of bloodshed and the mutilation of body parts"
-msgstr "تصوير لسفك الدماء والتمثيل بأجزاء الجسد"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:124
-msgid "No sexual violence"
-msgstr "لا عنف جنسي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:127
-msgid "Rape or other violent sexual behavior"
-msgstr "اغتصاب أو سلوك جنسي عنيف"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:130
-msgid "No references to alcohol"
-msgstr "لا إشارات لمشروبات كحولية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:133
-msgid "References to alcoholic beverages"
-msgstr "إشارات لمشروبات كحولية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:136
-msgid "Use of alcoholic beverages"
-msgstr "استخدام مشروبات كحولية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:139
-msgid "No references to illicit drugs"
-msgstr "لا إشارات لمخدرات غير مشروعة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:142
-msgid "References to illicit drugs"
-msgstr "إشارات لمخدرات غير مشروعة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:145
-msgid "Use of illicit drugs"
-msgstr "استخدام مخدرات غير مشروعة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:148
-msgid "References to tobacco products"
-msgstr "إشارات منتجات التبغ"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:151
-msgid "Use of tobacco products"
-msgstr "استخدام منتجات التبغ"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:154
-msgid "No nudity of any sort"
-msgstr "لا عري من أي نوع"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:157
-msgid "Brief artistic nudity"
-msgstr "عري فني بسيط"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:160
-msgid "Prolonged nudity"
-msgstr "العري لفترة طويلة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:163
-msgid "No references or depictions of sexual nature"
-msgstr "لا إشارات أو تصوير للجنس"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:166
-msgid "Provocative references or depictions"
-msgstr "تلميحات استفزازية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:169
-msgid "Sexual references or depictions"
-msgstr "إشارات أو تصوير للجنس"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:172
-msgid "Graphic sexual behavior"
-msgstr "سلوك جنسي رسومي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:175
-msgid "No profanity of any kind"
-msgstr "لا ألفاظ نابية من أي نوع"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:178
-msgid "Mild or infrequent use of profanity"
-msgstr "استخدام معتدل أو نادر للألفاظ النابية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:181
-msgid "Moderate use of profanity"
-msgstr "استعمال معتدل للألفاظ النابية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:184
-msgid "Strong or frequent use of profanity"
-msgstr "استعمال قوي أو متكرر للألفاظ النابية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:187
-msgid "No inappropriate humor"
-msgstr "لا فكاهة مبتذلة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:190
-msgid "Slapstick humor"
-msgstr "فكاهة تهريجية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:193
-msgid "Vulgar or bathroom humor"
-msgstr "فكاهة مبتذلة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:196
-msgid "Mature or sexual humor"
-msgstr "نكت جنسية/للكبار"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:199
-msgid "No discriminatory language of any kind"
-msgstr "لا لغة متحيزة من أي نوع"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:202
-msgid "Negativity towards a specific group of people"
-msgstr "السلبية تجاه مجموعة من الأشخاص"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:205
-msgid "Discrimination designed to cause emotional harm"
-msgstr "تمييز مفتعل للتسبب بضرر عاطفي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:208
-msgid "Explicit discrimination based on gender, sexuality, race or religion"
-msgstr "تمييز صريح بناء على الجنس، أو السلاسة البشرية أو العقيدة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:211
-msgid "No advertising of any kind"
-msgstr "لا إعلانات من أي نوع"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:214
-msgid "Product placement"
-msgstr "إشهار منتجات"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:217
-msgid "Explicit references to specific brands or trademarked products"
-msgstr "إشارات صريحة لعلامات تجارية ومنتجات معينة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:220
-msgid "Users are encouraged to purchase specific real-world items"
-msgstr "يُشجّع المستخدمين على شراء عناصر معينة في العالم الحقيقي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:223
-msgid "No gambling of any kind"
-msgstr "لا مقامرة من أي نوع"
-
-#. TRANSLATORS: content rating description
 #: libmalcontent-ui/gs-content-rating.c:226
-msgid "Gambling on random events using tokens or credits"
-msgstr "مقامرة على أحداث عشوائية باستخدام عمل رمزية أو ائتمانات"
+#: libmalcontent-ui/gs-content-rating.c:483
+msgid "Teen"
+msgstr ""
 
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:229
-msgid "Gambling using “play” money"
-msgstr "مقامرة باستخدام مال ”ألعاب“"
+#: libmalcontent-ui/gs-content-rating.c:228
+#: libmalcontent-ui/gs-content-rating.c:482
+msgid "Everyone 10+"
+msgstr ""
 
-#. TRANSLATORS: content rating description
+#: libmalcontent-ui/gs-content-rating.c:230
+#: libmalcontent-ui/gs-content-rating.c:481
+msgid "Everyone"
+msgstr ""
+
 #: libmalcontent-ui/gs-content-rating.c:232
-msgid "Gambling using real money"
-msgstr "مقامرة باستخدام مال حقيقي"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:235
-msgid "No ability to spend money"
-msgstr "لا إمكانية إنفاق أموال"
-
-#. v1.1
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:238
-msgid "Users are encouraged to donate real money"
-msgstr "يُشجّع المستخدمين على التبرع بنقود حقيقية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:241
-msgid "Ability to spend real money in-game"
-msgstr "إمكانية إنفاق أموال حقيقية داخل اللعبة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:244
-msgid "No way to chat with other users"
-msgstr "لا إمكانية للدردشة مع مستخدمين آخرين"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:247
-msgid "User-to-user game interactions without chat functionality"
-msgstr "تفاعل المستخدمين مع بعض في اللعبة بدون ميزة دردشة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:250
-msgid "Moderated chat functionality between users"
-msgstr "ميزة مدارة دردشة بين المستخدمين"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:253
-msgid "Uncontrolled chat functionality between users"
-msgstr "ميزة دردشة بين المستخدمين بلا إدارة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:256
-msgid "No way to talk with other users"
-msgstr "لا إمكانية للحديث مع مستخدمين آخرين"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:259
-msgid "Uncontrolled audio or video chat functionality between users"
-msgstr "ميزة دردشة مرئية أو صوتية بين المستخدمين بلا إدارة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:262
-msgid "No sharing of social network usernames or email addresses"
-msgstr "لا مشاركة لأسماء حسابات شبكات التواصل أو عناوين البريد"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:265
-msgid "Sharing social network usernames or email addresses"
-msgstr "مشاركة أسماء حسابات شبكات التواصل أو عناوين البريد"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:268
-msgid "No sharing of user information with 3rd parties"
-msgstr "لا مشاركة لمعلومات المستخدم مع أطراف ثالثة"
-
-#. v1.1
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:271
-msgid "Checking for the latest application version"
-msgstr "يتم التحقق من أحدث إصدار للتطبيق"
-
-#. v1.1
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:274
-msgid "Sharing diagnostic data that does not let others identify the user"
-msgstr "مشاركة بيانات التشخيص التي لا تسمح للآخرين بتحديد المستخدم"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:277
-msgid "Sharing information that lets others identify the user"
-msgstr "مشاركة المعلومات التي تتيح للآخرين تحديد هوية المستخدم"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:280
-msgid "No sharing of physical location to other users"
-msgstr "غير مصرح بمشاركة الموقع الفعلي مع المستخدمين الآخرين"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:283
-msgid "Sharing physical location to other users"
-msgstr "مشاركة الموقع الفيزيائي مع بقية المستخدمين"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:288
-msgid "No references to homosexuality"
-msgstr "لا توجد إشارات إلى المثلية الجنسية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:291
-msgid "Indirect references to homosexuality"
-msgstr "إشارات غير مباشرة إلى المثلية الجنسية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:294
-msgid "Kissing between people of the same gender"
-msgstr "تقبيل بين الناس من نفس الجنس"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:297
-msgid "Graphic sexual behavior between people of the same gender"
-msgstr "السلوك الجنسي الجرافيكي بين الناس من نفس الجنس"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:300
-msgid "No references to prostitution"
-msgstr "لا إشارات إلى البغاء"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:303
-msgid "Indirect references to prostitution"
-msgstr "إشارات غير مباشرة إلى البغاء"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:306
-msgid "Direct references to prostitution"
-msgstr "إشارات مباشرة للبغاء"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:309
-msgid "Graphic depictions of the act of prostitution"
-msgstr "تصوير جرافيك لممارسة البغاء"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:312
-msgid "No references to adultery"
-msgstr "لا إشارات إلى الزنا"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:315
-msgid "Indirect references to adultery"
-msgstr "إشارات غير مباشرة إلى الزنا"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:318
-msgid "Direct references to adultery"
-msgstr "إشارات مباشرة إلى الزنا"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:321
-msgid "Graphic depictions of the act of adultery"
-msgstr "تصوير جرافيك لفعل الزنا"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:324
-msgid "No sexualized characters"
-msgstr "بدون شخصيات جنسية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:327
-msgid "Scantily clad human characters"
-msgstr "يكتنفه الشخصيات البشرية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:330
-msgid "Overtly sexualized human characters"
-msgstr "شخصيات بشرية جنسية بشكل علني"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:333
-msgid "No references to desecration"
-msgstr "لا إشارات إلى التدنيس"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:336
-msgid "Depictions or references to historical desecration"
-msgstr "تصوير أو إشارات تدنيس تاريخية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:339
-msgid "Depictions of modern-day human desecration"
-msgstr "تصوير تدنيس الإنسان الحديث"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:342
-msgid "Graphic depictions of modern-day desecration"
-msgstr "صور جرافيك لتدنيس العصر الحديث"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:345
-msgid "No visible dead human remains"
-msgstr "لا توجد رفات بشرية ميتة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:348
-msgid "Visible dead human remains"
-msgstr "بقايا بشرية ميتة ظاهرة"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:351
-msgid "Dead human remains that are exposed to the elements"
-msgstr "بقايا بشرية ميتة تتعرض للعناصر"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:354
-msgid "Graphic depictions of desecration of human bodies"
-msgstr "الرسوم البيانية لتدنيس الأجسام البشرية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:357
-msgid "No references to slavery"
-msgstr "لا إشارات إلى العبودية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:360
-msgid "Depictions or references to historical slavery"
-msgstr "تصوير أو إشارات إلى العبودية التاريخية"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:363
-msgid "Depictions of modern-day slavery"
-msgstr "تصوير الرق المعاصر"
-
-#. TRANSLATORS: content rating description
-#: libmalcontent-ui/gs-content-rating.c:366
-msgid "Graphic depictions of modern-day slavery"
-msgstr "تصوير جرافيكي للعبودية الحديثة"
+#: libmalcontent-ui/gs-content-rating.c:480
+msgid "Early Childhood"
+msgstr ""
 
 #. Translators: the placeholder is a user’s full name
-#: libmalcontent-ui/restrict-applications-dialog.c:220
+#: libmalcontent-ui/restrict-applications-dialog.c:222
 #, c-format
 msgid "Restrict %s from using the following installed applications."
-msgstr ""
+msgstr "تقييد %s من استخدام التطبيقات المثبتة التالية."
 
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
 msgid "Restrict Applications"
-msgstr ""
+msgstr "تقييد التطبيقات"
 
 #: libmalcontent-ui/restrict-applications-selector.ui:24
 msgid "No applications found to restrict."
-msgstr ""
+msgstr "لم يتم العثور على تطبيقات لتقييدها."
 
 #. Translators: this is the full name for an unknown user account.
-#: libmalcontent-ui/user-controls.c:234 libmalcontent-ui/user-controls.c:245
+#: libmalcontent-ui/user-controls.c:242 libmalcontent-ui/user-controls.c:253
 msgid "unknown"
-msgstr ""
+msgstr "غير معروف"
 
-#: libmalcontent-ui/user-controls.c:330 libmalcontent-ui/user-controls.c:403
-#: libmalcontent-ui/user-controls.c:676
+#: libmalcontent-ui/user-controls.c:338 libmalcontent-ui/user-controls.c:425
+#: libmalcontent-ui/user-controls.c:711
 msgid "All Ages"
-msgstr ""
+msgstr "جميع الأعمار"
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:491
+#: libmalcontent-ui/user-controls.c:514
 #, c-format
 msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
 "available in other applications."
 msgstr ""
+"يمنع %s من تشغيل متصفحات الإنترنت. قد يظل محتوى الإنترنت المحدود متاحاً في "
+"تطبيقات أخرى."
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:496
+#: libmalcontent-ui/user-controls.c:519
 #, c-format
 msgid "Prevents specified applications from being used by %s."
-msgstr ""
+msgstr "يمنع استخدام تطبيقات محددة من قبل %s."
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:501
+#: libmalcontent-ui/user-controls.c:524
 #, c-format
 msgid "Prevents %s from installing applications."
-msgstr ""
+msgstr "يمنع %s تثبيت التطبيقات."
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:506
+#: libmalcontent-ui/user-controls.c:529
 #, c-format
 msgid "Applications installed by %s will not appear for other users."
-msgstr ""
+msgstr "لن تظهر التطبيقات المثبتة بواسطة %s للمستخدمين الآخرين."
 
 #: libmalcontent-ui/user-controls.ui:17
 msgid "Application Usage Restrictions"
-msgstr ""
+msgstr "قيود استخدام التطبيق"
 
-#: libmalcontent-ui/user-controls.ui:67
+#: libmalcontent-ui/user-controls.ui:68
 msgid "Restrict _Web Browsers"
-msgstr ""
+msgstr "تقييد متصفحات الإنترنت"
 
-#: libmalcontent-ui/user-controls.ui:151
+#: libmalcontent-ui/user-controls.ui:152
 msgid "_Restrict Applications"
-msgstr ""
+msgstr "تقييد التطبيقات"
 
-#: libmalcontent-ui/user-controls.ui:230
+#: libmalcontent-ui/user-controls.ui:231
 msgid "Software Installation Restrictions"
-msgstr ""
+msgstr "قيود تثبيت البرنامج"
 
-#: libmalcontent-ui/user-controls.ui:280
+#: libmalcontent-ui/user-controls.ui:281
 msgid "Restrict Application _Installation"
-msgstr ""
+msgstr "تقييد تثبيت التطبيق"
 
-#: libmalcontent-ui/user-controls.ui:365
+#: libmalcontent-ui/user-controls.ui:366
 msgid "Restrict Application Installation for _Others"
-msgstr ""
+msgstr "تقييد تثبيت التطبيق على الآخرين"
 
-#: libmalcontent-ui/user-controls.ui:450
+#: libmalcontent-ui/user-controls.ui:451
 msgid "Application _Suitability"
-msgstr ""
+msgstr "ملاءمة التطبيق"
 
-#: libmalcontent-ui/user-controls.ui:472
+#: libmalcontent-ui/user-controls.ui:473
 msgid ""
 "Restricts browsing or installation of applications to applications suitable "
 "for certain ages or above."
 msgstr ""
+"يقتصر تصفح أو تثبيت التطبيقات على تطبيقات مناسبة لفئة عمرية معينة أو أكبر."
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
@@ -739,80 +301,87 @@ msgstr ""
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
-msgstr ""
+msgstr "أدوات الإشراف العائلي"
 
 #: malcontent-control/application.c:270
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
-msgstr ""
+msgstr "حقوق النشر © 2019، 2020 Endless Mobile، Inc."
 
-#: malcontent-control/application.c:272
+#. Translators: this should be "translated" to the
+#. names of people who have translated Malcontent into
+#. this language, one per line.
+#: malcontent-control/application.c:275
 msgid "translator-credits"
 msgstr ""
 
-#: malcontent-control/application.c:276
+#. Translators: "Malcontent" is the brand name of this
+#. project, so should not be translated.
+#: malcontent-control/application.c:281
 msgid "Malcontent Website"
-msgstr ""
+msgstr "موقع Malcontent"
 
-#: malcontent-control/application.c:294
+#: malcontent-control/application.c:299
 msgid "The help contents could not be displayed"
-msgstr ""
+msgstr "لا يمكن عرض محتويات المساعدة"
 
-#: malcontent-control/application.c:331
+#: malcontent-control/application.c:336
 msgid "Failed to load user data from the system"
-msgstr ""
+msgstr "فشل تحميل بيانات المستخدم من النظام"
 
-#: malcontent-control/application.c:333
+#: malcontent-control/application.c:338
 msgid "Please make sure that the AccountsService is installed and enabled."
-msgstr ""
+msgstr "يُرجى التأكد من تثبيت خدمة الحسابات وتمكينها."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
-msgstr ""
+msgstr "الصفحة السابقة"
 
 #: malcontent-control/carousel.ui:74
 msgid "Next Page"
-msgstr ""
+msgstr "الصفحة التالية"
 
-#: malcontent-control/main.ui:92
+#: malcontent-control/main.ui:93
 msgid "Permission Required"
-msgstr ""
+msgstr "الإذن مطلوب"
 
-#: malcontent-control/main.ui:106
+#: malcontent-control/main.ui:107
 msgid ""
 "Permission is required to view and change user parental controls settings."
-msgstr ""
+msgstr "الإذن مطلوب لعرض وتغيير إعدادات الإشراف العائلي لحساب المستخدم."
 
-#: malcontent-control/main.ui:147
+#: malcontent-control/main.ui:148
 msgid "No Child Users Configured"
-msgstr ""
+msgstr "لم يتم تهيئة مستخدمين فرعيين"
 
-#: malcontent-control/main.ui:161
+#: malcontent-control/main.ui:162
 msgid ""
 "No child users are currently set up on the system. Create one before setting "
 "up their parental controls."
 msgstr ""
+"لا توجد حالياً حسابات لمستخدمين أطفال على النظام. قُم بإنشاء حساب واحد قبل "
+"تهيئة أدوات الإشراف العائلي الخاصة بها."
 
-#: malcontent-control/main.ui:173
+#: malcontent-control/main.ui:174
 msgid "Create _Child User"
-msgstr ""
+msgstr "إنشاء حساب لطفل"
 
-#: malcontent-control/main.ui:201
+#: malcontent-control/main.ui:202
 msgid "Loading…"
-msgstr ""
+msgstr "جارٍ التحميل..."
 
-#: malcontent-control/main.ui:264
+#: malcontent-control/main.ui:265
 msgid "_Help"
 msgstr "م_ساعدة"
 
-#: malcontent-control/main.ui:268
+#: malcontent-control/main.ui:269
 msgid "_About Parental Controls"
-msgstr ""
+msgstr "نبذة عن الإشراف العائلي"
 
 #. Translators: the brief summary of the application as it appears in a software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
-msgstr ""
+msgstr "قُم بضبط الإشراف العائلي ومراقبة الاستخدام بواسطة المستخدمين"
 
 #. Translators: These are the application description paragraphs in the AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
@@ -821,37 +390,54 @@ msgid ""
 "use the computer for, what software they can install, and what installed "
 "software they can run."
 msgstr ""
+"إدارة قيود الإشراف العائلي للمستخدمين، والتحكم في المدة التي يمكنهم خلالها "
+"استخدام الكمبيوتر، والبرنامج الذي يمكنهم تثبيته، والبرنامج المثبت الذي "
+"يمكنهم تشغيله"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
 msgid "The GNOME Project"
 msgstr ""
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:50
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:59
 msgid "Minor improvements to parental controls application UI"
 msgstr ""
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:51
+msgid "Add a user manual"
+msgstr ""
+
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:52
+msgid "Translation updates"
+msgstr ""
+
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:60
 msgid "Translations to Ukrainian and Polish"
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:58
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:67
 msgid "Improve parental controls application UI and add icon"
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:59
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:68
 msgid "Support for indicating which accounts are parent accounts"
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:66
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:75
 msgid "Initial release of basic parental controls application"
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:67
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:76
 msgid "Support for setting app installation and run restrictions on users"
 msgstr ""
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:74
+#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:83
 msgid "Maintenance release of underlying parental controls library"
+msgstr ""
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:7
+msgid "org.freedesktop.MalcontentControl"
 msgstr ""
 
 #. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
@@ -860,14 +446,17 @@ msgid ""
 "parental controls;screen time;app restrictions;web browser restrictions;oars;"
 "usage;usage limit;kid;child;"
 msgstr ""
+"إعدادات التحكم الأبوي؛ الوقت الذي يقضى بمشاهدة الشاشة؛ القيود الخاصة "
+"بالتطبيقات؛ القيود الخاصة بمتصفحات الإنترنت؛ فتح خدمة تقارير مؤتمتة؛ "
+"الاستخدام؛ حدود الاستخدام؛ الطفل؛ الطفل؛    "
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
-msgstr ""
+msgstr "إدارة الإشراف العائلي"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:10
 msgid "Authentication is required to read and change user parental controls"
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة وتغيير إعدادات التحكم الأبوية الخاصة بالمستخدم"
 
 #: malcontent-control/user-selector.c:426
 msgid "Your account"
@@ -878,19 +467,312 @@ msgstr "حسابك"
 #: pam/pam_malcontent.c:142 pam/pam_malcontent.c:188
 #, c-format
 msgid "User ‘%s’ has no time limits enabled"
-msgstr ""
+msgstr "لم يتم تمكين حدود زمنية للمستخدم ‘%s’"
 
 #: pam/pam_malcontent.c:151 pam/pam_malcontent.c:172
 #, c-format
 msgid "Error getting session limits for user ‘%s’: %s"
-msgstr ""
+msgstr "حدث خطأ أثناء الحصول على حدود الجلسة للمستخدم ‘%s’: %s"
 
 #: pam/pam_malcontent.c:182
 #, c-format
 msgid "User ‘%s’ has no time remaining"
-msgstr ""
+msgstr "ليس لدى المستخدم \"%s\" وقتاً متبقياً"
 
 #: pam/pam_malcontent.c:200
 #, c-format
 msgid "Error setting time limit on login session: %s"
-msgstr ""
+msgstr "خطأ في تعيين حد الوقت لجلسة تسجيل الدخول: %s"
+
+#~ msgid "No cartoon violence"
+#~ msgstr "لا عنف كرتوني"
+
+#~ msgid "Cartoon characters in unsafe situations"
+#~ msgstr "شخصيات كرتونية في مواقف خطرة"
+
+#~ msgid "Cartoon characters in aggressive conflict"
+#~ msgstr "شخصيات كرتونية تتصراع بعدوانية"
+
+#~ msgid "Graphic violence involving cartoon characters"
+#~ msgstr "عنف رسومي لشخصيات كرتونية"
+
+#~ msgid "No fantasy violence"
+#~ msgstr "لا عنف خيالي"
+
+#~ msgid "Characters in unsafe situations easily distinguishable from reality"
+#~ msgstr "الشخصيات الكرتونية في مواقف خطرة يمكن تمييزها عن الواقع بسهولة"
+
+#~ msgid ""
+#~ "Characters in aggressive conflict easily distinguishable from reality"
+#~ msgstr ""
+#~ "الشخصيات الكرتونية وهي تتصارع بعدوانية يمكن تمييزها عن الواقع بسهولة"
+
+#~ msgid "Graphic violence easily distinguishable from reality"
+#~ msgstr "العنف الرسومي سهل تفرقته عن الواقع"
+
+#~ msgid "No realistic violence"
+#~ msgstr "لا عنف واقعي"
+
+#~ msgid "Mildly realistic characters in unsafe situations"
+#~ msgstr "شخصيات واقعية معتدلة في حالات غير آمنة"
+
+#~ msgid "Depictions of realistic characters in aggressive conflict"
+#~ msgstr "تصوير شخصيات واقعية تتصراع بعدوانية"
+
+#~ msgid "Graphic violence involving realistic characters"
+#~ msgstr "عنف رسومي لشخصيات واقعية"
+
+#~ msgid "No bloodshed"
+#~ msgstr "لا إراقة دماء"
+
+#~ msgid "Unrealistic bloodshed"
+#~ msgstr "إراقة الدماء غير حقيقة"
+
+#~ msgid "Realistic bloodshed"
+#~ msgstr "إراقة الدماء حقيقة"
+
+#~ msgid "Depictions of bloodshed and the mutilation of body parts"
+#~ msgstr "تصوير لسفك الدماء والتمثيل بأجزاء الجسد"
+
+#~ msgid "No sexual violence"
+#~ msgstr "لا عنف جنسي"
+
+#~ msgid "Rape or other violent sexual behavior"
+#~ msgstr "اغتصاب أو سلوك جنسي عنيف"
+
+#~ msgid "No references to alcohol"
+#~ msgstr "لا إشارات لمشروبات كحولية"
+
+#~ msgid "References to alcoholic beverages"
+#~ msgstr "إشارات لمشروبات كحولية"
+
+#~ msgid "Use of alcoholic beverages"
+#~ msgstr "استخدام مشروبات كحولية"
+
+#~ msgid "No references to illicit drugs"
+#~ msgstr "لا إشارات لمخدرات غير مشروعة"
+
+#~ msgid "References to illicit drugs"
+#~ msgstr "إشارات لمخدرات غير مشروعة"
+
+#~ msgid "Use of illicit drugs"
+#~ msgstr "استخدام مخدرات غير مشروعة"
+
+#~ msgid "References to tobacco products"
+#~ msgstr "إشارات منتجات التبغ"
+
+#~ msgid "Use of tobacco products"
+#~ msgstr "استخدام منتجات التبغ"
+
+#~ msgid "No nudity of any sort"
+#~ msgstr "لا عري من أي نوع"
+
+#~ msgid "Brief artistic nudity"
+#~ msgstr "عري فني بسيط"
+
+#~ msgid "Prolonged nudity"
+#~ msgstr "العري لفترة طويلة"
+
+#~ msgid "No references or depictions of sexual nature"
+#~ msgstr "لا إشارات أو تصوير للجنس"
+
+#~ msgid "Provocative references or depictions"
+#~ msgstr "تلميحات استفزازية"
+
+#~ msgid "Sexual references or depictions"
+#~ msgstr "إشارات أو تصوير للجنس"
+
+#~ msgid "Graphic sexual behavior"
+#~ msgstr "سلوك جنسي رسومي"
+
+#~ msgid "No profanity of any kind"
+#~ msgstr "لا ألفاظ نابية من أي نوع"
+
+#~ msgid "Mild or infrequent use of profanity"
+#~ msgstr "استخدام معتدل أو نادر للألفاظ النابية"
+
+#~ msgid "Moderate use of profanity"
+#~ msgstr "استعمال معتدل للألفاظ النابية"
+
+#~ msgid "Strong or frequent use of profanity"
+#~ msgstr "استعمال قوي أو متكرر للألفاظ النابية"
+
+#~ msgid "No inappropriate humor"
+#~ msgstr "لا فكاهة مبتذلة"
+
+#~ msgid "Slapstick humor"
+#~ msgstr "فكاهة تهريجية"
+
+#~ msgid "Vulgar or bathroom humor"
+#~ msgstr "فكاهة مبتذلة"
+
+#~ msgid "Mature or sexual humor"
+#~ msgstr "نكت جنسية/للكبار"
+
+#~ msgid "No discriminatory language of any kind"
+#~ msgstr "لا لغة متحيزة من أي نوع"
+
+#~ msgid "Negativity towards a specific group of people"
+#~ msgstr "السلبية تجاه مجموعة من الأشخاص"
+
+#~ msgid "Discrimination designed to cause emotional harm"
+#~ msgstr "تمييز مفتعل للتسبب بضرر عاطفي"
+
+#~ msgid "Explicit discrimination based on gender, sexuality, race or religion"
+#~ msgstr "تمييز صريح بناء على الجنس، أو السلاسة البشرية أو العقيدة"
+
+#~ msgid "No advertising of any kind"
+#~ msgstr "لا إعلانات من أي نوع"
+
+#~ msgid "Product placement"
+#~ msgstr "إشهار منتجات"
+
+#~ msgid "Explicit references to specific brands or trademarked products"
+#~ msgstr "إشارات صريحة لعلامات تجارية ومنتجات معينة"
+
+#~ msgid "Users are encouraged to purchase specific real-world items"
+#~ msgstr "يُشجّع المستخدمين على شراء عناصر معينة في العالم الحقيقي"
+
+#~ msgid "No gambling of any kind"
+#~ msgstr "لا مقامرة من أي نوع"
+
+#~ msgid "Gambling on random events using tokens or credits"
+#~ msgstr "مقامرة على أحداث عشوائية باستخدام عمل رمزية أو ائتمانات"
+
+#~ msgid "Gambling using “play” money"
+#~ msgstr "مقامرة باستخدام مال ”ألعاب“"
+
+#~ msgid "Gambling using real money"
+#~ msgstr "مقامرة باستخدام مال حقيقي"
+
+#~ msgid "No ability to spend money"
+#~ msgstr "لا إمكانية إنفاق أموال"
+
+#~ msgid "Users are encouraged to donate real money"
+#~ msgstr "يُشجّع المستخدمين على التبرع بنقود حقيقية"
+
+#~ msgid "Ability to spend real money in-game"
+#~ msgstr "إمكانية إنفاق أموال حقيقية داخل اللعبة"
+
+#~ msgid "No way to chat with other users"
+#~ msgstr "لا إمكانية للدردشة مع مستخدمين آخرين"
+
+#~ msgid "User-to-user game interactions without chat functionality"
+#~ msgstr "تفاعل المستخدمين مع بعض في اللعبة بدون ميزة دردشة"
+
+#~ msgid "Moderated chat functionality between users"
+#~ msgstr "ميزة مدارة دردشة بين المستخدمين"
+
+#~ msgid "Uncontrolled chat functionality between users"
+#~ msgstr "ميزة دردشة بين المستخدمين بلا إدارة"
+
+#~ msgid "No way to talk with other users"
+#~ msgstr "لا إمكانية للحديث مع مستخدمين آخرين"
+
+#~ msgid "Uncontrolled audio or video chat functionality between users"
+#~ msgstr "ميزة دردشة مرئية أو صوتية بين المستخدمين بلا إدارة"
+
+#~ msgid "No sharing of social network usernames or email addresses"
+#~ msgstr "لا مشاركة لأسماء حسابات شبكات التواصل أو عناوين البريد"
+
+#~ msgid "Sharing social network usernames or email addresses"
+#~ msgstr "مشاركة أسماء حسابات شبكات التواصل أو عناوين البريد"
+
+#~ msgid "No sharing of user information with 3rd parties"
+#~ msgstr "لا مشاركة لمعلومات المستخدم مع أطراف ثالثة"
+
+#~ msgid "Checking for the latest application version"
+#~ msgstr "يتم التحقق من أحدث إصدار للتطبيق"
+
+#~ msgid "Sharing diagnostic data that does not let others identify the user"
+#~ msgstr "مشاركة بيانات التشخيص التي لا تسمح للآخرين بتحديد المستخدم"
+
+#~ msgid "Sharing information that lets others identify the user"
+#~ msgstr "مشاركة المعلومات التي تتيح للآخرين تحديد هوية المستخدم"
+
+#~ msgid "No sharing of physical location to other users"
+#~ msgstr "غير مصرح بمشاركة الموقع الفعلي مع المستخدمين الآخرين"
+
+#~ msgid "Sharing physical location to other users"
+#~ msgstr "مشاركة الموقع الفيزيائي مع بقية المستخدمين"
+
+#~ msgid "No references to homosexuality"
+#~ msgstr "لا توجد إشارات إلى المثلية الجنسية"
+
+#~ msgid "Indirect references to homosexuality"
+#~ msgstr "إشارات غير مباشرة إلى المثلية الجنسية"
+
+#~ msgid "Kissing between people of the same gender"
+#~ msgstr "تقبيل بين الناس من نفس الجنس"
+
+#~ msgid "Graphic sexual behavior between people of the same gender"
+#~ msgstr "السلوك الجنسي الجرافيكي بين الناس من نفس الجنس"
+
+#~ msgid "No references to prostitution"
+#~ msgstr "لا إشارات إلى البغاء"
+
+#~ msgid "Indirect references to prostitution"
+#~ msgstr "إشارات غير مباشرة إلى البغاء"
+
+#~ msgid "Direct references to prostitution"
+#~ msgstr "إشارات مباشرة للبغاء"
+
+#~ msgid "Graphic depictions of the act of prostitution"
+#~ msgstr "تصوير جرافيك لممارسة البغاء"
+
+#~ msgid "No references to adultery"
+#~ msgstr "لا إشارات إلى الزنا"
+
+#~ msgid "Indirect references to adultery"
+#~ msgstr "إشارات غير مباشرة إلى الزنا"
+
+#~ msgid "Direct references to adultery"
+#~ msgstr "إشارات مباشرة إلى الزنا"
+
+#~ msgid "Graphic depictions of the act of adultery"
+#~ msgstr "تصوير جرافيك لفعل الزنا"
+
+#~ msgid "No sexualized characters"
+#~ msgstr "بدون شخصيات جنسية"
+
+#~ msgid "Scantily clad human characters"
+#~ msgstr "يكتنفه الشخصيات البشرية"
+
+#~ msgid "Overtly sexualized human characters"
+#~ msgstr "شخصيات بشرية جنسية بشكل علني"
+
+#~ msgid "No references to desecration"
+#~ msgstr "لا إشارات إلى التدنيس"
+
+#~ msgid "Depictions or references to historical desecration"
+#~ msgstr "تصوير أو إشارات تدنيس تاريخية"
+
+#~ msgid "Depictions of modern-day human desecration"
+#~ msgstr "تصوير تدنيس الإنسان الحديث"
+
+#~ msgid "Graphic depictions of modern-day desecration"
+#~ msgstr "صور جرافيك لتدنيس العصر الحديث"
+
+#~ msgid "No visible dead human remains"
+#~ msgstr "لا توجد رفات بشرية ميتة"
+
+#~ msgid "Visible dead human remains"
+#~ msgstr "بقايا بشرية ميتة ظاهرة"
+
+#~ msgid "Dead human remains that are exposed to the elements"
+#~ msgstr "بقايا بشرية ميتة تتعرض للعناصر"
+
+#~ msgid "Graphic depictions of desecration of human bodies"
+#~ msgstr "الرسوم البيانية لتدنيس الأجسام البشرية"
+
+#~ msgid "No references to slavery"
+#~ msgstr "لا إشارات إلى العبودية"
+
+#~ msgid "Depictions or references to historical slavery"
+#~ msgstr "تصوير أو إشارات إلى العبودية التاريخية"
+
+#~ msgid "Depictions of modern-day slavery"
+#~ msgstr "تصوير الرق المعاصر"
+
+#~ msgid "Graphic depictions of modern-day slavery"
+#~ msgstr "تصوير جرافيكي للعبودية الحديثة"
