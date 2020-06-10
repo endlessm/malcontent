@@ -164,9 +164,9 @@ mct_app_filter_is_enabled (MctAppFilter *filter)
   /* Check all fields against their default values. Ignore
    * `allow_system_installation` since it’s false by default, so the default
    * value is already the most restrictive. */
-  return ((filter->app_list_type == MCT_APP_FILTER_LIST_BLACKLIST &&
+  return ((filter->app_list_type == MCT_APP_FILTER_LIST_BLOCKLIST &&
            filter->app_list[0] != NULL) ||
-          filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST ||
+          filter->app_list_type == MCT_APP_FILTER_LIST_ALLOWLIST ||
           !oars_ratings_all_intense_or_unknown ||
           !filter->allow_user_installation);
 }
@@ -202,9 +202,9 @@ mct_app_filter_is_path_allowed (MctAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case MCT_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLOCKLIST:
       return !path_in_list;
-    case MCT_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_ALLOWLIST:
       return path_in_list;
     default:
       g_assert_not_reached ();
@@ -265,9 +265,9 @@ mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case MCT_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLOCKLIST:
       return !ref_in_list;
-    case MCT_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_ALLOWLIST:
       return ref_in_list;
     default:
       g_assert_not_reached ();
@@ -281,7 +281,7 @@ mct_app_filter_is_flatpak_ref_allowed (MctAppFilter *filter,
  *
  * Check whether the flatpak app with the given @app_id is allowed to be run
  * according to this app filter. This is a globbing match, matching @app_id
- * against potentially multiple entries in the blacklist, as the blacklist
+ * against potentially multiple entries in the blocklist, as the blocklist
  * contains flatpak refs (for example, `app/org.gnome.Builder/x86_64/master`)
  * which contain architecture and branch information. App IDs (for example,
  * `org.gnome.Builder`) do not contain architecture or branch information.
@@ -315,9 +315,9 @@ mct_app_filter_is_flatpak_app_allowed (MctAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case MCT_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLOCKLIST:
       return !id_in_list;
-    case MCT_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_ALLOWLIST:
       return id_in_list;
     default:
       g_assert_not_reached ();
@@ -431,8 +431,8 @@ is_valid_content_type (const gchar *content_type)
  * according to this app filter.
  *
  * Note that this method doesn’t match content subtypes. For example, if
- * `application/xml` is added to the blacklist but `application/xspf+xml` is not,
- * a check for whether `application/xspf+xml` is blacklisted would return false.
+ * `application/xml` is added to the blocklist but `application/xspf+xml` is not,
+ * a check for whether `application/xspf+xml` is blocklisted would return false.
  *
  * Returns: %TRUE if the user this @filter corresponds to is allowed to run
  *    programs handling @content_type according to the @filter policy;
@@ -453,9 +453,9 @@ mct_app_filter_is_content_type_allowed (MctAppFilter *filter,
 
   switch (filter->app_list_type)
     {
-    case MCT_APP_FILTER_LIST_BLACKLIST:
+    case MCT_APP_FILTER_LIST_BLOCKLIST:
       return !ref_in_list;
-    case MCT_APP_FILTER_LIST_WHITELIST:
+    case MCT_APP_FILTER_LIST_ALLOWLIST:
       return ref_in_list;
     default:
       g_assert_not_reached ();
@@ -606,7 +606,7 @@ _mct_app_filter_build_app_filter_variant (MctAppFilter *filter)
   g_return_val_if_fail (filter->ref_count >= 1, NULL);
 
   g_variant_builder_add (&builder, "b",
-                         (filter->app_list_type == MCT_APP_FILTER_LIST_WHITELIST));
+                         (filter->app_list_type == MCT_APP_FILTER_LIST_ALLOWLIST));
   g_variant_builder_open (&builder, G_VARIANT_TYPE ("as"));
 
   for (gsize i = 0; filter->app_list[i] != NULL; i++)
@@ -675,7 +675,7 @@ mct_app_filter_deserialize (GVariant  *variant,
                             uid_t      user_id,
                             GError   **error)
 {
-  gboolean is_whitelist;
+  gboolean is_allowlist;
   g_auto(GStrv) app_list = NULL;
   const gchar *content_rating_kind;
   g_autoptr(GVariant) oars_variant = NULL;
@@ -700,10 +700,10 @@ mct_app_filter_deserialize (GVariant  *variant,
    * kept in sync with those in the `com.endlessm.ParentalControls.AppFilter`
    * D-Bus interface. */
   if (!g_variant_lookup (variant, "AppFilter", "(b^as)",
-                         &is_whitelist, &app_list))
+                         &is_allowlist, &app_list))
     {
       /* Default value. */
-      is_whitelist = FALSE;
+      is_allowlist = FALSE;
       app_list = g_new0 (gchar *, 1);
     }
 
@@ -747,7 +747,7 @@ mct_app_filter_deserialize (GVariant  *variant,
   app_filter->user_id = user_id;
   app_filter->app_list = g_steal_pointer (&app_list);
   app_filter->app_list_type =
-    is_whitelist ? MCT_APP_FILTER_LIST_WHITELIST : MCT_APP_FILTER_LIST_BLACKLIST;
+    is_allowlist ? MCT_APP_FILTER_LIST_ALLOWLIST : MCT_APP_FILTER_LIST_BLOCKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = allow_user_installation;
   app_filter->allow_system_installation = allow_system_installation;
@@ -762,7 +762,7 @@ mct_app_filter_deserialize (GVariant  *variant,
  */
 typedef struct
 {
-  GPtrArray *blacklist;  /* (nullable) (owned) (element-type utf8) */
+  GPtrArray *blocklist;  /* (nullable) (owned) (element-type utf8) */
   GHashTable *oars;  /* (nullable) (owned) (element-type utf8 MctAppFilterOarsValue) */
   gboolean allow_user_installation;
   gboolean allow_system_installation;
@@ -800,7 +800,7 @@ mct_app_filter_builder_init (MctAppFilterBuilder *builder)
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->blacklist == NULL);
+  g_return_if_fail (_builder->blocklist == NULL);
   g_return_if_fail (_builder->oars == NULL);
 
   memcpy (builder, &local_builder, sizeof (local_builder));
@@ -826,7 +826,7 @@ mct_app_filter_builder_clear (MctAppFilterBuilder *builder)
 
   g_return_if_fail (_builder != NULL);
 
-  g_clear_pointer (&_builder->blacklist, g_ptr_array_unref);
+  g_clear_pointer (&_builder->blocklist, g_ptr_array_unref);
   g_clear_pointer (&_builder->oars, g_hash_table_unref);
 }
 
@@ -876,8 +876,8 @@ mct_app_filter_builder_copy (MctAppFilterBuilder *builder)
   _copy = (MctAppFilterBuilderReal *) copy;
 
   mct_app_filter_builder_clear (copy);
-  if (_builder->blacklist != NULL)
-    _copy->blacklist = g_ptr_array_ref (_builder->blacklist);
+  if (_builder->blocklist != NULL)
+    _copy->blocklist = g_ptr_array_ref (_builder->blocklist);
   if (_builder->oars != NULL)
     _copy->oars = g_hash_table_ref (_builder->oars);
   _copy->allow_user_installation = _builder->allow_user_installation;
@@ -927,11 +927,11 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   g_autoptr(GVariant) oars_variant = NULL;
 
   g_return_val_if_fail (_builder != NULL, NULL);
-  g_return_val_if_fail (_builder->blacklist != NULL, NULL);
+  g_return_val_if_fail (_builder->blocklist != NULL, NULL);
   g_return_val_if_fail (_builder->oars != NULL, NULL);
 
   /* Ensure the paths list is %NULL-terminated. */
-  g_ptr_array_add (_builder->blacklist, NULL);
+  g_ptr_array_add (_builder->blocklist, NULL);
 
   /* Build the OARS variant. */
   g_hash_table_iter_init (&iter, _builder->oars);
@@ -962,8 +962,8 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
   app_filter = g_new0 (MctAppFilter, 1);
   app_filter->ref_count = 1;
   app_filter->user_id = -1;
-  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->blacklist), FALSE);
-  app_filter->app_list_type = MCT_APP_FILTER_LIST_BLACKLIST;
+  app_filter->app_list = (gchar **) g_ptr_array_free (g_steal_pointer (&_builder->blocklist), FALSE);
+  app_filter->app_list_type = MCT_APP_FILTER_LIST_BLOCKLIST;
   app_filter->oars_ratings = g_steal_pointer (&oars_variant);
   app_filter->allow_user_installation = _builder->allow_user_installation;
   app_filter->allow_system_installation = _builder->allow_system_installation;
@@ -974,24 +974,24 @@ mct_app_filter_builder_end (MctAppFilterBuilder *builder)
 }
 
 /**
- * mct_app_filter_builder_blacklist_path:
+ * mct_app_filter_builder_blocklist_path:
  * @builder: an initialised #MctAppFilterBuilder
- * @path: (type filename): an absolute path to blacklist
+ * @path: (type filename): an absolute path to blocklist
  *
- * Add @path to the blacklist of app paths in the filter under construction. It
+ * Add @path to the blocklist of app paths in the filter under construction. It
  * will be canonicalised (without doing any I/O) before being added.
  * The canonicalised @path will not be added again if it’s already been added.
  *
  * Since: 0.2.0
  */
 void
-mct_app_filter_builder_blacklist_path (MctAppFilterBuilder *builder,
+mct_app_filter_builder_blocklist_path (MctAppFilterBuilder *builder,
                                        const gchar         *path)
 {
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->blacklist != NULL);
+  g_return_if_fail (_builder->blocklist != NULL);
   g_return_if_fail (path != NULL);
   g_return_if_fail (g_path_is_absolute (path));
 
@@ -1000,67 +1000,67 @@ mct_app_filter_builder_blacklist_path (MctAppFilterBuilder *builder,
                                                               NULL, NULL, NULL);
   g_return_if_fail (canonical_path_utf8 != NULL);
 
-  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+  if (!g_ptr_array_find_with_equal_func (_builder->blocklist,
                                          canonical_path_utf8, g_str_equal, NULL))
-    g_ptr_array_add (_builder->blacklist, g_steal_pointer (&canonical_path_utf8));
+    g_ptr_array_add (_builder->blocklist, g_steal_pointer (&canonical_path_utf8));
 }
 
 /**
- * mct_app_filter_builder_blacklist_flatpak_ref:
+ * mct_app_filter_builder_blocklist_flatpak_ref:
  * @builder: an initialised #MctAppFilterBuilder
- * @app_ref: a flatpak app ref to blacklist
+ * @app_ref: a flatpak app ref to blocklist
  *
- * Add @app_ref to the blacklist of flatpak refs in the filter under
+ * Add @app_ref to the blocklist of flatpak refs in the filter under
  * construction. The @app_ref will not be added again if it’s already been
  * added.
  *
  * Since: 0.2.0
  */
 void
-mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
+mct_app_filter_builder_blocklist_flatpak_ref (MctAppFilterBuilder *builder,
                                               const gchar         *app_ref)
 {
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->blacklist != NULL);
+  g_return_if_fail (_builder->blocklist != NULL);
   g_return_if_fail (app_ref != NULL);
   g_return_if_fail (is_valid_flatpak_ref (app_ref));
 
-  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+  if (!g_ptr_array_find_with_equal_func (_builder->blocklist,
                                          app_ref, g_str_equal, NULL))
-    g_ptr_array_add (_builder->blacklist, g_strdup (app_ref));
+    g_ptr_array_add (_builder->blocklist, g_strdup (app_ref));
 }
 
 /**
- * mct_app_filter_builder_blacklist_content_type:
+ * mct_app_filter_builder_blocklist_content_type:
  * @builder: an initialised #MctAppFilterBuilder
- * @content_type: a content type to blacklist
+ * @content_type: a content type to blocklist
  *
- * Add @content_type to the blacklist of content types in the filter under
+ * Add @content_type to the blocklist of content types in the filter under
  * construction. The @content_type will not be added again if it’s already been
  * added.
  *
  * Note that this method doesn’t handle content subtypes. For example, if
- * `application/xml` is added to the blacklist but `application/xspf+xml` is not,
- * a check for whether `application/xspf+xml` is blacklisted would return false.
+ * `application/xml` is added to the blocklist but `application/xspf+xml` is not,
+ * a check for whether `application/xspf+xml` is blocklisted would return false.
  *
  * Since: 0.4.0
  */
 void
-mct_app_filter_builder_blacklist_content_type (MctAppFilterBuilder *builder,
+mct_app_filter_builder_blocklist_content_type (MctAppFilterBuilder *builder,
                                                const gchar         *content_type)
 {
   MctAppFilterBuilderReal *_builder = (MctAppFilterBuilderReal *) builder;
 
   g_return_if_fail (_builder != NULL);
-  g_return_if_fail (_builder->blacklist != NULL);
+  g_return_if_fail (_builder->blocklist != NULL);
   g_return_if_fail (content_type != NULL);
   g_return_if_fail (is_valid_content_type (content_type));
 
-  if (!g_ptr_array_find_with_equal_func (_builder->blacklist,
+  if (!g_ptr_array_find_with_equal_func (_builder->blocklist,
                                          content_type, g_str_equal, NULL))
-    g_ptr_array_add (_builder->blacklist, g_strdup (content_type));
+    g_ptr_array_add (_builder->blocklist, g_strdup (content_type));
 }
 
 /**

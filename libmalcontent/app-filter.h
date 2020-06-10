@@ -165,11 +165,11 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (MctAppFilterBuilder, mct_app_filter_builder_free)
 
 MctAppFilter *mct_app_filter_builder_end (MctAppFilterBuilder *builder);
 
-void mct_app_filter_builder_blacklist_path        (MctAppFilterBuilder   *builder,
+void mct_app_filter_builder_blocklist_path        (MctAppFilterBuilder   *builder,
                                                    const gchar           *path);
-void mct_app_filter_builder_blacklist_flatpak_ref (MctAppFilterBuilder *builder,
+void mct_app_filter_builder_blocklist_flatpak_ref (MctAppFilterBuilder *builder,
                                                    const gchar         *app_ref);
-void mct_app_filter_builder_blacklist_content_type (MctAppFilterBuilder *builder,
+void mct_app_filter_builder_blocklist_content_type (MctAppFilterBuilder *builder,
                                                     const gchar         *content_type);
 
 void mct_app_filter_builder_set_oars_value        (MctAppFilterBuilder   *builder,
