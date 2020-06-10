@@ -6,9 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent master\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 12:04+0100\n"
-"PO-Revision-Date: 2020-04-07 09:03+0300\n"
+"Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/issu"
+"es\n"
+"POT-Creation-Date: 2020-06-10 15:26+0000\n"
+"PO-Revision-Date: 2020-06-10 20:33+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -181,45 +182,45 @@ msgstr ""
 #: libmalcontent-ui/gs-content-rating.c:75
 #, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%s (%s)"
 
 #: libmalcontent-ui/gs-content-rating.c:209
 msgid "General"
-msgstr ""
+msgstr "Загальне"
 
 #: libmalcontent-ui/gs-content-rating.c:218
 msgid "ALL"
-msgstr ""
+msgstr "УСІ"
 
 #: libmalcontent-ui/gs-content-rating.c:222
 #: libmalcontent-ui/gs-content-rating.c:485
 msgid "Adults Only"
-msgstr ""
+msgstr "Лише для дорослих"
 
 #: libmalcontent-ui/gs-content-rating.c:224
 #: libmalcontent-ui/gs-content-rating.c:484
 msgid "Mature"
-msgstr ""
+msgstr "Для дорослих"
 
 #: libmalcontent-ui/gs-content-rating.c:226
 #: libmalcontent-ui/gs-content-rating.c:483
 msgid "Teen"
-msgstr ""
+msgstr "Для підлітків"
 
 #: libmalcontent-ui/gs-content-rating.c:228
 #: libmalcontent-ui/gs-content-rating.c:482
 msgid "Everyone 10+"
-msgstr ""
+msgstr "Для усіх 10+"
 
 #: libmalcontent-ui/gs-content-rating.c:230
 #: libmalcontent-ui/gs-content-rating.c:481
 msgid "Everyone"
-msgstr ""
+msgstr "Для усіх"
 
 #: libmalcontent-ui/gs-content-rating.c:232
 #: libmalcontent-ui/gs-content-rating.c:480
 msgid "Early Childhood"
-msgstr ""
+msgstr "Для маленьких дітей"
 
 #. Translators: the placeholder is a user’s full name
 #: libmalcontent-ui/restrict-applications-dialog.c:222
@@ -416,48 +417,6 @@ msgstr ""
 msgid "The GNOME Project"
 msgstr "Проєкт GNOME"
 
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:50
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:59
-msgid "Minor improvements to parental controls application UI"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:51
-msgid "Add a user manual"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:52
-msgid "Translation updates"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:60
-msgid "Translations to Ukrainian and Polish"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:67
-msgid "Improve parental controls application UI and add icon"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:68
-msgid "Support for indicating which accounts are parent accounts"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:75
-msgid "Initial release of basic parental controls application"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:76
-msgid "Support for setting app installation and run restrictions on users"
-msgstr ""
-
-#: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:83
-msgid "Maintenance release of underlying parental controls library"
-msgstr ""
-
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:7
-msgid "org.freedesktop.MalcontentControl"
-msgstr ""
-
 #. Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:13
 msgid ""
@@ -506,310 +465,3 @@ msgstr "У користувача «%s» більше не лишилося ча
 #, c-format
 msgid "Error setting time limit on login session: %s"
 msgstr "Помилка під час спроби встановити часове обмеження на сеанс роботи: %s"
-
-#~ msgid "No cartoon violence"
-#~ msgstr "Без насильства у мультфільмах"
-
-#~ msgid "Cartoon characters in unsafe situations"
-#~ msgstr "Персонажі мультфільмів у небезпечних ситуаціях"
-
-#~ msgid "Cartoon characters in aggressive conflict"
-#~ msgstr "Персонажі мультфільмів у агресивному конфлікті"
-
-#~ msgid "Graphic violence involving cartoon characters"
-#~ msgstr "Відверте насильство за участі персонажів мультфільмів"
-
-#~ msgid "No fantasy violence"
-#~ msgstr "Без насильства у фентезі"
-
-#~ msgid "Characters in unsafe situations easily distinguishable from reality"
-#~ msgstr ""
-#~ "Персонажі у небезпечних ситуаціях, які просто відрізнити від реальності"
-
-#~ msgid ""
-#~ "Characters in aggressive conflict easily distinguishable from reality"
-#~ msgstr ""
-#~ "Персонажі у агресивному конфлікті, який просто відрізнити від реальності"
-
-#~ msgid "Graphic violence easily distinguishable from reality"
-#~ msgstr "Відверте насильство, яке просто відрізнити від реальності"
-
-#~ msgid "No realistic violence"
-#~ msgstr "Без реалістичного насильства"
-
-#~ msgid "Mildly realistic characters in unsafe situations"
-#~ msgstr "Помірно реалістичні персонажі у небезпечних ситуаціях"
-
-#~ msgid "Depictions of realistic characters in aggressive conflict"
-#~ msgstr "Зображення реалістичних персонажів у агресивному конфлікті"
-
-#~ msgid "Graphic violence involving realistic characters"
-#~ msgstr "Відверте насильство за участі реалістичних персонажів"
-
-#~ msgid "No bloodshed"
-#~ msgstr "Без кривавих сцен"
-
-#~ msgid "Unrealistic bloodshed"
-#~ msgstr "Нереалістичні криваві сцени"
-
-#~ msgid "Realistic bloodshed"
-#~ msgstr "Реалістичні криваві сцени"
-
-#~ msgid "Depictions of bloodshed and the mutilation of body parts"
-#~ msgstr "Зображення кривавих сцен і каліцтва"
-
-#~ msgid "No sexual violence"
-#~ msgstr "Без сексуального насильства"
-
-#~ msgid "Rape or other violent sexual behavior"
-#~ msgstr "Зґвалтування та інша насильницька сексуальна поведінка"
-
-#~ msgid "No references to alcohol"
-#~ msgstr "Без згадування алкоголю"
-
-#~ msgid "References to alcoholic beverages"
-#~ msgstr "Згадки про алкогольні напої"
-
-#~ msgid "Use of alcoholic beverages"
-#~ msgstr "Вживання алкогольних напоїв"
-
-#~ msgid "No references to illicit drugs"
-#~ msgstr "Без згадування заборонених наркотиків"
-
-#~ msgid "References to illicit drugs"
-#~ msgstr "Згадування заборонених наркотиків"
-
-#~ msgid "Use of illicit drugs"
-#~ msgstr "Вживання заборонених наркотиків"
-
-#~ msgid "References to tobacco products"
-#~ msgstr "Згадування тютюнових продуктів"
-
-#~ msgid "Use of tobacco products"
-#~ msgstr "Вживання тютюнових продуктів"
-
-#~ msgid "No nudity of any sort"
-#~ msgstr "Без оголення інтимних частин тіла"
-
-#~ msgid "Brief artistic nudity"
-#~ msgstr "Незначні художні оголення"
-
-#~ msgid "Prolonged nudity"
-#~ msgstr "Тривалі сцени із оголенням"
-
-#~ msgid "No references or depictions of sexual nature"
-#~ msgstr "Без згадок або зображення сексуальної природи"
-
-#~ msgid "Provocative references or depictions"
-#~ msgstr "Провокативні згадки або зображення"
-
-#~ msgid "Sexual references or depictions"
-#~ msgstr "Сексуальні згадки або зображення"
-
-#~ msgid "Graphic sexual behavior"
-#~ msgstr "Відверта сексуальна поведінка"
-
-#~ msgid "No profanity of any kind"
-#~ msgstr "Без будь-якої лайки"
-
-#~ msgid "Mild or infrequent use of profanity"
-#~ msgstr "Помірне або нечасте вживання лайки"
-
-#~ msgid "Moderate use of profanity"
-#~ msgstr "Помірне вживання лайки"
-
-#~ msgid "Strong or frequent use of profanity"
-#~ msgstr "Відверте або часте вживання лайки"
-
-#~ msgid "No inappropriate humor"
-#~ msgstr "Без сумнівного гумору"
-
-#~ msgid "Slapstick humor"
-#~ msgstr "Грубий гумор"
-
-#~ msgid "Vulgar or bathroom humor"
-#~ msgstr "Вульгарний або туалетний гумор"
-
-#~ msgid "Mature or sexual humor"
-#~ msgstr "Гумор для дорослих або сексуальний гумор"
-
-#~ msgid "No discriminatory language of any kind"
-#~ msgstr "Без принизливих згадок суспільних груп"
-
-#~ msgid "Negativity towards a specific group of people"
-#~ msgstr "Негатив щодо певної суспільної групи"
-
-#~ msgid "Discrimination designed to cause emotional harm"
-#~ msgstr "Принизливі вислови для спричинення емоційної шкоди"
-
-#~ msgid "Explicit discrimination based on gender, sexuality, race or religion"
-#~ msgstr ""
-#~ "Явне вербальне приниження на основі статі, сексуальної орієнтації, раси "
-#~ "або релігійної приналежності"
-
-#~ msgid "No advertising of any kind"
-#~ msgstr "Без будь-якої реклами"
-
-#~ msgid "Product placement"
-#~ msgstr "Реклама товарів"
-
-#~ msgid "Explicit references to specific brands or trademarked products"
-#~ msgstr ""
-#~ "Явні згадування певних торговельних марок та продуктів, захищених "
-#~ "авторським правом"
-
-#~ msgid "Users are encouraged to purchase specific real-world items"
-#~ msgstr "Користувачам пропонують придбати певні матеріальні товари"
-
-#~ msgid "No gambling of any kind"
-#~ msgstr "Без будь-яких азартних ігор"
-
-#~ msgid "Gambling on random events using tokens or credits"
-#~ msgstr ""
-#~ "Азартні ігри або випадкові події із використанням жетонів або кредитів"
-
-#~ msgid "Gambling using “play” money"
-#~ msgstr "Азартні ігри із використанням ігрових грошей"
-
-#~ msgid "Gambling using real money"
-#~ msgstr "Азартні ігри із використанням справжніх грошей"
-
-#~ msgid "No ability to spend money"
-#~ msgstr "Без можливості витрачання грошей"
-
-#~ msgid "Users are encouraged to donate real money"
-#~ msgstr "Користувачам пропонують вкладати реальні гроші"
-
-#~ msgid "Ability to spend real money in-game"
-#~ msgstr "Можливість вкладання реальних грошей під час ігрового процесу"
-
-#~ msgid "No way to chat with other users"
-#~ msgstr "Не можна спілкуватися із іншими користувачами"
-
-#~ msgid "User-to-user game interactions without chat functionality"
-#~ msgstr "Безпосередня гра між користувачами без можливостей спілкування"
-
-#~ msgid "Moderated chat functionality between users"
-#~ msgstr "Можливості зі спілкування між користувачами із модерацією"
-
-#~ msgid "Uncontrolled chat functionality between users"
-#~ msgstr "Неконтрольовані можливості із спілкування між користувачами"
-
-#~ msgid "No way to talk with other users"
-#~ msgstr "Без можливості звукового спілкування із іншими користувачами"
-
-#~ msgid "Uncontrolled audio or video chat functionality between users"
-#~ msgstr ""
-#~ "Неконтрольовані можливості із звукового та відеоспілкування між "
-#~ "користувачами"
-
-#~ msgid "No sharing of social network usernames or email addresses"
-#~ msgstr ""
-#~ "Без оприлюднення імен користувачів у соціальних мережах та адрес "
-#~ "електронної пошти"
-
-#~ msgid "Sharing social network usernames or email addresses"
-#~ msgstr ""
-#~ "Оприлюднення імен користувачів у соціальних мережах та адрес електронної "
-#~ "пошти"
-
-#~ msgid "No sharing of user information with 3rd parties"
-#~ msgstr "Без надання даних щодо користувача стороннім особам"
-
-#~ msgid "Checking for the latest application version"
-#~ msgstr "Пошук найсвіжішої версії програми"
-
-#~ msgid "Sharing diagnostic data that does not let others identify the user"
-#~ msgstr ""
-#~ "Оприлюднення діагностичних даних, які не надають безпосередньої змоги "
-#~ "ідентифікувати користувача"
-
-#~ msgid "Sharing information that lets others identify the user"
-#~ msgstr "Оприлюднення даних, які уможливлюють ідентифікацію користувача"
-
-#~ msgid "No sharing of physical location to other users"
-#~ msgstr "Без відкриття доступу щодо місця перебування іншим користувачам"
-
-#~ msgid "Sharing physical location to other users"
-#~ msgstr "Відкриття доступу щодо місця перебування іншим користувачам"
-
-#~ msgid "No references to homosexuality"
-#~ msgstr "Без згадування гомосексуальності"
-
-#~ msgid "Indirect references to homosexuality"
-#~ msgstr "Опосередковане згадування гомосексуальності"
-
-#~ msgid "Kissing between people of the same gender"
-#~ msgstr "Цілунки між людьми однієї статі"
-
-#~ msgid "Graphic sexual behavior between people of the same gender"
-#~ msgstr "Відверта сексуальна поведінка між людьми однієї статі"
-
-#~ msgid "No references to prostitution"
-#~ msgstr "Без згадування проституції"
-
-#~ msgid "Indirect references to prostitution"
-#~ msgstr "Опосередковане згадування проституції"
-
-#~ msgid "Direct references to prostitution"
-#~ msgstr "Безпосереднє згадування проституції"
-
-#~ msgid "Graphic depictions of the act of prostitution"
-#~ msgstr "Відверте зображення акту проституції"
-
-#~ msgid "No references to adultery"
-#~ msgstr "Без згадування перелюбу"
-
-#~ msgid "Indirect references to adultery"
-#~ msgstr "Опосередковані згадування перелюбу"
-
-#~ msgid "Direct references to adultery"
-#~ msgstr "Безпосередні згадування перелюбу"
-
-#~ msgid "Graphic depictions of the act of adultery"
-#~ msgstr "Відверті зображення актів перелюбу"
-
-#~ msgid "No sexualized characters"
-#~ msgstr "Без сексуальних персонажів"
-
-#~ msgid "Scantily clad human characters"
-#~ msgstr "Напівоголені людські персонажі"
-
-#~ msgid "Overtly sexualized human characters"
-#~ msgstr "Відверто сексуальні людські персонажі"
-
-#~ msgid "No references to desecration"
-#~ msgstr "Без згадування знущання над людьми"
-
-#~ msgid "Depictions or references to historical desecration"
-#~ msgstr "Зображення або згадування знущання над людьми у минулому"
-
-#~ msgid "Depictions of modern-day human desecration"
-#~ msgstr "Відверті зображення сучасного знущання над людьми"
-
-#~ msgid "Graphic depictions of modern-day desecration"
-#~ msgstr "Відверті зображення сучасного знущання над людьми"
-
-#~ msgid "No visible dead human remains"
-#~ msgstr "Без показу решток мертвих людей"
-
-#~ msgid "Visible dead human remains"
-#~ msgstr "Показ решток мертвих людей"
-
-#~ msgid "Dead human remains that are exposed to the elements"
-#~ msgstr "Докладний показ решток мертвих людей"
-
-#~ msgid "Graphic depictions of desecration of human bodies"
-#~ msgstr "Відверте зображення осквернення людських тіл"
-
-#~ msgid "No references to slavery"
-#~ msgstr "Без згадування рабства"
-
-#~ msgid "Depictions or references to historical slavery"
-#~ msgstr "Зображення або згадки рабства у минулому"
-
-#~ msgid "Depictions of modern-day slavery"
-#~ msgstr "Зображення сучасного рабства"
-
-#~ msgid "Graphic depictions of modern-day slavery"
-#~ msgstr "Відверте зображення сучасного рабства"
