@@ -1,52 +1,59 @@
-# Persian translations for malcontent package.
-# Copyright (C) 2020 THE malcontent'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Automatically generated, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Translators:
+# Will Thompson <wjt@endlessm.com>, 2020
+# Basirahmad Askari <basir.transilation786@gmail.com>, 2020
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 12:04+0100\n"
-"PO-Revision-Date: 2020-04-15 13:42+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2020-06-10 12:08+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Basirahmad Askari <basir.transilation786@gmail.com>, 2020\n"
+"Language-Team: Persian (https://www.transifex.com/endless-os/teams/9016/"
+"fa/)\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr ""
+msgstr "فلتر کردن برنامه خود را تغیر بدهد"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr ""
+msgstr "تشخیص هویت برای تبدیل کردن فیلتر برنامه ضروری است."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr ""
+msgstr "فیلتر برنامه خود را بخوانید"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
-msgstr ""
+msgstr "تشخیص هویت رای خواندن فیلتر برنامه ضروری است."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr ""
+msgstr "برنامه فیلتر یوزر دیگر را تغیر بدهد."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
-msgstr ""
+msgstr "تشخیص هویت برای تغیر دادن فیلتر برنامه یوزر دیگر ضروری است."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr ""
+msgstr "فیلتر برنامه کاربر دیگر را بخوانید"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
-msgstr ""
+msgstr "تشخیص هویت ضروری است برای خوانده فیلتر برنامه کاربر دیگر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"

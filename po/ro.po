@@ -3,32 +3,36 @@
 # This file is distributed under the same license as the malcontent package.
 # Automatically generated, 2020.
 #
+# Translators:
+# georgian balan <braila222@gmail.com>, 2020
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 12:04+0100\n"
-"PO-Revision-Date: 2020-04-15 13:42+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2020-06-10 12:08+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: georgian balan <braila222@gmail.com>, 2020\n"
+"Language-Team: Romanian (https://www.transifex.com/endless-os/teams/9016/"
+"ro/)\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
+"2:1));\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr ""
+msgstr "Modifica filtrul aplicatiei"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr ""
+msgstr "Pentru a schimba filtrul este necesara autentificarea"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr ""
+msgstr "Citeste filtrul aplicatiei"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
@@ -36,23 +40,27 @@ msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr ""
+msgstr "Schimba filtrul aplicatiei a altui utilizator"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
 msgstr ""
+"Pentru a schimba filrtul aplicatiei a altui utilizator,este necesara "
+"autentificarea."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr ""
+msgstr "Citeste filtrul aplicatiei a altui utilizator."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
 msgstr ""
+"Pentru a citi filtrul aplicatiei a altui utilizator,este necesara "
+"autentificarea."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"
-msgstr ""
+msgstr "Modifica limita de sesiune personala."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."

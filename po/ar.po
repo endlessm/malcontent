@@ -7,158 +7,160 @@ msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 12:04+0100\n"
-"PO-Revision-Date: 2020-04-15 13:42+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2020-06-10 12:08+0100\n"
+"PO-Revision-Date: 2020-04-17 21:58+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>, 2020\n"
+"Language-Team: Arabic (https://www.transifex.com/endless-os/teams/9016/ar/)\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr ""
+msgstr "قُم بتغيير عناصر تصفية تطبيقك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير عناصر تصفية تطبيقك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr ""
+msgstr "اقرأ عناصر تصفية تطبيقك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة عناصر تصفية تطبيقك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr ""
+msgstr "قم بتغيير مرشح تطبيق مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير عناصر تصفية التطبيق الخاص بمستخدمٍ آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr ""
+msgstr "قراءة مرشح تطبيقات مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة مرشح تطبيق مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"
-msgstr ""
+msgstr "تغيير حدود جلستك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير حدود جلستك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:54
 msgid "Read your own session limits"
-msgstr ""
+msgstr "قراءة حدود الجلسة الخاصة بك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:55
 msgid "Authentication is required to read your session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة حدود جلستك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:64
 msgid "Change another user’s session limits"
-msgstr ""
+msgstr "تغيير حدود الجلسات لمستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:65
 msgid "Authentication is required to change another user’s session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير حدود جلسة مستخدمٍ آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:74
 msgid "Read another user’s session limits"
-msgstr ""
+msgstr "اقرأ حدود جلسات مستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:75
 msgid "Authentication is required to read another user’s session limits."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة حدود جلسات مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:84
 msgid "Change your own account info"
-msgstr ""
+msgstr "قُم بتغيير معلومات حسابك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:85
 msgid "Authentication is required to change your account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير معلومات حسابك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:94
 msgid "Read your own account info"
-msgstr ""
+msgstr "قراءة معلومات الحساب الخاص بك"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:95
 msgid "Authentication is required to read your account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة معلومات حسابك."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:104
 msgid "Change another user’s account info"
-msgstr ""
+msgstr "تغيير معلومات حساب مستخدمٍ آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:105
 msgid "Authentication is required to change another user’s account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لتغيير معلومات حساب مستخدم آخر."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:114
 msgid "Read another user’s account info"
-msgstr ""
+msgstr "قراءة معلومات حساب مستخدم آخر"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:115
 msgid "Authentication is required to read another user’s account info."
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة معلومات حساب مستخدمٍ آخر."
 
 #: libmalcontent/app-filter.c:694
 #, c-format
 msgid "App filter for user %u was in an unrecognized format"
-msgstr ""
+msgstr "عناصر تصفية التطبيق للمستخدم %u كانت بتنسيق غير معروف"
 
 #: libmalcontent/app-filter.c:725
 #, c-format
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
-msgstr ""
+msgstr "يحتوي مرشح OARS للمستخدم %u على ‘%s’ مجهول"
 
 #: libmalcontent/manager.c:283 libmalcontent/manager.c:412
 #, c-format
 msgid "Not allowed to query app filter data for user %u"
-msgstr ""
+msgstr "غير مسموح بالاستعلام عن بيانات فلتر التطبيق للمستخدم %u "
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
-msgstr ""
+msgstr "المستخدم %u غير موجود"
 
 #: libmalcontent/manager.c:394
 msgid "App filtering is globally disabled"
-msgstr ""
+msgstr "تم تعطيل ترشيح التطبيقات بشكل شامل"
 
 #: libmalcontent/manager.c:777
 msgid "Session limits are globally disabled"
-msgstr ""
+msgstr "حدود الجلسات معطلة بصورة شاملة"
 
 #: libmalcontent/manager.c:795
 #, c-format
 msgid "Not allowed to query session limits data for user %u"
-msgstr ""
+msgstr "غير مسموح بالاستعلام عن بيانات حدود الجلسة للمستخدم %u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
 msgid "Session limit for user %u was in an unrecognized format"
-msgstr ""
+msgstr "كان حد الجلسة للمستخدم %u بتنسيق غير معروف"
 
 #: libmalcontent/session-limits.c:328
 #, c-format
 msgid "Session limit for user %u has an unrecognized type ‘%u’"
-msgstr ""
+msgstr "لدى حد جلسة المستخدم %u نوعاً مجهولاً '%u'"
 
 #: libmalcontent/session-limits.c:346
 #, c-format
 msgid "Session limit for user %u has invalid daily schedule %u–%u"
-msgstr ""
+msgstr "حدود الجلسة للمستخدم %u لها جدول زمني يومي غير صالح %u–%u  "
 
 #. TRANSLATORS: This is the formatting of English and localized name
 #. of the rating e.g. "Adults Only (solo adultos)"
@@ -209,26 +211,26 @@ msgstr ""
 #: libmalcontent-ui/restrict-applications-dialog.c:222
 #, c-format
 msgid "Restrict %s from using the following installed applications."
-msgstr ""
+msgstr "تقييد %s من استخدام التطبيقات المثبتة التالية."
 
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
 msgid "Restrict Applications"
-msgstr ""
+msgstr "تقييد التطبيقات"
 
 #: libmalcontent-ui/restrict-applications-selector.ui:24
 msgid "No applications found to restrict."
-msgstr ""
+msgstr "لم يتم العثور على تطبيقات لتقييدها."
 
 #. Translators: this is the full name for an unknown user account.
 #: libmalcontent-ui/user-controls.c:242 libmalcontent-ui/user-controls.c:253
 msgid "unknown"
-msgstr ""
+msgstr "غير معروف"
 
 #: libmalcontent-ui/user-controls.c:338 libmalcontent-ui/user-controls.c:425
 #: libmalcontent-ui/user-controls.c:711
 msgid "All Ages"
-msgstr ""
+msgstr "جميع الأعمار"
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:514
@@ -237,58 +239,61 @@ msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
 "available in other applications."
 msgstr ""
+"يمنع %s من تشغيل متصفحات الإنترنت. قد يظل محتوى الإنترنت المحدود متاحاً في "
+"تطبيقات أخرى."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:519
 #, c-format
 msgid "Prevents specified applications from being used by %s."
-msgstr ""
+msgstr "يمنع استخدام تطبيقات محددة من قبل %s."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:524
 #, c-format
 msgid "Prevents %s from installing applications."
-msgstr ""
+msgstr "يمنع %s تثبيت التطبيقات."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:529
 #, c-format
 msgid "Applications installed by %s will not appear for other users."
-msgstr ""
+msgstr "لن تظهر التطبيقات المثبتة بواسطة %s للمستخدمين الآخرين."
 
 #: libmalcontent-ui/user-controls.ui:17
 msgid "Application Usage Restrictions"
-msgstr ""
+msgstr "قيود استخدام التطبيق"
 
 #: libmalcontent-ui/user-controls.ui:68
 msgid "Restrict _Web Browsers"
-msgstr ""
+msgstr "تقييد متصفحات الإنترنت"
 
 #: libmalcontent-ui/user-controls.ui:152
 msgid "_Restrict Applications"
-msgstr ""
+msgstr "تقييد التطبيقات"
 
 #: libmalcontent-ui/user-controls.ui:231
 msgid "Software Installation Restrictions"
-msgstr ""
+msgstr "قيود تثبيت البرنامج"
 
 #: libmalcontent-ui/user-controls.ui:281
 msgid "Restrict Application _Installation"
-msgstr ""
+msgstr "تقييد تثبيت التطبيق"
 
 #: libmalcontent-ui/user-controls.ui:366
 msgid "Restrict Application Installation for _Others"
-msgstr ""
+msgstr "تقييد تثبيت التطبيق على الآخرين"
 
 #: libmalcontent-ui/user-controls.ui:451
 msgid "Application _Suitability"
-msgstr ""
+msgstr "ملاءمة التطبيق"
 
 #: libmalcontent-ui/user-controls.ui:473
 msgid ""
 "Restricts browsing or installation of applications to applications suitable "
 "for certain ages or above."
 msgstr ""
+"يقتصر تصفح أو تثبيت التطبيقات على تطبيقات مناسبة لفئة عمرية معينة أو أكبر."
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
@@ -296,11 +301,11 @@ msgstr ""
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
-msgstr ""
+msgstr "أدوات الإشراف العائلي"
 
 #: malcontent-control/application.c:270
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
-msgstr ""
+msgstr "حقوق النشر © 2019، 2020 Endless Mobile، Inc."
 
 #. Translators: this should be "translated" to the
 #. names of people who have translated Malcontent into
@@ -313,54 +318,56 @@ msgstr ""
 #. project, so should not be translated.
 #: malcontent-control/application.c:281
 msgid "Malcontent Website"
-msgstr ""
+msgstr "موقع Malcontent"
 
 #: malcontent-control/application.c:299
 msgid "The help contents could not be displayed"
-msgstr ""
+msgstr "لا يمكن عرض محتويات المساعدة"
 
 #: malcontent-control/application.c:336
 msgid "Failed to load user data from the system"
-msgstr ""
+msgstr "فشل تحميل بيانات المستخدم من النظام"
 
 #: malcontent-control/application.c:338
 msgid "Please make sure that the AccountsService is installed and enabled."
-msgstr ""
+msgstr "يُرجى التأكد من تثبيت خدمة الحسابات وتمكينها."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
-msgstr ""
+msgstr "الصفحة السابقة"
 
 #: malcontent-control/carousel.ui:74
 msgid "Next Page"
-msgstr ""
+msgstr "الصفحة التالية"
 
 #: malcontent-control/main.ui:93
 msgid "Permission Required"
-msgstr ""
+msgstr "الإذن مطلوب"
 
 #: malcontent-control/main.ui:107
 msgid ""
 "Permission is required to view and change user parental controls settings."
-msgstr ""
+msgstr "الإذن مطلوب لعرض وتغيير إعدادات الإشراف العائلي لحساب المستخدم."
 
 #: malcontent-control/main.ui:148
 msgid "No Child Users Configured"
-msgstr ""
+msgstr "لم يتم تهيئة مستخدمين فرعيين"
 
 #: malcontent-control/main.ui:162
 msgid ""
 "No child users are currently set up on the system. Create one before setting "
 "up their parental controls."
 msgstr ""
+"لا توجد حالياً حسابات لمستخدمين أطفال على النظام. قُم بإنشاء حساب واحد قبل "
+"تهيئة أدوات الإشراف العائلي الخاصة بها."
 
 #: malcontent-control/main.ui:174
 msgid "Create _Child User"
-msgstr ""
+msgstr "إنشاء حساب لطفل"
 
 #: malcontent-control/main.ui:202
 msgid "Loading…"
-msgstr ""
+msgstr "جارٍ التحميل..."
 
 #: malcontent-control/main.ui:265
 msgid "_Help"
@@ -368,13 +375,13 @@ msgstr "م_ساعدة"
 
 #: malcontent-control/main.ui:269
 msgid "_About Parental Controls"
-msgstr ""
+msgstr "نبذة عن الإشراف العائلي"
 
 #. Translators: the brief summary of the application as it appears in a software center.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
-msgstr ""
+msgstr "قُم بضبط الإشراف العائلي ومراقبة الاستخدام بواسطة المستخدمين"
 
 #. Translators: These are the application description paragraphs in the AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
@@ -383,6 +390,9 @@ msgid ""
 "use the computer for, what software they can install, and what installed "
 "software they can run."
 msgstr ""
+"إدارة قيود الإشراف العائلي للمستخدمين، والتحكم في المدة التي يمكنهم خلالها "
+"استخدام الكمبيوتر، والبرنامج الذي يمكنهم تثبيته، والبرنامج المثبت الذي "
+"يمكنهم تشغيله"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:39
 msgid "The GNOME Project"
@@ -436,14 +446,17 @@ msgid ""
 "parental controls;screen time;app restrictions;web browser restrictions;oars;"
 "usage;usage limit;kid;child;"
 msgstr ""
+"إعدادات التحكم الأبوي؛ الوقت الذي يقضى بمشاهدة الشاشة؛ القيود الخاصة "
+"بالتطبيقات؛ القيود الخاصة بمتصفحات الإنترنت؛ فتح خدمة تقارير مؤتمتة؛ "
+"الاستخدام؛ حدود الاستخدام؛ الطفل؛ الطفل؛    "
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
-msgstr ""
+msgstr "إدارة الإشراف العائلي"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:10
 msgid "Authentication is required to read and change user parental controls"
-msgstr ""
+msgstr "المصادقة مطلوبة لقراءة وتغيير إعدادات التحكم الأبوية الخاصة بالمستخدم"
 
 #: malcontent-control/user-selector.c:426
 msgid "Your account"
@@ -454,22 +467,22 @@ msgstr "حسابك"
 #: pam/pam_malcontent.c:142 pam/pam_malcontent.c:188
 #, c-format
 msgid "User ‘%s’ has no time limits enabled"
-msgstr ""
+msgstr "لم يتم تمكين حدود زمنية للمستخدم ‘%s’"
 
 #: pam/pam_malcontent.c:151 pam/pam_malcontent.c:172
 #, c-format
 msgid "Error getting session limits for user ‘%s’: %s"
-msgstr ""
+msgstr "حدث خطأ أثناء الحصول على حدود الجلسة للمستخدم ‘%s’: %s"
 
 #: pam/pam_malcontent.c:182
 #, c-format
 msgid "User ‘%s’ has no time remaining"
-msgstr ""
+msgstr "ليس لدى المستخدم \"%s\" وقتاً متبقياً"
 
 #: pam/pam_malcontent.c:200
 #, c-format
 msgid "Error setting time limit on login session: %s"
-msgstr ""
+msgstr "خطأ في تعيين حد الوقت لجلسة تسجيل الدخول: %s"
 
 #~ msgid "No cartoon violence"
 #~ msgstr "لا عنف كرتوني"
