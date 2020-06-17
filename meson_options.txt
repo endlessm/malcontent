@@ -21,3 +21,9 @@ option(
   value: false,
   description: 'use installed libmalcontent rather than building it; used in distros to break a dependency cycle'
 )
+option(
+  'privileged_group',
+  type: 'string',
+  value: 'wheel',
+  description: 'name of group that has elevated permissions'
+)
