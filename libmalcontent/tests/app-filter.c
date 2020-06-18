@@ -279,7 +279,7 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
   mct_app_filter_builder_blocklist_path (fixture->builder, "/usr/bin/gnome-software");
 
   mct_app_filter_builder_blocklist_flatpak_ref (fixture->builder,
-                                                "app/org.doom.Doom/x86_64/master");
+                                                "app/org.doom.Doom/x86_64/stable");
 
   mct_app_filter_builder_blocklist_content_type (fixture->builder,
                                                  "x-scheme-handler/http");
@@ -300,10 +300,10 @@ test_app_filter_builder_non_empty (BuilderFixture *fixture,
                                                   "/usr/bin/gnome-software"));
 
   g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
-                                                        "app/org.gnome.Ponies/x86_64/master"));
+                                                        "app/org.gnome.Ponies/x86_64/stable"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
   g_assert_false (mct_app_filter_is_flatpak_ref_allowed (filter,
-                                                         "app/org.doom.Doom/x86_64/master"));
+                                                         "app/org.doom.Doom/x86_64/stable"));
   g_assert_false (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
 
   g_assert_false (mct_app_filter_is_content_type_allowed (filter,
@@ -343,10 +343,10 @@ test_app_filter_builder_empty (BuilderFixture *fixture,
                                                  "/usr/bin/gnome-software"));
 
   g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
-                                                        "app/org.gnome.Ponies/x86_64/master"));
+                                                        "app/org.gnome.Ponies/x86_64/stable"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.gnome.Ponies"));
   g_assert_true (mct_app_filter_is_flatpak_ref_allowed (filter,
-                                                        "app/org.doom.Doom/x86_64/master"));
+                                                        "app/org.doom.Doom/x86_64/stable"));
   g_assert_true (mct_app_filter_is_flatpak_app_allowed (filter, "org.doom.Doom"));
 
   g_assert_true (mct_app_filter_is_content_type_allowed (filter,
