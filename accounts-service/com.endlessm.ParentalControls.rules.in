@@ -27,7 +27,7 @@ polkit.addRule(function(action, subject) {
          action.id == "com.endlessm.ParentalControls.SessionLimits.ReadOwn" ||
          action.id == "com.endlessm.ParentalControls.SessionLimits.ReadAny") &&
         subject.active && subject.local &&
-        subject.isInGroup("sudo")) {
+        subject.isInGroup("@PRIVILEGED_GROUP@")) {
             return polkit.Result.YES;
     }
 

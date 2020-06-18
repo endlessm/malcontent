@@ -21,5 +21,11 @@ foreach dbus_interface: dbus_interfaces
     join_paths(accountsserviceinterfacesdir, filename))
 endforeach
 
-install_data('com.endlessm.ParentalControls.rules',
-  install_dir: join_paths(get_option('datadir'), 'polkit-1', 'rules.d'))
+polkit_conf = configuration_data()
+polkit_conf.set('PRIVILEGED_GROUP', get_option('privileged_group'))
+configure_file(
+  input: 'com.endlessm.ParentalControls.rules.in',
+  output: 'com.endlessm.ParentalControls.rules',
+  configuration: polkit_conf,
+  install_dir: join_paths(get_option('datadir'), 'polkit-1', 'rules.d')
+)

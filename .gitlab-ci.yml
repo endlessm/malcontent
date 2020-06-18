@@ -22,7 +22,7 @@ debian:
   except:
     - tags
   script:
-    - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true _build .
+    - meson --buildtype debug --werror -Db_coverage=true -Ddocumentation=true -Dprivileged_group=sudo _build .
     - meson test -C _build
     # FIXME: lcov doesn't support gcc9 yet:
     # https://github.com/linux-test-project/lcov/issues/58
