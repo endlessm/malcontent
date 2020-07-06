@@ -7,7 +7,7 @@ endif
 resources = gnome.compile_resources(
   'resources',
   'malcontent-control.gresource.xml',
-  source_dir: meson.source_root(),
+  source_dir: meson.current_source_dir(),
 )
 
 malcontent_control = executable('malcontent-control',
@@ -40,7 +40,7 @@ desktop_file = i18n.merge_file('desktop-file',
   type: 'desktop',
   input: '@0@.desktop.in'.format(application_id),
   output: '@0@.desktop'.format(application_id),
-  po_dir: join_paths(meson.source_root(), 'po'),
+  po_dir: join_paths(meson.current_source_dir(), '..', 'po'),
   install: true,
   install_dir: join_paths(get_option('datadir'), 'applications'),
 )
@@ -60,7 +60,7 @@ endif
 appdata_file = i18n.merge_file('appdata-file',
   input: '@0@.appdata.xml.in'.format(application_id),
   output: '@0@.appdata.xml'.format(application_id),
-  po_dir: join_paths(meson.source_root(), 'po'),
+  po_dir: join_paths(meson.current_source_dir(), '..', 'po'),
   install: true,
   install_dir: join_paths(get_option('datadir'), 'metainfo'),
 )
@@ -97,7 +97,7 @@ endif
 policy_file = i18n.merge_file('policy-file',
   input: '@0@.policy.in'.format(application_id),
   output: '@0@.policy'.format(application_id),
-  po_dir: join_paths(meson.source_root(), 'po'),
+  po_dir: join_paths(meson.current_source_dir(), '..', 'po'),
   install: true,
   install_dir: join_paths(get_option('datadir'), 'polkit-1', 'actions'),
 )
