@@ -8,7 +8,7 @@ endif
 resources = gnome.compile_resources(
   'resources',
   'malcontent-ui.gresource.xml',
-  source_dir: meson.source_root(),
+  source_dir: meson.current_source_dir(),
 )
 
 libmalcontent_ui_sources = [

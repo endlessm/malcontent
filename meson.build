@@ -13,8 +13,8 @@ gnome = import('gnome')
 i18n = import('i18n')
 pkgconfig = import('pkgconfig')
 
-meson_make_symlink = join_paths(meson.source_root(), 'tools', 'meson-make-symlink.py')
-po_dir = join_paths(meson.source_root(), 'po')
+meson_make_symlink = join_paths(meson.current_source_dir(), 'tools', 'meson-make-symlink.py')
+po_dir = join_paths(meson.current_source_dir(), 'po')
 
 prefix = get_option('prefix')
 bindir = join_paths(prefix, get_option('bindir'))
