@@ -1,3 +1,88 @@
+Overview of changes in malcontent 0.9.0
+=======================================
+
+* Use appstream-glib code for content rating systems if available — this
+  adds a dependency on appstream-glib, but no particular version (see #7)
+
+* Rename three APIs in `app-filter.h` to avoid discriminatory language:
+  - `mct_app_filter_builder_blacklist_path` → `…_blocklist_path`
+  - `…_blacklist_flatpak_ref` → `…_blocklist_flatpak_ref`
+  - `…_blacklist_content_type` → `…_blocklist_content_type`
+  This is an API break. (See !72)
+
+* Add a `privileged_group` configure option to set the name of the system
+  sudo group — it might be `sudo` or `wheel` (thanks to Sergey Shatunov; see #22)
+
+* Bugs fixed:
+ - #7 Lift GNOME Software content rating implementation into appstream-glib, and fix it
+ - #21 No references to homosexuality
+ - #22 Polkit rules should use wheel group instead of sudo
+ - !69 Two small UI tweaks
+ - !72 tree-wide: Replace usages of whitelist/blacklist
+ - !73 po: Update translations from downstream in Endless
+ - !74 Update Ukrainian translation
+ - !75 Update Polish translation 200614
+ - !77 all: Fix various typos and incorrect terminology
+ - !78 build: Use meson.current_source_dir() instead of source_root()
+ - !79 build: Re-add libglib-testing subproject
+ - !80 Update Brazilian Portuguese translation
+ - !81 ci: Use pre-built Docker images for CI builds
+ - !82 subprojects: Limit depth when cloning
+ - !83 Update Spanish translation
+
+* Translation updates:
+ - Afrikaans
+ - Arabic
+ - Bangla
+ - Basque
+ - Bokmål, Norwegian
+ - Bulgarian
+ - Catalan
+ - Catalan — valencia.UTF-8
+ - Chinese (Taiwan)
+ - Croatian
+ - Czech
+ - Danish
+ - Dutch
+ - Esperanto
+ - Finnish
+ - French
+ - Friulian
+ - Gaelic
+ - Galician
+ - German
+ - Greek, Modern (1453-)
+ - Hebrew
+ - Hindi
+ - Hungarian
+ - Indonesian
+ - Italian
+ - Kazakh
+ - Korean
+ - Latvian
+ - Lithuanian
+ - Malay
+ - Malayalam
+ - Occitan (post 1500)
+ - Panjabi
+ - Persian
+ - Polish
+ - Portuguese
+ - Portuguese (Brazil)
+ - Romanian
+ - Russian
+ - Serbian
+ - Serbian — latin.UTF-8
+ - Slovak
+ - Slovenian
+ - Spanish
+ - Swedish
+ - Thai
+ - Turkish
+ - Ukrainian
+ - Vietnamese
+
+
 Overview of changes in malcontent 0.8.0
 =======================================
 

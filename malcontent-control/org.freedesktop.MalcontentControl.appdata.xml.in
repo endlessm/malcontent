@@ -44,6 +44,15 @@
   </kudos>
   <translation type="gettext">malcontent</translation>
   <releases>
+    <release version="0.9.0" date="2020-09-03" type="stable">
+      <description>
+        <ul>
+          <li>Minor improvements to parental controls application UI</li>
+          <li>Choose rating system by territory rather than language</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.8.0" date="2020-04-28" type="stable">
       <description>
         <ul>
