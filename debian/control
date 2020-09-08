@@ -11,6 +11,7 @@ Build-Depends:
  gtk-doc-tools,
  itstool,
  libaccountsservice-dev (>= 0.6.39),
+ libappstream-glib-dev,
  libdbus-1-dev,
  libflatpak-dev,
  libgirepository1.0-dev (>= 1.30.0),
@@ -156,6 +157,7 @@ Architecture: any
 Multi-arch: same
 Depends:
  libaccountsservice-dev,
+ libflatpak-dev,
  libglib2.0-dev,
  libgtk-3-dev,
  libmalcontent-0-dev (= ${source:Version}),
