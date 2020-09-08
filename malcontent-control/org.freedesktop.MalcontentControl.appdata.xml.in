@@ -45,6 +45,7 @@
   <releases>
     <release version="0.9.0" date="2020-09-03" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Minor improvements to parental controls application UI</li>
           <li>Choose rating system by territory rather than language</li>
@@ -54,6 +55,7 @@
     </release>
     <release version="0.8.0" date="2020-04-28" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Minor improvements to parental controls application UI</li>
           <li>Add a user manual</li>
@@ -63,6 +65,7 @@
     </release>
     <release version="0.7.0" date="2020-03-24" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Minor improvements to parental controls application UI</li>
           <li>Translations to Ukrainian and Polish</li>
@@ -71,6 +74,7 @@
     </release>
     <release version="0.6.0" date="2020-02-26" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Improve parental controls application UI and add icon</li>
           <li>Support for indicating which accounts are parent accounts</li>
@@ -79,6 +83,7 @@
     </release>
     <release version="0.5.0" date="2020-02-14" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Initial release of basic parental controls application</li>
           <li>Support for setting app installation and run restrictions on users</li>
@@ -87,6 +92,7 @@
     </release>
     <release version="0.4.0" date="2019-07-17" type="stable">
       <description>
+        <p>This is a stable release with the following changes:</p>
         <ul>
           <li>Maintenance release of underlying parental controls library</li>
         </ul>
