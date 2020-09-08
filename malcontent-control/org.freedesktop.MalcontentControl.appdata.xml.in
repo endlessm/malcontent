@@ -19,13 +19,12 @@
       installed software they can run.
     </p>
   </description>
-  <!--
   <screenshots>
-    <screenshot type="default" width="400" height="480">
-      <image>https://FIXME/malcontent-control.png</image>
+    <screenshot height="552" width="699" type="default">
+      <image>https://gitlab.freedesktop.org/pwithnall/malcontent/-/raw/master/malcontent-control/malcontent-control.png</image>
+      <caption>Main window</caption>
     </screenshot>
   </screenshots>
-  -->
   <provides>
     <binary>malcontent-control</binary>
   </provides>
