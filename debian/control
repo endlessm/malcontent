@@ -157,6 +157,7 @@ Architecture: any
 Multi-arch: same
 Depends:
  libaccountsservice-dev,
+ libappstream-glib-dev,
  libflatpak-dev,
  libglib2.0-dev,
  libgtk-3-dev,
