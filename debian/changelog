@@ -1,3 +1,11 @@
+malcontent (0.9.0-2) master; urgency=medium
+
+  * Add libappstream-glib-dev as a dependency of libmalcontent-ui-0-dev
+    as its pkg-config file is needed in order to use malcontent-ui-0.pc
+    (T30173)
+
+ -- Philip Withnall <withnall@endlessm.com>  Wed, 09 Sep 2020 16:39:00 +0100
+
 malcontent (0.9.0-1) master; urgency=medium
 
   * Upstream 0.9.0 release
