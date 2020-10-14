@@ -165,9 +165,21 @@
                 <property name="spacing">12</property>
                 <property name="margin">18</property>
                 <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">system-users-symbolic</property>
+                    <property name="pixel-size">96</property>
+                    <property name="visible">True</property>
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="AtkObject::accessible-role">static</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">No Child Users Configured</property>
+                    <property name="label" translatable="yes">No Standard User Accounts</property>
                     <attributes>
                       <attribute name="scale" value="1.4"/>
                     </attributes>
@@ -181,7 +193,9 @@
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">No child users are currently set up on the system. Create one before setting up their parental controls.</property>
+                    <property name="justify">center</property>
+                    <property name="label" translatable="yes">Parental controls can only be applied to standard user
+accounts. These can be created in the user settings.</property>
                     <property name="wrap">True</property>
                     <child internal-child="accessible">
                       <object class="AtkObject">
@@ -193,7 +207,7 @@
                 <child>
                   <object class="GtkButton" id="user_accounts_panel_button">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Create _Child User</property>
+                    <property name="label" translatable="yes">_User Settings</property>
                     <property name="halign">center</property>
                     <property name="can-default">True</property>
                     <property name="has-default">True</property>
