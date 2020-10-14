@@ -286,6 +286,14 @@ bus_error_to_manager_error (const GError *bus_error,
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
     return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_INVALID_USER,
                         _("User %u does not exist"), (guint) user_id);
+  else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN) ||
+           g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_NAME_HAS_NO_OWNER))
+    /* If accountsservice is not available on the system bus, then the
+     * com.endlessm.ParentalControls.AppFilter extension interface
+     * certainly can't be available. */
+    return g_error_new_literal (MCT_MANAGER_ERROR,
+                                MCT_MANAGER_ERROR_DISABLED,
+                                _("System accounts service not available"));
   else
     return g_error_copy (bus_error);
 }
