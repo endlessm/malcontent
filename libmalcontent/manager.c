@@ -280,7 +280,7 @@ bus_error_to_manager_error (const GError *bus_error,
   if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_ACCESS_DENIED) ||
       bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.PermissionDenied"))
     return g_error_new (MCT_MANAGER_ERROR, MCT_MANAGER_ERROR_PERMISSION_DENIED,
-                        _("Not allowed to query app filter data for user %u"),
+                        _("Not allowed to query parental controls data for user %u"),
                         (guint) user_id);
   else if (g_error_matches (bus_error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD) ||
            bus_remote_error_matches (bus_error, "org.freedesktop.Accounts.Error.Failed"))
