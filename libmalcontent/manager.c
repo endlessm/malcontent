@@ -417,7 +417,7 @@ mct_manager_get_app_filter (MctManager            *self,
     {
       g_set_error (error, MCT_MANAGER_ERROR,
                    MCT_MANAGER_ERROR_PERMISSION_DENIED,
-                   _("Not allowed to query app filter data for user %u"),
+                   _("Not allowed to query parental controls data for user %u"),
                    (guint) user_id);
       return NULL;
     }
@@ -800,7 +800,7 @@ mct_manager_get_session_limits (MctManager                *self,
     {
       g_set_error (error, MCT_MANAGER_ERROR,
                    MCT_MANAGER_ERROR_PERMISSION_DENIED,
-                   _("Not allowed to query session limits data for user %u"),
+                   _("Not allowed to query parental controls data for user %u"),
                    (guint) user_id);
       return NULL;
     }
