@@ -389,7 +389,8 @@ app_compare_id_length_cb (gconstpointer a,
 static void
 reload_apps (MctRestrictApplicationsSelector *self)
 {
-  GList *iter, *apps;
+  g_autolist(GAppInfo) apps = NULL;
+  GList *iter;
   g_autoptr(GHashTable) seen_flatpak_ids = NULL;
   g_autoptr(GHashTable) seen_executables = NULL;
 
@@ -485,8 +486,6 @@ reload_apps (MctRestrictApplicationsSelector *self)
                                   compare_app_info_cb,
                                   self);
     }
-
-  g_list_free_full (apps, g_object_unref);
 }
 
 static void
