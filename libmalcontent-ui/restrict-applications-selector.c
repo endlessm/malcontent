@@ -104,6 +104,9 @@ mct_restrict_applications_selector_constructed (GObject *obj)
 
   g_assert (self->app_filter != NULL);
 
+  /* Load the apps. */
+  reload_apps (self);
+
   G_OBJECT_CLASS (mct_restrict_applications_selector_parent_class)->constructed (obj);
 }
 
