@@ -61,6 +61,7 @@ struct _MctRestrictApplicationsSelector
 
   GtkListBox *listbox;
 
+  GList *cached_apps;  /* (nullable) (owned) (element-type GAppInfo) */
   GListStore *apps;  /* (owned) */
   GAppInfoMonitor *app_info_monitor;  /* (owned) */
   gulong app_info_monitor_changed_id;
@@ -151,6 +152,7 @@ mct_restrict_applications_selector_dispose (GObject *object)
 
   g_clear_pointer (&self->blocklisted_apps, g_hash_table_unref);
   g_clear_object (&self->apps);
+  g_clear_list (&self->cached_apps, g_object_unref);
 
   if (self->app_info_monitor != NULL && self->app_info_monitor_changed_id != 0)
     {
@@ -225,6 +227,7 @@ mct_restrict_applications_selector_init (MctRestrictApplicationsSelector *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->apps = g_list_store_new (G_TYPE_APP_INFO);
+  self->cached_apps = NULL;
 
   self->app_info_monitor = g_app_info_monitor_get ();
   self->app_info_monitor_changed_id =
@@ -392,15 +395,68 @@ app_compare_id_length_cb (gconstpointer a,
     return id_a_len - id_b_len;
 }
 
+/* Elements in @added_out and @removed_out are valid as long as @old_apps and
+ * @new_apps are valid.
+ *
+ * Both lists have to be sorted the same before calling this function. */
+static void
+diff_app_lists (GList      *old_apps,
+                GList      *new_apps,
+                GPtrArray **added_out,
+                GPtrArray **removed_out)
+{
+  g_autoptr(GPtrArray) added = g_ptr_array_new_with_free_func (NULL);
+  g_autoptr(GPtrArray) removed = g_ptr_array_new_with_free_func (NULL);
+  GList *o, *n;
+
+  g_return_if_fail (added_out != NULL);
+  g_return_if_fail (removed_out != NULL);
+
+  for (o = old_apps, n = new_apps; o != NULL || n != NULL;)
+    {
+      int comparison;
+
+      if (o == NULL)
+        comparison = 1;
+      else if (n == NULL)
+        comparison = -1;
+      else
+        comparison = app_compare_id_length_cb (o->data, n->data);
+
+      if (comparison < 0)
+        {
+          g_ptr_array_add (removed, o->data);
+          o = o->next;
+        }
+      else if (comparison > 0)
+        {
+          g_ptr_array_add (added, n->data);
+          n = n->next;
+        }
+      else
+        {
+          o = o->next;
+          n = n->next;
+        }
+    }
+
+  *added_out = g_steal_pointer (&added);
+  *removed_out = g_steal_pointer (&removed);
+}
+
+/* This is quite expensive to call, as there’s no way to avoid calling
+ * g_app_info_get_all() to see if anything’s changed; and that’s quite expensive. */
 static void
 reload_apps (MctRestrictApplicationsSelector *self)
 {
-  g_autolist(GAppInfo) apps = NULL;
-  GList *iter;
+  g_autolist(GAppInfo) old_apps = NULL;
+  g_autolist(GAppInfo) new_apps = NULL;
+  g_autoptr(GPtrArray) added_apps = NULL, removed_apps = NULL;
   g_autoptr(GHashTable) seen_flatpak_ids = NULL;
   g_autoptr(GHashTable) seen_executables = NULL;
 
-  apps = g_app_info_get_all ();
+  old_apps = g_steal_pointer (&self->cached_apps);
+  new_apps = g_app_info_get_all ();
 
   /* Sort the apps by increasing length of #GAppInfo ID. When coupled with the
    * deduplication of flatpak IDs and executable paths, below, this should ensure that we
@@ -409,20 +465,46 @@ reload_apps (MctRestrictApplicationsSelector *self)
    *
    * This is designed to avoid listing all the components of LibreOffice for example,
    * which all share an app ID and hence have the same entry in the parental controls
-   * app filter. */
-  apps = g_list_sort (apps, app_compare_id_length_cb);
+   * app filter.
+   *
+   * Then diff the old and new lists so that the code below doesn’t end up
+   * removing more rows than are necessary, and hence potentially losing
+   * in-progress user input. */
+  new_apps = g_list_sort (new_apps, app_compare_id_length_cb);
+  diff_app_lists (old_apps, new_apps, &added_apps, &removed_apps);
+
+  g_debug ("%s: Diffed old and new app lists: %u apps added, %u apps removed",
+           G_STRFUNC, added_apps->len, removed_apps->len);
+
   seen_flatpak_ids = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   seen_executables = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
-  g_list_store_remove_all (self->apps);
-
-  for (iter = apps; iter; iter = iter->next)
+  /* Remove items first. */
+  for (guint i = 0; i < removed_apps->len; i++)
     {
-      GAppInfo *app;
+      GAppInfo *app = removed_apps->pdata[i];
+      guint pos;
+      gboolean found;
+
+      found = g_list_store_find_with_equal_func (self->apps, app,
+                                                 (GEqualFunc) g_app_info_equal, &pos);
+
+      /* The app being removed may have not passed the condition checks below
+       * to have been added to self->apps. */
+      if (!found)
+        continue;
+
+      g_debug ("Removing app ‘%s’", g_app_info_get_id (app));
+      g_list_store_remove (self->apps, pos);
+    }
+
+  /* Now add the new items. */
+  for (guint i = 0; i < added_apps->len; i++)
+    {
+      GAppInfo *app = added_apps->pdata[i];
       const gchar *app_name;
       const gchar * const *supported_types;
 
-      app = iter->data;
       app_name = g_app_info_get_name (app);
 
       supported_types = g_app_info_get_supported_types (app);
@@ -492,6 +574,9 @@ reload_apps (MctRestrictApplicationsSelector *self)
                                   compare_app_info_cb,
                                   self);
     }
+
+  /* Update the cache for next time. */
+  self->cached_apps = g_steal_pointer (&new_apps);
 }
 
 static void
