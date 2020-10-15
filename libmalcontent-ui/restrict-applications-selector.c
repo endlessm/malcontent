@@ -372,6 +372,7 @@ app_compare_id_length_cb (gconstpointer a,
 {
   GAppInfo *info_a = (GAppInfo *) a, *info_b = (GAppInfo *) b;
   const gchar *id_a, *id_b;
+  gsize id_a_len, id_b_len;
 
   id_a = g_app_info_get_id (info_a);
   id_b = g_app_info_get_id (info_b);
@@ -383,7 +384,12 @@ app_compare_id_length_cb (gconstpointer a,
   else if (id_b == NULL)
     return 1;
 
-  return strlen (id_a) - strlen (id_b);
+  id_a_len = strlen (id_a);
+  id_b_len = strlen (id_b);
+  if (id_a_len == id_b_len)
+    return strcmp (id_a, id_b);
+  else
+    return id_a_len - id_b_len;
 }
 
 static void
