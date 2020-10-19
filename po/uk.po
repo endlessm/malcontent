@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: malcontent master\n"
 "Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/issu"
 "es\n"
-"POT-Creation-Date: 2020-09-08 15:27+0000\n"
-"PO-Revision-Date: 2020-09-10 09:33+0300\n"
+"POT-Creation-Date: 2020-10-15 15:28+0000\n"
+"PO-Revision-Date: 2020-10-17 16:55+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -136,30 +136,30 @@ msgstr "Фільтр програм для користувача %u запис�
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "Фільтр OARS для користувача %u належить до невідомого типу «%s»"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:420
+#: libmalcontent/manager.c:803
 #, c-format
-msgid "Not allowed to query app filter data for user %u"
+#| msgid "Not allowed to query app filter data for user %u"
+msgid "Not allowed to query parental controls data for user %u"
 msgstr ""
-"Не дозволено опитувати систему щодо даних фільтра програм для користувача %u"
+"Не дозволено опитувати дані щодо батьківського контролю для користувача %u"
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
 msgstr "Запису користувача %u не існує"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:296
+msgid "System accounts service not available"
+msgstr "Загальносистемна служба облікових записів є недоступною"
+
+#: libmalcontent/manager.c:402
 msgid "App filtering is globally disabled"
 msgstr "Фільтрування програм вимкнено на загальному рівні"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:785
 msgid "Session limits are globally disabled"
 msgstr "Обмеження сеансів вимкнено на загальному рівні"
-
-#: libmalcontent/manager.c:795
-#, c-format
-msgid "Not allowed to query session limits data for user %u"
-msgstr ""
-"Не дозволено опитувати систему щодо даних обмежень сеансів для користувача %u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
