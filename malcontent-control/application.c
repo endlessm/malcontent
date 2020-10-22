@@ -94,8 +94,24 @@ static void
 mct_application_constructed (GObject *object)
 {
   GApplication *application = G_APPLICATION (object);
+  const GOptionEntry options[] =
+    {
+      { "user", 'u', G_OPTION_FLAG_NONE, G_OPTION_ARG_STRING, NULL,
+        /* Translators: This documents the --user command line option to malcontent-control: */
+        N_("User to select in the UI"),
+        /* Translators: This is a placeholder for a command line argument value: */
+        N_("USERNAME") },
+    };
 
   g_application_set_application_id (application, "org.freedesktop.MalcontentControl");
+
+  g_application_add_main_option_entries (application, options);
+  g_application_set_flags (application, g_application_get_flags (application) | G_APPLICATION_HANDLES_COMMAND_LINE);
+
+  /* Translators: This is a summary of what the application does, displayed when
+   * it’s run with --help: */
+  g_application_set_option_context_parameter_string (application,
+                                                     N_("— view and edit parental controls"));
 
   /* Localisation */
   bindtextdomain ("malcontent", PACKAGE_LOCALE_DIR);
@@ -240,6 +256,25 @@ mct_application_startup (GApplication *application)
                                          "app.quit", (const gchar * const[]) { "<Primary>q", "<Primary>w", NULL });
 }
 
+static gint
+mct_application_command_line (GApplication            *application,
+                              GApplicationCommandLine *command_line)
+{
+  MctApplication *self = MCT_APPLICATION (application);
+  GVariantDict *options = g_application_command_line_get_options_dict (command_line);
+  const gchar *username;
+
+  /* Show the application. */
+  g_application_activate (application);
+
+  /* Select a user if requested. */
+  if (g_variant_dict_lookup (options, "user", "&s", &username) &&
+      !mct_user_selector_select_user_by_username (self->user_selector, username))
+    g_warning ("Failed to select user ‘%s’", username);
+
+  return 0;  /* exit status */
+}
+
 static void
 mct_application_class_init (MctApplicationClass *klass)
 {
@@ -251,6 +286,7 @@ mct_application_class_init (MctApplicationClass *klass)
 
   application_class->activate = mct_application_activate;
   application_class->startup = mct_application_startup;
+  application_class->command_line = mct_application_command_line;
 }
 
 static void
