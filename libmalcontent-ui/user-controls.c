@@ -167,40 +167,6 @@ static const GActionEntry actions[] = {
   { "set-age", on_set_age_action_activated, "u", NULL, NULL, { 0, }}
 };
 
-#if !AS_CHECK_VERSION(0, 7, 15)
-static const gchar * const oars_categories[] =
-{
-  "violence-cartoon",
-  "violence-fantasy",
-  "violence-realistic",
-  "violence-bloodshed",
-  "violence-sexual",
-  "violence-desecration",
-  "violence-slavery",
-  "violence-worship",
-  "drugs-alcohol",
-  "drugs-narcotics",
-  "drugs-tobacco",
-  "sex-nudity",
-  "sex-themes",
-  "sex-homosexuality",
-  "sex-prostitution",
-  "sex-adultery",
-  "sex-appearance",
-  "language-profanity",
-  "language-humor",
-  "language-discrimination",
-  "social-chat",
-  "social-info",
-  "social-audio",
-  "social-location",
-  "social-contacts",
-  "money-purchasing",
-  "money-gambling",
-  NULL
-};
-#endif  /* appstream-glib < 0.7.15 */
-
 /* Auxiliary methods */
 
 static GsContentRatingSystem
@@ -388,9 +354,7 @@ update_oars_level (MctUserControls *self)
   guint maximum_age;
   gsize i;
   gboolean all_categories_unset;
-#if AS_CHECK_VERSION(0, 7, 15)
   g_autofree const gchar **oars_categories = as_content_rating_get_all_rating_ids ();
-#endif
 
   g_assert (self->filter != NULL);
 
@@ -1495,9 +1459,7 @@ mct_user_controls_build_app_filter (MctUserControls     *self,
 {
   gboolean restrict_web_browsers;
   gsize i;
-#if AS_CHECK_VERSION(0, 7, 15)
   g_autofree const gchar **oars_categories = as_content_rating_get_all_rating_ids ();
-#endif
 
   g_return_if_fail (MCT_IS_USER_CONTROLS (self));
   g_return_if_fail (builder != NULL);
