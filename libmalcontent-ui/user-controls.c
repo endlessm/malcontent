@@ -314,6 +314,12 @@ update_app_filter_from_user (MctUserControls *self)
 }
 
 static void
+update_restricted_apps (MctUserControls *self)
+{
+  mct_restrict_applications_dialog_set_app_filter (self->restrict_applications_dialog, self->filter);
+}
+
+static void
 update_categories_from_language (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
@@ -385,7 +391,7 @@ update_oars_level (MctUserControls *self)
 {
   GsContentRatingSystem rating_system;
   g_autofree gchar *rating_age_category = NULL;
-  guint maximum_age;
+  guint maximum_age, selected_age;
   gsize i;
   gboolean all_categories_unset;
 #if AS_CHECK_VERSION(0, 7, 15)
@@ -423,9 +429,15 @@ update_oars_level (MctUserControls *self)
     {
       g_clear_pointer (&rating_age_category, g_free);
       rating_age_category = g_strdup (_("All Ages"));
+      selected_age = oars_disabled_age;
+    }
+  else
+    {
+      selected_age = maximum_age;
     }
 
   gtk_label_set_label (self->oars_button_label, rating_age_category);
+  self->selected_age = selected_age;
 }
 
 static void
@@ -550,6 +562,7 @@ setup_parental_control_settings (MctUserControls *self)
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), is_authorized);
 
+  update_restricted_apps (self);
   update_categories_from_language (self);
   update_oars_level (self);
   update_allow_app_installation (self);

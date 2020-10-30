@@ -290,6 +290,21 @@ on_switch_active_changed_cb (GtkSwitch  *s,
   g_signal_emit (self, signals[SIGNAL_CHANGED], 0);
 }
 
+static void
+update_listbox_row_switch (MctRestrictApplicationsSelector *self,
+                           GtkSwitch                       *w)
+{
+  GAppInfo *app = g_object_get_data (G_OBJECT (w), "GAppInfo");
+  gboolean allowed = mct_app_filter_is_appinfo_allowed (self->app_filter, app);
+
+  gtk_switch_set_active (w, !allowed);
+
+  if (allowed)
+    g_hash_table_remove (self->blocklisted_apps, app);
+  else
+    g_hash_table_add (self->blocklisted_apps, g_object_ref (app));
+}
+
 static GtkWidget *
 create_row_for_app_cb (gpointer item,
                        gpointer user_data)
@@ -298,7 +313,6 @@ create_row_for_app_cb (gpointer item,
   GAppInfo *app = G_APP_INFO (item);
   g_autoptr(GIcon) icon = NULL;
   GtkWidget *box, *w;
-  gboolean allowed;
   const gchar *app_name;
   gint size;
   GtkStyleContext *context;
@@ -345,16 +359,8 @@ create_row_for_app_cb (gpointer item,
   gtk_widget_show_all (box);
 
   /* Fetch status from AccountService */
-  allowed = mct_app_filter_is_appinfo_allowed (self->app_filter, app);
-
-  gtk_switch_set_active (GTK_SWITCH (w), !allowed);
   g_object_set_data_full (G_OBJECT (w), "GAppInfo", g_object_ref (app), g_object_unref);
-
-  if (allowed)
-    g_hash_table_remove (self->blocklisted_apps, app);
-  else
-    g_hash_table_add (self->blocklisted_apps, g_object_ref (app));
-
+  update_listbox_row_switch (self, GTK_SWITCH (w));
   g_signal_connect (w, "notify::active", G_CALLBACK (on_switch_active_changed_cb), self);
 
   return box;
@@ -751,6 +757,7 @@ mct_restrict_applications_selector_set_app_filter (MctRestrictApplicationsSelect
                                                    MctAppFilter                    *app_filter)
 {
   g_autoptr(MctAppFilter) owned_app_filter = NULL;
+  guint n_apps;
 
   g_return_if_fail (MCT_IS_RESTRICT_APPLICATIONS_SELECTOR (self));
 
@@ -768,6 +775,30 @@ mct_restrict_applications_selector_set_app_filter (MctRestrictApplicationsSelect
   g_clear_pointer (&self->app_filter, mct_app_filter_unref);
   self->app_filter = mct_app_filter_ref (app_filter);
 
-  reload_apps (self);
+  /* Update the status of each app row. */
+  n_apps = g_list_model_get_n_items (G_LIST_MODEL (self->apps));
+
+  for (guint i = 0; i < n_apps; i++)
+    {
+      GtkListBoxRow *row;
+      GtkWidget *box, *w;
+      g_autoptr(GList) children = NULL;  /* (element-type GtkWidget) */
+
+      /* Navigate the widget hierarchy set up in create_row_for_app_cb(). */
+      row = gtk_list_box_get_row_at_index (self->listbox, i);
+      g_assert (row != NULL && GTK_IS_LIST_BOX_ROW (row));
+
+      box = gtk_bin_get_child (GTK_BIN (row));
+      g_assert (box != NULL && GTK_IS_BOX (box));
+
+      children = gtk_container_get_children (GTK_CONTAINER (box));
+      g_assert (children != NULL);
+
+      w = g_list_nth_data (children, 2);
+      g_assert (w != NULL && GTK_IS_SWITCH (w));
+
+      update_listbox_row_switch (self, GTK_SWITCH (w));
+    }
+
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_APP_FILTER]);
 }
