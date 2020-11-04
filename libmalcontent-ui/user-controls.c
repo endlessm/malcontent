@@ -104,7 +104,8 @@ struct _MctUserControls
   GDBusConnection *dbus_connection;  /* (owned) */
   GCancellable *cancellable; /* (owned) */
   MctManager   *manager; /* (owned) */
-  MctAppFilter *filter; /* (owned) (nullable) */
+  MctAppFilter *filter; /* (owned) (nullable); updated by the user of #MctUserControls */
+  MctAppFilter *last_saved_filter; /* (owned) (nullable); updated each time we internally time out and save the app filter */
   guint         selected_age; /* @oars_disabled_age to disable OARS */
 
   guint         blocklist_apps_source_id;
@@ -296,6 +297,7 @@ update_app_filter_from_user (MctUserControls *self)
 
   /* FIXME: make it asynchronous */
   g_clear_pointer (&self->filter, mct_app_filter_unref);
+  g_clear_pointer (&self->last_saved_filter, mct_app_filter_unref);
   self->filter = mct_manager_get_app_filter (self->manager,
                                              act_user_get_uid (self->user),
                                              MCT_MANAGER_GET_VALUE_FLAGS_NONE,
@@ -309,6 +311,8 @@ update_app_filter_from_user (MctUserControls *self)
                  error->message);
       return;
     }
+
+  self->last_saved_filter = mct_app_filter_ref (self->filter);
 
   g_debug ("Retrieved new app filter for user '%s'", act_user_get_user_name (self->user));
 }
@@ -591,6 +595,15 @@ blocklist_apps_cb (gpointer data)
   mct_user_controls_build_app_filter (self, &builder);
   new_filter = mct_app_filter_builder_end (&builder);
 
+  /* Don’t bother saving the app filter (which could result in asking the user
+   * for admin permission) if it hasn’t changed. */
+  if (self->last_saved_filter != NULL &&
+      mct_app_filter_equal (new_filter, self->last_saved_filter))
+    {
+      g_debug ("Not saving app filter as it hasn’t changed");
+      return G_SOURCE_REMOVE;
+    }
+
   /* FIXME: should become asynchronous */
   mct_manager_set_app_filter (self->manager,
                               act_user_get_uid (self->user),
@@ -604,6 +617,10 @@ blocklist_apps_cb (gpointer data)
       g_warning ("Error updating app filter: %s", error->message);
       setup_parental_control_settings (self);
     }
+
+  /* Update the cached copy */
+  mct_app_filter_unref (self->last_saved_filter);
+  self->last_saved_filter = g_steal_pointer (&new_filter);
 
   return G_SOURCE_REMOVE;
 }
@@ -816,6 +833,7 @@ mct_user_controls_finalize (GObject *object)
   g_clear_object (&self->permission);
 
   g_clear_pointer (&self->filter, mct_app_filter_unref);
+  g_clear_pointer (&self->last_saved_filter, mct_app_filter_unref);
   g_clear_object (&self->manager);
   g_clear_object (&self->dbus_connection);
 
@@ -1333,8 +1351,12 @@ mct_user_controls_set_app_filter (MctUserControls *self,
     return;
 
   g_clear_pointer (&self->filter, mct_app_filter_unref);
+  g_clear_pointer (&self->last_saved_filter, mct_app_filter_unref);
   if (app_filter != NULL)
-    self->filter = mct_app_filter_ref (app_filter);
+    {
+      self->filter = mct_app_filter_ref (app_filter);
+      self->last_saved_filter = mct_app_filter_ref (app_filter);
+    }
 
   g_debug ("Set new app filter from caller");
   setup_parental_control_settings (self);
