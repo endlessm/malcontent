@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: malcontent master\n"
 "POT-Creation-Date: 2020-10-11 03:28+0000\n"
-"PO-Revision-Date: 2020-10-11 19:15+0200\n"
+"PO-Revision-Date: 2020-11-18 00:00+0200\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish\n"
 "Language: da\n"
@@ -40,10 +40,10 @@ msgid ""
 "application if no child users already exist; and otherwise may be created "
 "from the <app>Control Center</app>."
 msgstr ""
-"Forælderstyring kan kun anvendes på konti som ikke er administrator. En "
-"sådan konto kan være blevet oprettet første gang computeren blev opsat. Er "
+"Forældrestyring kan kun anvendes på konti som ikke er administrator. En "
+"sådan konto kan være blevet oprettet, første gang computeren blev opsat. Er "
 "det ikke tilfældet, så kan der oprettes en ny barnebruger i programmet "
-"<app>Forælderstyring</app> hvis der ikke allerede findes en barnebruger; "
+"<app>Forældrestyring</app>, hvis der ikke allerede findes en barnebruger, "
 "ellers kan den oprettes i <app>Kontrolpanel</app>."
 
 #. (itstool) path: page/p
@@ -54,10 +54,10 @@ msgid ""
 "created, it will appear in the <app>Parental Controls</app> window so that "
 "its parental controls settings can be configured."
 msgstr ""
-"For at oprette en ny barnebruger, se <link type=\"guide\" xref=\"help:gnome-"
-"help/user-add\">Tilføj en ny brugerkonto</link>. Den nye bruger vises i "
-"vinduet <app>Forælderstyring</app> så snart den er oprettet, så dens "
-"forælderstyringsindstillinger kan konfigureres."
+"Se <link type=\"guide\" xref=\"help:gnome-"
+"help/user-add\">Tilføj en ny brugerkonto</link>, for at oprette en ny barnebruger. Den nye bruger vises i "
+"vinduet <app>Forældrestyring</app>, så snart den er oprettet, så dens "
+"forældrestyringsindstillinger kan konfigureres."
 
 #. (itstool) path: credit/name
 #: C/index.page:6
@@ -72,7 +72,7 @@ msgstr "2020"
 #. (itstool) path: page/title
 #: C/index.page:12
 msgid "Parental Controls Help"
-msgstr "Hjælp til Forælderstyring"
+msgstr "Hjælp til Forældrestyring"
 
 #. (itstool) path: section/title
 #: C/index.page:15
@@ -104,10 +104,10 @@ msgid ""
 "it will not prevent software updates being downloaded and applied."
 msgstr ""
 "Du kan begrænse en brugers adgang til internettet. Det forhindrer dem i at "
-"bruge en webbrowser men det forhindrer dem ikke i at bruge internettet (i "
-"potentielt mere begrænsede forum) gennem andre programmer. Det vil f.eks. "
+"bruge en webbrowser, men det forhindrer dem ikke i at bruge internettet (i "
+"potentielt mere begrænset form) gennem andre programmer. Det vil f.eks. "
 "ikke forhindre adgang til e-mailkonti med <app>Evolution</app> og det "
-"forhindre ikke softwareopdateringer i at blive downloadet og installeret."
+"forhindrer ikke softwareopdateringer i at blive downloadet og installeret."
 
 #. (itstool) path: page/p
 #: C/internet.page:17
@@ -118,13 +118,13 @@ msgstr "Sådan begrænses en brugers adgang til internettet:"
 #: C/internet.page:19 C/restricting-applications.page:20
 #: C/software-installation.page:27 C/software-installation.page:64
 msgid "Open the <app>Parental Controls</app> application."
-msgstr "Åbn programmet <app>Forælderstyring</app>."
+msgstr "Åbn programmet <app>Forældrestyring</app>."
 
 #. (itstool) path: item/p
 #: C/internet.page:20 C/restricting-applications.page:21
 #: C/software-installation.page:28 C/software-installation.page:65
 msgid "Select the user in the tabs at the top."
-msgstr "Vælg brugeren i fanebladet øverst."
+msgstr "Vælg brugeren i fanebladene øverst."
 
 #. (itstool) path: item/p
 #: C/internet.page:21
@@ -138,12 +138,12 @@ msgstr ""
 msgid ""
 "Overview of parental controls and the <app>Parental Controls</app> "
 "application."
-msgstr "Overblik over forælderstyring og programmet <app>Forælderstyring</app>."
+msgstr "Overblik over forældrestyring og programmet <app>Forældrestyring</app>."
 
 #. (itstool) path: page/title
 #: C/introduction.page:10
 msgid "Introduction to Parental Controls"
-msgstr "Introduktion til Forælderstyring"
+msgstr "Introduktion til Forældrestyring"
 
 #. (itstool) path: page/p
 #: C/introduction.page:12
@@ -153,11 +153,13 @@ msgid ""
 "children can do when using the computer unsupervised or under limited "
 "supervision."
 msgstr ""
-"Forælderstyring er et måde til at begrænse hvad konti som ikke er "
-"administrator kan gøre på computeren med det mål at give forældre mulighed "
-"for at begrænse hvad deres børn kan når de bruger computeren uden opsyn "
+"Forældrestyring er et måde til at begrænse, hvad konti, som ikke er "
+"administrator, kan gøre på computeren med det mål at give forældre mulighed "
+"for at begrænse, hvad deres børn kan, når de bruger computeren uden opsyn "
 "eller under begrænset opsyn."
 
+# scootergrisen: fra gennemlæsning: det skal nok ikke forstås som en plejesituation som på et plejehjem, men som et forhold mellem dem, der bestemmer, og dem der bliver bestemt over
+# scootergrisen: fra gennemlæsning: Prøv med: såsom andre forhold mellem myndige og umyndige
 #. (itstool) path: page/p
 #: C/introduction.page:16
 msgid ""
@@ -166,7 +168,7 @@ msgid ""
 "easy to find."
 msgstr ""
 "Funktionaliteten kan bruges i andre situationer ­– såsom et andet forhold mellem "
-"plejer og plejede – men kaldes ‘forælderstyring’ for at det skal være let at finde."
+"plejer og plejede – men kaldes ‘forældrestyring’ for at det skal være let at finde."
 
 #. (itstool) path: page/p
 #: C/introduction.page:19
@@ -176,10 +178,10 @@ msgid ""
 "accounts in tabs along its top bar, and shows their current parental "
 "controls settings below. Changes to the parental controls apply immediately."
 msgstr ""
-"Forælderstyringen kan for alle brugere forespørges og indstilles med "
-"programmet <app>Forælderstyring</app>. Det viser de konti som ikke er "
-"administrator i faneblade langs den øverste linje og viser deres nuværende "
-"forælderstyringsindstillinger nedenfor. Ændringer til forælderstyringen "
+"Forældrestyringen kan for alle brugere forespørges og indstilles med "
+"programmet <app>Forældrestyring</app>. Det viser de konti, som ikke er "
+"administrator, i faneblade langs den øverste linje og viser deres nuværende "
+"forældrestyringsindstillinger nedenfor. Ændringer til forældrestyringen "
 "anvendes straks."
 
 #. (itstool) path: page/p
@@ -192,10 +194,10 @@ msgid ""
 "Controls</app> application."
 msgstr ""
 "Begrænsninger i at bruge computeren kan kun anvendes på konti som ikke er "
-"administrator. Forælderstyringsindstillingerne til en bruger kan kun ændres "
+"administrator. Forældrestyringsindstillingerne til en bruger kan kun ændres "
 "af en administrator, dog kan administratoren gøre det fra brugerens konto "
 "ved at indtaste deres adgangskode når de bliver spurgt om det i programmet "
-"<app>Forælderstyring</app>."
+"<app>Forældrestyring</app>."
 
 #. (itstool) path: p/link
 #: C/legal.xml:4
@@ -259,7 +261,7 @@ msgid ""
 "the user from accessing."
 msgstr ""
 "Aktivér kontakten i rækken ved de programmer du vil begrænse brugeren i at få "
-"adgang."
+"adgang til."
 
 #. (itstool) path: item/p
 #: C/restricting-applications.page:24
@@ -312,7 +314,7 @@ msgid ""
 "Additionally, you can restrict which software a user can browse or search "
 "for in the <app>Software</app> catalog by age categories."
 msgstr ""
-"Derudover kan du begrænse hvilke software en bruger kan gennemse eller søge "
+"Derudover kan du begrænse, hvilken software en bruger kan gennemse eller søge "
 "efter i <app>Software</app>-kataloget efter aldersgruppekategorier."
 
 #. (itstool) path: page/p
@@ -367,12 +369,12 @@ msgid ""
 msgstr ""
 "Afkrydsningsboksen <gui style=\"checkbox\">Begræns programinstallation for "
 "andre</gui> giver brugeren mulighed for at installere yderligere software "
-"til sig selv, men forhindre softwaren i at blive gjort tilgængelig for andre "
-"brugere. Det kan f.eks. bruges hvis der er to barnebrugere hvoraf en af dem "
-"er moden nok til at få tilladelse til at installere yderligere software men "
+"til sig selv, men forhindrer softwaren i at blive gjort tilgængelig for andre "
+"brugere. Det kan f.eks. bruges, hvis der er to barnebrugere, hvoraf en af dem "
+"er moden nok til at få tilladelse til at installere yderligere software, men "
 "den anden ikke er — hvis <gui style=\"checkbox\">Begræns programinstallation "
 "for andre</gui> tillades vil det forhindre det modne barn i at installere "
-"programmer som kan være uegnet for det andet barn og gøre dem tilgængelige "
+"programmer, som kan være uegnet for det andet barn og gøre dem tilgængelige "
 "for det andet barn."
 
 #. (itstool) path: section/title
@@ -395,9 +397,6 @@ msgstr ""
 "at bruge penge."
 
 # scootergrisen: find ud af hvordan "suitable for ages 7+" er oversat andet sted
-# scootergrisen: tjek oversættelsen af "region-specific schemes"
-# scootergrisen: tjek oversættelsen af "ratings schemes"
-# scootergrisen: tjek oversættelsen af "age ratings"
 #. (itstool) path: section/p
 #: C/software-installation.page:51
 msgid ""
@@ -408,8 +407,8 @@ msgid ""
 msgstr ""
 "Informationen er opsummeret i hvert program som den laveste alder for børn "
 "det typisk er egnet for at blive brugt af — f.eks. “suitable for ages 7+”. "
-"Disse aldersvurderinger præsenteres i områdespecifikke skemaer som kan "
-"sammenlignes med de vurderingsskemaer som bruges til film og spil."
+"Disse aldersvurderinger præsenteres i områdespecifikke modeller som kan "
+"sammenlignes med de vurderingsmodeller som bruges til film og spil."
 
 # scootergrisen: tjek "age suitability". Findes to gange
 #. (itstool) path: section/p
@@ -420,9 +419,9 @@ msgid ""
 "the user will be hidden, and will not be installable by that user. They will "
 "be installable by other users (if their age suitability is set high enough)."
 msgstr ""
-"De programmer som vises til en bruger i <app>Software</app>-kataloget kan "
-"filtreres efter den aldersgruppe de er egnet til. Programmer som ikke er "
-"egnet til brugeren skjules og kan ikke installeres af den bruger. De kan "
+"De programmer, som vises til en bruger i <app>Software</app>-kataloget, kan "
+"filtreres efter den aldersgruppe, de er egnet til. Programmer, som ikke er "
+"egnet til brugeren, skjules og kan ikke installeres af den bruger. De kan "
 "installeres af andre brugere (hvis aldersgruppen de er egnet til er "
 "indstillet højt nok)."
 
@@ -443,7 +442,7 @@ msgid ""
 "applications should be suitable for."
 msgstr ""
 "Vælg den aldersgruppe som programmerne "
-"skal være egnet til, i listen <gui>Programegnethed</gui>."
+"skal være egnet til i listen <gui>Programegnethed</gui>."
 
 #. (itstool) path: note/p
 #: C/software-installation.page:70
@@ -453,6 +452,6 @@ msgid ""
 "must periodically re-assess the appropriate <gui>Application Suitability</"
 "gui> for each user."
 msgstr ""
-"Brugeren rigtige alder gemmes ikke, så <gui>Programegnethed</gui> opdateres "
+"Brugerens rigtige alder gemmes ikke, så <gui>Programegnethed</gui> opdateres "
 "ikke automatisk efterhånden som barnet bliver ældre. Du skal periodisk "
 "revurdere den passende <gui>Programegnethed</gui> til hver bruger."
