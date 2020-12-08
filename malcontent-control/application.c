@@ -80,6 +80,7 @@ struct _MctApplication
   GtkLabel *error_message;
   GtkLockButton *lock_button;
   GtkButton *user_accounts_panel_button;
+  GtkLabel *help_label;
 };
 
 G_DEFINE_TYPE (MctApplication, mct_application, GTK_TYPE_APPLICATION)
@@ -211,6 +212,7 @@ mct_application_activate (GApplication *application)
       self->error_message = GTK_LABEL (gtk_builder_get_object (builder, "error_message"));
       self->lock_button = GTK_LOCK_BUTTON (gtk_builder_get_object (builder, "lock_button"));
       self->user_accounts_panel_button = GTK_BUTTON (gtk_builder_get_object (builder, "user_accounts_panel_button"));
+      self->help_label = GTK_LABEL (gtk_builder_get_object (builder, "help_label"));
 
       /* Connect signals. */
       g_signal_connect_object (self->user_selector, "notify::user",
@@ -391,6 +393,24 @@ update_main_stack (MctApplication *self)
     }
   else if (is_permission_loaded && is_user_manager_loaded)
     {
+      g_autofree gchar *help_label = NULL;
+
+      /* Translators: Replace the link to commonsensemedia.org with some
+       * localised guidance for parents/carers on how to set restrictions on
+       * their child/caree in a responsible way which is in keeping with the
+       * best practice and culture of the region. If no suitable localised
+       * guidance exists, and if the default commonsensemedia.org link is not
+       * suitable, please file an issue against malcontent so we can discuss
+       * further!
+       * https://gitlab.freedesktop.org/pwithnall/malcontent/-/issues/new
+       */
+      help_label = g_strdup_printf (_("It’s recommended that restrictions are "
+                                      "set as part of an ongoing conversation "
+                                      "with %s. <a href='https://www.commonsensemedia.org/privacy-and-internet-safety'>"
+                                      "Read guidance</a> on what to consider."),
+                                    act_user_get_real_name (selected_user));
+      gtk_label_set_markup (self->help_label, help_label);
+
       mct_user_controls_set_user (self->user_controls, selected_user);
 
       new_page_name = "controls";
