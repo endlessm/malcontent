@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent master\n"
-"POT-Creation-Date: 2020-11-22 03:28+0000\n"
-"PO-Revision-Date: 2020-11-22 09:11+0200\n"
+"POT-Creation-Date: 2020-12-08 15:28+0000\n"
+"PO-Revision-Date: 2020-12-08 22:19+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -139,19 +139,25 @@ msgstr "Позначте пункт <gui style=\"checkbox\">Обмежити б�
 
 #. (itstool) path: info/desc
 #: C/introduction.page:6
+#| msgid ""
+#| "Overview of parental controls and the <app>Parental Controls</app> "
+#| "application."
 msgid ""
-"Overview of parental controls and the <app>Parental Controls</app> "
-"application."
+"Overview of parental controls, the <app>Parental Controls</app> application "
+"and its use in other situations where access restrictions are needed on a "
+"user."
 msgstr ""
-"Огляд батьківського контролю і програми <app>Батьківський контроль</app>."
+"Огляд батьківського контролю, програми <app>Батьківський контроль</app> та її"
+" використання у інших ситуаціях, коли потрібне обмеження доступу для"
+" користувача."
 
 #. (itstool) path: page/title
-#: C/introduction.page:10
+#: C/introduction.page:12
 msgid "Introduction to Parental Controls"
 msgstr "Вступ до «Батьківського контролю»"
 
 #. (itstool) path: page/p
-#: C/introduction.page:12
+#: C/introduction.page:14
 msgid ""
 "Parental controls are a way to restrict what non-administrator accounts can "
 "do on the computer, with the aim of allowing parents to restrict what their "
@@ -164,18 +170,23 @@ msgstr ""
 "без нагляду або із обмеженим наглядом."
 
 #. (itstool) path: page/p
-#: C/introduction.page:16
+#: C/introduction.page:18
+#| msgid ""
+#| "This functionality can be used in other situations ­– such as other carer/"
+#| "caree relationships – but is labelled as ‘parental controls’ so that it’s "
+#| "easy to find."
 msgid ""
 "This functionality can be used in other situations ­– such as other carer/"
 "caree relationships – but is labelled as ‘parental controls’ so that it’s "
-"easy to find."
+"easy to find, as that’s what most people will be looking for."
 msgstr ""
 "Цими функціональними можливостями можна скористатися і в інших ситуаціях — "
 "зокрема у ситуаціях із стосунками доглядач-пацієнт, — ми назвали це "
-"«батьківський контроль» лише для зручності пошуку."
+"«батьківський контроль» лише для зручності пошуку, оскільки саме це шукають"
+" більшість наших користувачів."
 
 #. (itstool) path: page/p
-#: C/introduction.page:19
+#: C/introduction.page:21
 msgid ""
 "The parental controls for any user can be queried and set using the "
 "<app>Parental Controls</app> application. This lists the non-administrator "
@@ -189,7 +200,7 @@ msgstr ""
 "панелі під списком. Зміни у батьківському контролі буде застосовано негайно."
 
 #. (itstool) path: page/p
-#: C/introduction.page:23
+#: C/introduction.page:25
 msgid ""
 "Restrictions on using the computer can only be applied to non-administrator "
 "accounts. The parental controls settings for a user can only be changed by "
@@ -301,11 +312,6 @@ msgstr "Обмеження встановлення програмного за�
 
 #. (itstool) path: page/p
 #: C/software-installation.page:11
-#| msgid ""
-#| "You can prevent a user from installing additional software, either for "
-#| "the entire system, or just for themselves. They will still be able to "
-#| "search for new software to install, but will need an administrator to "
-#| "authorize the installation when they try to install an application."
 msgid ""
 "You can prevent a user from installing additional software on the system. "
 "They will still be able to search for new software to install, but will need "
@@ -314,12 +320,12 @@ msgid ""
 "system-wide (for all users) or just for themselves."
 msgstr ""
 "Ви можете заборонити користувачеві встановлювати додаткове програмне "
-"забезпечення. Користувачі зможуть виконувати пошук нового програмного"
-" забезпечення для встановлення, але "
-"потребуватимуть пароля адміністратора для уповноваження на встановлення. "
-"Запит щодо пароля буде показано, коли користувач спробує встановити програму."
-" Це стосується ситуацій, коли користувачі намагаються встановити програму на"
-" загальносистемному рівні (для усіх користувачів) або лише для себе."
+"забезпечення. Користувачі зможуть виконувати пошук нового програмного "
+"забезпечення для встановлення, але потребуватимуть пароля адміністратора для "
+"уповноваження на встановлення. Запит щодо пароля буде показано, коли "
+"користувач спробує встановити програму. Це стосується ситуацій, коли "
+"користувачі намагаються встановити програму на загальносистемному рівні (для "
+"усіх користувачів) або лише для себе."
 
 #. (itstool) path: page/p
 #: C/software-installation.page:17
