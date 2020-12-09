@@ -11,7 +11,7 @@ Build-Depends:
  gtk-doc-tools,
  itstool,
  libaccountsservice-dev (>= 0.6.39),
- libappstream-glib-dev,
+ libappstream-glib-dev (>= 0.7.15),
  libdbus-1-dev,
  libflatpak-dev,
  libgirepository1.0-dev (>= 1.30.0),
