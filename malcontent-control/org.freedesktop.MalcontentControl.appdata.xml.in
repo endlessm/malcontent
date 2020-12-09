@@ -43,6 +43,18 @@
   </kudos>
   <translation type="gettext">malcontent</translation>
   <releases>
+    <release version="0.10.0" date="2020-12-09" type="stable">
+      <description>
+        <p>This is a stable release with the following changes:</p>
+        <ul>
+          <li>Reload the application list when apps are installed or removed</li>
+          <li>Fix some data loss consistency problems in the UI</li>
+          <li>Hide support for flatpak user repositories, as they are typically not configured</li>
+          <li>Minor improvements to parental controls application UI</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.9.0" date="2020-09-03" type="stable">
       <description>
         <p>This is a stable release with the following changes:</p>
