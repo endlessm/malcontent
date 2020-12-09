@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: malcontent master\n"
 "Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/issu"
 "es\n"
-"POT-Creation-Date: 2020-12-08 15:28+0000\n"
-"PO-Revision-Date: 2020-12-08 22:18+0200\n"
+"POT-Creation-Date: 2020-12-09 03:28+0000\n"
+"PO-Revision-Date: 2020-12-09 08:59+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -367,9 +367,9 @@ msgid ""
 "conversation with %s. <a href='https://www.commonsensemedia.org/privacy-and-"
 "internet-safety'>Read guidance</a> on what to consider."
 msgstr ""
-"Рекомендуємо встановити обмеження як частину наступної розмови із %s. <a"
-" href='https://www.commonsensemedia.org/privacy-and-internet-safety'"
-">Ознайомтеся із настановами</a> щодо того, що слід врахувати."
+"Рекомендуємо встановити обмеження як частину наступної розмови із %s. <a "
+"href='https://www.commonsensemedia.org/privacy-and-internet-"
+"safety'>Ознайомтеся із настановами</a> щодо того, що слід врахувати."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
@@ -390,31 +390,32 @@ msgstr ""
 "Для перегляду і внесення змін до параметрів батьківського контролю для "
 "користувача потрібні відповідні права доступу."
 
-#: malcontent-control/main.ui:170
-msgid "No Child Users Configured"
-msgstr "Не налаштовано жодного користувача-дитини"
+#: malcontent-control/main.ui:182
+msgid "No Standard User Accounts"
+msgstr "Немає стандартних облікових записів користувачів"
 
-#: malcontent-control/main.ui:184
+#: malcontent-control/main.ui:197
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"Parental controls can only be applied to standard user\n"
+"accounts. These can be created in the user settings."
 msgstr ""
-"У системі зараз не налаштовано жодного дитячого облікового запису. Створіть "
-"такий запис, перш ніж налаштовувати батьківський контроль для нього."
+"Батьківський контроль можна застосовувати лише до стандартних\n"
+"облікових записів користувачів. Такі записи можна створити у параметрах"
+" користувачів."
 
-#: malcontent-control/main.ui:196
-msgid "Create _Child User"
-msgstr "Створити користува_ча-дитину"
+#: malcontent-control/main.ui:210
+msgid "_User Settings"
+msgstr "П_араметри користувачів"
 
-#: malcontent-control/main.ui:224
+#: malcontent-control/main.ui:238
 msgid "Loading…"
 msgstr "Завантаження…"
 
-#: malcontent-control/main.ui:287
+#: malcontent-control/main.ui:301
 msgid "_Help"
 msgstr "_Довідка"
 
-#: malcontent-control/main.ui:291
+#: malcontent-control/main.ui:305
 msgid "_About Parental Controls"
 msgstr "_Про «Батьківський контроль»"
 
