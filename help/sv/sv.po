@@ -6,16 +6,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent master\n"
-"POT-Creation-Date: 2020-09-13 15:28+0000\n"
-"PO-Revision-Date: 2020-09-14 15:22+0200\n"
+"POT-Creation-Date: 2020-12-08 15:28+0000\n"
+"PO-Revision-Date: 2020-12-17 18:25+0100\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -118,13 +118,13 @@ msgstr "För att begränsa en användares åtkomst till internet:"
 
 #. (itstool) path: item/p
 #: C/internet.page:19 C/restricting-applications.page:20
-#: C/software-installation.page:27 C/software-installation.page:64
+#: C/software-installation.page:28 C/software-installation.page:54
 msgid "Open the <app>Parental Controls</app> application."
 msgstr "Öppna programmet <app>Föräldrakontroller</app>."
 
 #. (itstool) path: item/p
 #: C/internet.page:20 C/restricting-applications.page:21
-#: C/software-installation.page:28 C/software-installation.page:65
+#: C/software-installation.page:29 C/software-installation.page:55
 msgid "Select the user in the tabs at the top."
 msgstr "Välj användaren i flikarna högst upp."
 
@@ -137,19 +137,21 @@ msgstr "Aktivera kryssrutan <gui style=\"checkbox\">Begränsa webbläsare</gui>.
 #. (itstool) path: info/desc
 #: C/introduction.page:6
 msgid ""
-"Overview of parental controls and the <app>Parental Controls</app> "
-"application."
+"Overview of parental controls, the <app>Parental Controls</app> application "
+"and its use in other situations where access restrictions are needed on a "
+"user."
 msgstr ""
-"Översikt över föräldrakontroller och programmet <app>Föräldrakontroller</"
-"app>."
+"Översikt över föräldrakontroller, programmet <app>Föräldrakontroller</app> "
+"och dess användning i andra situationer där åtkomstbegränsningar behövs för "
+"en användare."
 
 #. (itstool) path: page/title
-#: C/introduction.page:10
+#: C/introduction.page:12
 msgid "Introduction to Parental Controls"
 msgstr "Introduktion till Föräldrakontroller"
 
 #. (itstool) path: page/p
-#: C/introduction.page:12
+#: C/introduction.page:14
 msgid ""
 "Parental controls are a way to restrict what non-administrator accounts can "
 "do on the computer, with the aim of allowing parents to restrict what their "
@@ -161,18 +163,19 @@ msgstr ""
 "göra när de använder datorn utan översikt eller med begränsad översikt."
 
 #. (itstool) path: page/p
-#: C/introduction.page:16
+#: C/introduction.page:18
 msgid ""
 "This functionality can be used in other situations ­– such as other carer/"
 "caree relationships – but is labelled as ‘parental controls’ so that it’s "
-"easy to find."
+"easy to find, as that’s what most people will be looking for."
 msgstr ""
 "Denna funktionalitet kan användas i andra situationer – som i andra "
 "relationer där ena parten har ansvar för den andra – men kallas "
-"”föräldrakontroller” för att vara lätt att hitta."
+"”föräldrakontroller” för att vara lätt att hitta, då det är vad de flesta "
+"kommer att söka efter."
 
 #. (itstool) path: page/p
-#: C/introduction.page:19
+#: C/introduction.page:21
 msgid ""
 "The parental controls for any user can be queried and set using the "
 "<app>Parental Controls</app> application. This lists the non-administrator "
@@ -186,7 +189,7 @@ msgstr ""
 "föräldrakontrollerna tillämpas omedelbart."
 
 #. (itstool) path: page/p
-#: C/introduction.page:23
+#: C/introduction.page:25
 msgid ""
 "Restrictions on using the computer can only be applied to non-administrator "
 "accounts. The parental controls settings for a user can only be changed by "
@@ -294,19 +297,21 @@ msgstr "Begränsa installation av programvara"
 #. (itstool) path: page/p
 #: C/software-installation.page:11
 msgid ""
-"You can prevent a user from installing additional software, either for the "
-"entire system, or just for themselves. They will still be able to search for "
-"new software to install, but will need an administrator to authorize the "
-"installation when they try to install an application."
+"You can prevent a user from installing additional software on the system. "
+"They will still be able to search for new software to install, but will need "
+"an administrator to authorize the installation when they try to install an "
+"application. This applies whether they are trying to install the application "
+"system-wide (for all users) or just for themselves."
 msgstr ""
-"Du kan förhindra en användare från att installera ytterligare programvara, "
-"antingen för hela systemet, eller bara för sig själva. De kommer fortfarande "
-"kunna söka efter ny programvara att installera, men kommer behöva att en "
-"administratör godkänner installationen när de försöker installera ett "
-"program."
+"Du kan förhindra en användare från att installera ytterligare programvara på "
+"systemet. De kommer fortfarande kunna söka efter ny programvara att "
+"installera, men kommer behöva att en administratör godkänner installationen "
+"när de försöker installera ett program. Detta gäller oavsett om de försöker "
+"installera programmet systemomfattande (för alla användare) eller bara för "
+"sig själva."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:16
+#: C/software-installation.page:17
 msgid ""
 "Additionally, you can restrict which software a user can browse or search "
 "for in the <app>Software</app> catalog by age categories."
@@ -316,7 +321,7 @@ msgstr ""
 "ålderskategorier."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:19
+#: C/software-installation.page:20
 msgid ""
 "To prevent a user from running an application which has already been "
 "installed, see <link xref=\"restricting-applications\"/>."
@@ -325,18 +330,18 @@ msgstr ""
 "installerats, se <link xref=\"restricting-applications\"/>."
 
 #. (itstool) path: section/title
-#: C/software-installation.page:23
+#: C/software-installation.page:24
 msgid "Preventing Software Installation"
 msgstr "Förhindra installation av programvara"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:25
+#: C/software-installation.page:26
 msgid "To prevent a user from installing additional software:"
 msgstr ""
 "För att förhindra en användare från att installera ytterligare programvara:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:29
+#: C/software-installation.page:30
 msgid ""
 "Enable the <gui style=\"checkbox\">Restrict Application Installation</gui> "
 "checkbox."
@@ -344,45 +349,13 @@ msgstr ""
 "Aktivera kryssrutan <gui style=\"checkbox\">Begränsa installation av "
 "program</gui>."
 
-#. (itstool) path: item/p
-#: C/software-installation.page:30
-msgid ""
-"Or enable the <gui style=\"checkbox\">Restrict Application Installation for "
-"Others</gui> checkbox."
-msgstr ""
-"Eller aktivera kryssrutan <gui style=\"checkbox\">Begränsa installation av "
-"program åt andra</gui>."
-
-#. (itstool) path: section/p
-#: C/software-installation.page:33
-msgid ""
-"The <gui style=\"checkbox\">Restrict Application Installation for Others</"
-"gui> checkbox allows the user to install additional software for themselves, "
-"but prevents that software from being made available to other users. It "
-"could be used, for example, if there were two child users, one of whom is "
-"mature enough to be allowed to install additional software, but the other "
-"isn’t — enabling <gui style=\"checkbox\">Restrict Application Installation "
-"for Others</gui> would prevent the more mature child from installing "
-"applications which are inappropriate for the other child and making them "
-"available to the other child."
-msgstr ""
-"Kryssrutan <gui style=\"checkbox\">Begränsa installation av program åt "
-"andra</gui> låter användaren installera ytterligare programvara åt sig "
-"själv, men förhindrar den programvaran från att bli tillgänglig för andra "
-"användare. Det kan till exempel användas om det finns två barnanvändare, en "
-"som är mogen nog för att tillåtas installera ytterligare programvara, och en "
-"som inte är det — att aktivera <gui style=\"checkbox\">Begränsa installation "
-"av program åt andra</gui> skulle förhindra det mognare barnet från att "
-"installera program som är olämpliga så att de blir tillgängliga för det "
-"andra barnet."
-
 #. (itstool) path: section/title
-#: C/software-installation.page:45
+#: C/software-installation.page:35
 msgid "Restricting Software Installation by Age"
 msgstr "Begränsning av programvaruinstallation enligt ålder"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:47
+#: C/software-installation.page:37
 msgid ""
 "Applications in the <app>Software</app> catalog have information about "
 "content they contain which might be inappropriate for some ages — for "
@@ -395,7 +368,7 @@ msgstr ""
 "att spendera pengar."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:51
+#: C/software-installation.page:41
 msgid ""
 "For each application, this information is summarized as the minimum age "
 "child it is typically suitable to be used by — for example, “suitable for "
@@ -408,7 +381,7 @@ msgstr ""
 "kan jämföras med klassifikationerna som används för film och spel."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:55
+#: C/software-installation.page:45
 msgid ""
 "The applications shown to a user in the <app>Software</app> catalog can be "
 "filtered by their age suitability. Applications which are not suitable for "
@@ -422,7 +395,7 @@ msgstr ""
 "är satt tillräckligt högt)."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:61
+#: C/software-installation.page:51
 msgid ""
 "To filter the applications seen by a user in the <app>Software</app> catalog "
 "to only those suitable for a certain age:"
@@ -432,7 +405,7 @@ msgstr ""
 "ålder:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:66
+#: C/software-installation.page:56
 msgid ""
 "In the <gui>Application Suitability</gui> list, select the age which "
 "applications should be suitable for."
@@ -441,7 +414,7 @@ msgstr ""
 "vara lämpliga för."
 
 #. (itstool) path: note/p
-#: C/software-installation.page:70
+#: C/software-installation.page:60
 msgid ""
 "The user’s actual age is not stored, so the <gui>Application Suitability</"
 "gui> is not automatically updated over time as the child grows older. You "
@@ -452,3 +425,31 @@ msgstr ""
 "uppdateras inte automatiskt då barnet blir äldre. Du måste periodiskt "
 "utvärdera den rätta <gui>Lämplighet för program</gui> för varje användare på "
 "nytt."
+
+#~ msgid ""
+#~ "Or enable the <gui style=\"checkbox\">Restrict Application Installation "
+#~ "for Others</gui> checkbox."
+#~ msgstr ""
+#~ "Eller aktivera kryssrutan <gui style=\"checkbox\">Begränsa installation "
+#~ "av program åt andra</gui>."
+
+#~ msgid ""
+#~ "The <gui style=\"checkbox\">Restrict Application Installation for Others</"
+#~ "gui> checkbox allows the user to install additional software for "
+#~ "themselves, but prevents that software from being made available to other "
+#~ "users. It could be used, for example, if there were two child users, one "
+#~ "of whom is mature enough to be allowed to install additional software, "
+#~ "but the other isn’t — enabling <gui style=\"checkbox\">Restrict "
+#~ "Application Installation for Others</gui> would prevent the more mature "
+#~ "child from installing applications which are inappropriate for the other "
+#~ "child and making them available to the other child."
+#~ msgstr ""
+#~ "Kryssrutan <gui style=\"checkbox\">Begränsa installation av program åt "
+#~ "andra</gui> låter användaren installera ytterligare programvara åt sig "
+#~ "själv, men förhindrar den programvaran från att bli tillgänglig för andra "
+#~ "användare. Det kan till exempel användas om det finns två barnanvändare, "
+#~ "en som är mogen nog för att tillåtas installera ytterligare programvara, "
+#~ "och en som inte är det — att aktivera <gui style=\"checkbox\">Begränsa "
+#~ "installation av program åt andra</gui> skulle förhindra det mognare "
+#~ "barnet från att installera program som är olämpliga så att de blir "
+#~ "tillgängliga för det andra barnet."
