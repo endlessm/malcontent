@@ -7,14 +7,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent-help\n"
-"POT-Creation-Date: 2020-04-12 03:55+0000\n"
-"PO-Revision-Date: 2020-04-12 15:33+0200\n"
+"POT-Creation-Date: 2020-12-18 15:14+0000\n"
+"PO-Revision-Date: 2020-12-20 13:22+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pl\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
@@ -123,13 +123,13 @@ msgstr "Aby ograniczyć dostęp użytkownika do Internetu:"
 
 #. (itstool) path: item/p
 #: C/internet.page:19 C/restricting-applications.page:20
-#: C/software-installation.page:27 C/software-installation.page:64
+#: C/software-installation.page:28 C/software-installation.page:54
 msgid "Open the <app>Parental Controls</app> application."
 msgstr "Otwórz program <app>Kontrola rodzicielska</app>."
 
 #. (itstool) path: item/p
 #: C/internet.page:20 C/restricting-applications.page:21
-#: C/software-installation.page:28 C/software-installation.page:65
+#: C/software-installation.page:29 C/software-installation.page:55
 msgid "Select the user in the tabs at the top."
 msgstr "Wybierz użytkownika z kart na górze."
 
@@ -144,18 +144,21 @@ msgstr ""
 #. (itstool) path: info/desc
 #: C/introduction.page:6
 msgid ""
-"Overview of parental controls and the <app>Parental Controls</app> "
-"application."
+"Overview of parental controls, the <app>Parental Controls</app> application "
+"and its use in other situations where access restrictions are needed on a "
+"user."
 msgstr ""
-"Przegląd kontroli rodzicielskiej i programu <app>Kontrola rodzicielska</app>."
+"Przegląd kontroli rodzicielskiej, programu <app>Kontrola rodzicielska</app> "
+"i jego użycia w innych sytuacjach, w których potrzebne są ograniczenia "
+"dostępu użytkownika."
 
 #. (itstool) path: page/title
-#: C/introduction.page:10
+#: C/introduction.page:12
 msgid "Introduction to Parental Controls"
 msgstr "Wprowadzenie do kontroli rodzicielskiej"
 
 #. (itstool) path: page/p
-#: C/introduction.page:12
+#: C/introduction.page:14
 msgid ""
 "Parental controls are a way to restrict what non-administrator accounts can "
 "do on the computer, with the aim of allowing parents to restrict what their "
@@ -168,18 +171,18 @@ msgstr ""
 "nadzoru lub z minimalnym nadzorem."
 
 #. (itstool) path: page/p
-#: C/introduction.page:16
+#: C/introduction.page:18
 msgid ""
 "This functionality can be used in other situations ­– such as other carer/"
 "caree relationships – but is labelled as ‘parental controls’ so that it’s "
-"easy to find."
+"easy to find, as that’s what most people will be looking for."
 msgstr ""
 "Ta funkcjonalność może być używana w innych sytuacjach — takich jak inne "
 "relacje opiekuńcze — ale nazywa się „kontrola rodzicielska”, aby można ją "
-"było łatwo znaleźć."
+"było łatwo znaleźć, jako że większość osób będzie szukać tego terminu."
 
 #. (itstool) path: page/p
-#: C/introduction.page:19
+#: C/introduction.page:21
 msgid ""
 "The parental controls for any user can be queried and set using the "
 "<app>Parental Controls</app> application. This lists the non-administrator "
@@ -193,7 +196,7 @@ msgstr ""
 "są uwzględniane od razu."
 
 #. (itstool) path: page/p
-#: C/introduction.page:23
+#: C/introduction.page:25
 msgid ""
 "Restrictions on using the computer can only be applied to non-administrator "
 "accounts. The parental controls settings for a user can only be changed by "
@@ -305,18 +308,20 @@ msgstr "Ograniczanie instalacji oprogramowania"
 #. (itstool) path: page/p
 #: C/software-installation.page:11
 msgid ""
-"You can prevent a user from installing additional software, either for the "
-"entire system, or just for themselves. They will still be able to search for "
-"new software to install, but will need an administrator to authorize the "
-"installation when they try to install an application."
+"You can prevent a user from installing additional software on the system. "
+"They will still be able to search for new software to install, but will need "
+"an administrator to authorize the installation when they try to install an "
+"application. This applies whether they are trying to install the application "
+"system-wide (for all users) or just for themselves."
 msgstr ""
-"Można uniemożliwić użytkownikowi instalowanie dodatkowego oprogramowania dla "
-"całego komputera lub tylko dla niego. Nadal będzie on mógł wyszukiwać nowe "
-"oprogramowanie, ale do jego zainstalowania będzie potrzebował upoważnienia "
-"administratora."
+"Można uniemożliwić użytkownikowi instalowanie dodatkowego oprogramowania na "
+"komputerze. Nadal będzie on mógł wyszukiwać nowe oprogramowanie, ale do jego "
+"zainstalowania będzie potrzebował upoważnienia administratora. Ma to "
+"zastosowanie niezależnie od tego, czy użytkownik próbuje zainstalować "
+"program w systemie (dla wszystkich użytkowników) czy tylko dla siebie."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:16
+#: C/software-installation.page:17
 msgid ""
 "Additionally, you can restrict which software a user can browse or search "
 "for in the <app>Software</app> catalog by age categories."
@@ -326,7 +331,7 @@ msgstr ""
 "wiekowych."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:19
+#: C/software-installation.page:20
 msgid ""
 "To prevent a user from running an application which has already been "
 "installed, see <link xref=\"restricting-applications\"/>."
@@ -335,63 +340,31 @@ msgstr ""
 "uniemożliwić użytkownikowi uruchamianie już zainstalowanego programu."
 
 #. (itstool) path: section/title
-#: C/software-installation.page:23
+#: C/software-installation.page:24
 msgid "Preventing Software Installation"
 msgstr "Uniemożliwianie instalacji oprogramowania"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:25
+#: C/software-installation.page:26
 msgid "To prevent a user from installing additional software:"
 msgstr ""
 "Aby uniemożliwić użytkownikowi instalowanie dodatkowego oprogramowania:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:29
+#: C/software-installation.page:30
 msgid ""
 "Enable the <gui style=\"checkbox\">Restrict Application Installation</gui> "
 "checkbox."
 msgstr ""
 "Zaznacz pole <gui style=\"checkbox\">Ograniczanie instalacji programów</gui>."
 
-#. (itstool) path: item/p
-#: C/software-installation.page:30
-msgid ""
-"Or enable the <gui style=\"checkbox\">Restrict Application Installation for "
-"Others</gui> checkbox."
-msgstr ""
-"Lub zaznacz pole <gui style=\"checkbox\">Ograniczanie instalacji programów "
-"dla innych</gui>."
-
-#. (itstool) path: section/p
-#: C/software-installation.page:33
-msgid ""
-"The <gui style=\"checkbox\">Restrict Application Installation for Others</"
-"gui> checkbox allows the user to install additional software for themselves, "
-"but prevents that software from being made available to other users. It "
-"could be used, for example, if there were two child users, one of whom is "
-"mature enough to be allowed to install additional software, but the other "
-"isn’t — enabling <gui style=\"checkbox\">Restrict Application Installation "
-"for Others</gui> would prevent the more mature child from installing "
-"applications which are inappropriate for the other child and making them "
-"available to the other child."
-msgstr ""
-"Pole <gui style=\"checkbox\">Ograniczanie instalacji programów dla innych</"
-"gui> umożliwia użytkownikowi instalowanie dodatkowego oprogramowania dla "
-"siebie, ale uniemożliwia korzystanie z tego oprogramowania pozostałym "
-"użytkownikom. Można go używać na przykład jeśli są dwa konta dzieci, "
-"z których jedno na tyle dorosłe, aby móc instalować dodatkowe "
-"oprogramowanie, ale drugie nie jest — włączenie <gui style=\"checkbox"
-"\">Ograniczanie instalacji programów dla innych</gui> uniemożliwi starszemu "
-"dziecku instalowanie programów nieodpowiednich dla młodszego i dawanie mu do "
-"nich dostępu."
-
 #. (itstool) path: section/title
-#: C/software-installation.page:45
+#: C/software-installation.page:35
 msgid "Restricting Software Installation by Age"
 msgstr "Ograniczanie instalacji oprogramowania według wieku"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:47
+#: C/software-installation.page:37
 msgid ""
 "Applications in the <app>Software</app> catalog have information about "
 "content they contain which might be inappropriate for some ages — for "
@@ -404,7 +377,7 @@ msgstr ""
 "w Internecie lub możliwość wydawania pieniędzy."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:51
+#: C/software-installation.page:41
 msgid ""
 "For each application, this information is summarized as the minimum age "
 "child it is typically suitable to be used by — for example, “suitable for "
@@ -418,7 +391,7 @@ msgstr ""
 "filmów i gier."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:55
+#: C/software-installation.page:45
 msgid ""
 "The applications shown to a user in the <app>Software</app> catalog can be "
 "filtered by their age suitability. Applications which are not suitable for "
@@ -432,7 +405,7 @@ msgstr ""
 "kategoria wiekowa jest ustawiona odpowiednio wysoko)."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:61
+#: C/software-installation.page:51
 msgid ""
 "To filter the applications seen by a user in the <app>Software</app> catalog "
 "to only those suitable for a certain age:"
@@ -441,7 +414,7 @@ msgstr ""
 "<app>Menedżera oprogramowania</app>:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:66
+#: C/software-installation.page:56
 msgid ""
 "In the <gui>Application Suitability</gui> list, select the age which "
 "applications should be suitable for."
@@ -450,7 +423,7 @@ msgstr ""
 "programy powinny być odpowiednie."
 
 #. (itstool) path: note/p
-#: C/software-installation.page:70
+#: C/software-installation.page:60
 msgid ""
 "The user’s actual age is not stored, so the <gui>Application Suitability</"
 "gui> is not automatically updated over time as the child grows older. You "
