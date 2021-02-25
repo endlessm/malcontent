@@ -374,8 +374,8 @@ compare_app_info_cb (gconstpointer a,
   GAppInfo *app_a = (GAppInfo*) a;
   GAppInfo *app_b = (GAppInfo*) b;
 
-  return g_utf8_collate (g_app_info_get_display_name (app_a),
-                         g_app_info_get_display_name (app_b));
+  return g_utf8_collate (g_app_info_get_name (app_a),
+                         g_app_info_get_name (app_b));
 }
 
 static gint
