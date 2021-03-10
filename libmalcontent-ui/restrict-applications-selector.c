@@ -521,8 +521,6 @@ reload_apps (MctRestrictApplicationsSelector *self)
       if (!G_IS_DESKTOP_APP_INFO (app) ||
           !g_app_info_should_show (app) ||
           app_name[0] == '\0' ||
-          /* Endless' link apps have the "eos-link" prefix, and should be ignored too */
-          g_str_has_prefix (g_app_info_get_id (app), "eos-link") ||
           /* FIXME: Only list flatpak apps and apps with X-Parental-Controls
            * key set for now; we really need a system-wide MAC to be able to
            * reliably support blocklisting system programs. */
