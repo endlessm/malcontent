@@ -1,3 +1,17 @@
+Overview of changes in malcontent 0.10.1
+========================================
+
+* Bugs fixed:
+ - #32 App sort key does not match displayed name
+ - !112 Update Swedish translation
+ - !113 Update Polish translation 201220
+ - !116 libmalcontent-ui: Drop handling of eos-link desktop files
+
+* Translation updates:
+ - Polish
+ - Swedish
+
+
 Overview of changes in malcontent 0.10.0
 ========================================
 

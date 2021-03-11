@@ -43,6 +43,15 @@
   </kudos>
   <translation type="gettext">malcontent</translation>
   <releases>
+    <release version="0.10.1" date="2021-03-11" type="stable">
+      <description>
+        <p>This is a stable release with the following changes:</p>
+        <ul>
+          <li>Sort apps by displayed name when listing them</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.10.0" date="2020-12-09" type="stable">
       <description>
         <p>This is a stable release with the following changes:</p>
