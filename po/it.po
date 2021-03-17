@@ -1,15 +1,15 @@
 # Italian translations for malcontent package.
-# Copyright (C) 2020 Free Software Foundation, Inc.
+# Copyright (C) 2020, 2021 Free Software Foundation, Inc.
 # This file is distributed under the same license as the malcontent package.
-# Milo Casagrande <milo@milo.name>, 2020.
+# Milo Casagrande <milo@milo.name>, 2020, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent\n"
 "Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
 "issues\n"
-"POT-Creation-Date: 2020-09-10 03:28+0000\n"
-"PO-Revision-Date: 2020-09-13 14:25+0200\n"
+"POT-Creation-Date: 2020-12-18 15:14+0000\n"
+"PO-Revision-Date: 2021-03-17 11:27+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
@@ -135,29 +135,29 @@ msgstr "Il filtro app per l'utente %u era in un formato non riconosciuto"
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
 msgstr "Il filtro OARS per l'utente %u presenta un tipo «%s» non riconosciuto"
 
-#: libmalcontent/manager.c:283 libmalcontent/manager.c:412
+#: libmalcontent/manager.c:283 libmalcontent/manager.c:420
+#: libmalcontent/manager.c:803
 #, c-format
-msgid "Not allowed to query app filter data for user %u"
-msgstr "Non è consentito richiedere i dati dei filtri app per l'utente %u"
+msgid "Not allowed to query parental controls data for user %u"
+msgstr ""
+"Non è consentito richiedere i dati sui controlli parentali per l'utente %u"
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
 msgstr "L'utente %u non esiste"
 
-#: libmalcontent/manager.c:394
+#: libmalcontent/manager.c:296
+msgid "System accounts service not available"
+msgstr ""
+
+#: libmalcontent/manager.c:402
 msgid "App filtering is globally disabled"
 msgstr "I filtri sulle app sono disabilitati globalmente"
 
-#: libmalcontent/manager.c:777
+#: libmalcontent/manager.c:785
 msgid "Session limits are globally disabled"
 msgstr "I limiti sulla sessione sono disabilitati globalmente"
-
-#: libmalcontent/manager.c:795
-#, c-format
-msgid "Not allowed to query session limits data for user %u"
-msgstr ""
-"Non è consentito richiedere i dati dei limiti di sessione per l'utente %u"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
@@ -239,17 +239,17 @@ msgid "No applications found to restrict."
 msgstr "Non è stata trovata alcuna applicazione da limitare."
 
 #. Translators: this is the full name for an unknown user account.
-#: libmalcontent-ui/user-controls.c:242 libmalcontent-ui/user-controls.c:253
+#: libmalcontent-ui/user-controls.c:207 libmalcontent-ui/user-controls.c:218
 msgid "unknown"
 msgstr "sconosciuto"
 
-#: libmalcontent-ui/user-controls.c:338 libmalcontent-ui/user-controls.c:425
-#: libmalcontent-ui/user-controls.c:711
+#: libmalcontent-ui/user-controls.c:312 libmalcontent-ui/user-controls.c:397
+#: libmalcontent-ui/user-controls.c:669
 msgid "All Ages"
 msgstr "Tutte le età"
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:514
+#: libmalcontent-ui/user-controls.c:477
 #, c-format
 msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
@@ -259,53 +259,42 @@ msgstr ""
 "possono comunque essere accessibili in altre applicazioni."
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:519
+#: libmalcontent-ui/user-controls.c:482
 #, c-format
 msgid "Prevents specified applications from being used by %s."
 msgstr "Impedisce all'utente %s di utilizzare applicazioni specifiche."
 
 #. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:524
+#: libmalcontent-ui/user-controls.c:487
 #, c-format
 msgid "Prevents %s from installing applications."
 msgstr "Impedisce all'utente %s di installare applicazioni."
 
-#. Translators: The placeholder is a user’s display name.
-#: libmalcontent-ui/user-controls.c:529
-#, c-format
-msgid "Applications installed by %s will not appear for other users."
-msgstr ""
-"Le applicazioni installate da %s non saranno visualizzate da altri utenti."
-
-#: libmalcontent-ui/user-controls.ui:17
+#: libmalcontent-ui/user-controls.ui:16
 msgid "Application Usage Restrictions"
 msgstr "Limitazioni utilizzo applicazioni"
 
-#: libmalcontent-ui/user-controls.ui:68
+#: libmalcontent-ui/user-controls.ui:67
 msgid "Restrict _Web Browsers"
 msgstr "Limita browser _web"
 
-#: libmalcontent-ui/user-controls.ui:152
+#: libmalcontent-ui/user-controls.ui:151
 msgid "_Restrict Applications"
 msgstr "_Limita applicazioni"
 
-#: libmalcontent-ui/user-controls.ui:231
+#: libmalcontent-ui/user-controls.ui:230
 msgid "Software Installation Restrictions"
 msgstr "Limitazioni installazione software"
 
-#: libmalcontent-ui/user-controls.ui:281
+#: libmalcontent-ui/user-controls.ui:280
 msgid "Restrict Application _Installation"
 msgstr "Limita _installazione applicazioni"
 
-#: libmalcontent-ui/user-controls.ui:366
-msgid "Restrict Application Installation for _Others"
-msgstr "Limita installazione applicazioni ad _altri"
-
-#: libmalcontent-ui/user-controls.ui:451
+#: libmalcontent-ui/user-controls.ui:365
 msgid "Application _Suitability"
 msgstr "Co_mpatibilità applicazioni"
 
-#: libmalcontent-ui/user-controls.ui:473
+#: libmalcontent-ui/user-controls.ui:387
 msgid ""
 "Restricts browsing or installation of applications to applications suitable "
 "for certain ages or above."
@@ -313,43 +302,78 @@ msgstr ""
 "Limita l'esplorazione o l'installazione di applicazioni a solo quelle "
 "compatibili con certe fasce d'età."
 
+#. Translators: This documents the --user command line option to malcontent-control:
+#: malcontent-control/application.c:102
+msgid "User to select in the UI"
+msgstr "Utente da selezionare nell'interfaccia utente"
+
+#. Translators: This is a placeholder for a command line argument value:
+#: malcontent-control/application.c:104
+msgid "USERNAME"
+msgstr "NOMEUTENTE"
+
+#: malcontent-control/application.c:115
+msgid "— view and edit parental controls"
+msgstr "— Visualizza e modifica i controlli parentali"
+
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
-#: malcontent-control/application.c:105 malcontent-control/main.ui:12
+#: malcontent-control/application.c:122 malcontent-control/main.ui:12
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:9
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:3
 msgid "Parental Controls"
 msgstr "Controlli parentali"
 
-#: malcontent-control/application.c:270
+#: malcontent-control/application.c:308
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
 msgstr "Copyright © 2019, 2020 Endless Mobile, Inc."
 
 #. Translators: this should be "translated" to the
 #. names of people who have translated Malcontent into
 #. this language, one per line.
-#: malcontent-control/application.c:275
+#: malcontent-control/application.c:313
 msgid "translator-credits"
 msgstr "Milo Casagrande <milo@milo.name>, 2020"
 
 #. Translators: "Malcontent" is the brand name of this
 #. project, so should not be translated.
-#: malcontent-control/application.c:281
+#: malcontent-control/application.c:319
 msgid "Malcontent Website"
 msgstr "Sito web di Malcontent"
 
-#: malcontent-control/application.c:299
+#: malcontent-control/application.c:337
 msgid "The help contents could not be displayed"
 msgstr "I contenuti dell'aiuto non possono essere visualizzati"
 
-#: malcontent-control/application.c:336
+#: malcontent-control/application.c:374
 msgid "Failed to load user data from the system"
 msgstr "Caricamento dei dati utente dal sistema non riuscito"
 
-#: malcontent-control/application.c:338
+#: malcontent-control/application.c:376
 msgid "Please make sure that the AccountsService is installed and enabled."
 msgstr ""
 "Assicurarsi che il servizio AccountsService sia installato e abilitato."
+
+#. Translators: Replace the link to commonsensemedia.org with some
+#. * localised guidance for parents/carers on how to set restrictions on
+#. * their child/caree in a responsible way which is in keeping with the
+#. * best practice and culture of the region. If no suitable localised
+#. * guidance exists, and if the default commonsensemedia.org link is not
+#. * suitable, please file an issue against malcontent so we can discuss
+#. * further!
+#. * https://gitlab.freedesktop.org/pwithnall/malcontent/-/issues/new
+#.
+#: malcontent-control/application.c:407
+#, c-format
+msgid ""
+"It’s recommended that restrictions are set as part of an ongoing "
+"conversation with %s. <a href='https://www.commonsensemedia.org/privacy-and-"
+"internet-safety'>Read guidance</a> on what to consider."
+msgstr ""
+"Si consiglia di impostare le restrizioni come parte di una conversazione "
+"attiva con %s. Per maggiori informazioni su cosa considerare per le "
+"restrizioni, è possibile <a href='https://www.internetmatters.org/it/"
+"resources/online-safety-guide/'>consultare questa guida</a>."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
@@ -359,42 +383,42 @@ msgstr "Pagina precedente"
 msgid "Next Page"
 msgstr "Pagina successiva"
 
-#: malcontent-control/main.ui:93
+#: malcontent-control/main.ui:115
 msgid "Permission Required"
 msgstr "Richiesti permessi"
 
-#: malcontent-control/main.ui:107
+#: malcontent-control/main.ui:129
 msgid ""
 "Permission is required to view and change user parental controls settings."
 msgstr ""
 "È richiesto avere i permessi necessari per visualizzare e modificare i "
 "controlli parentali dell'utente."
 
-#: malcontent-control/main.ui:148
-msgid "No Child Users Configured"
-msgstr "Nessun utente bambino configurato"
+#: malcontent-control/main.ui:184
+msgid "No Standard User Accounts"
+msgstr "Nessun account utente standard"
 
-#: malcontent-control/main.ui:162
+#: malcontent-control/main.ui:199
 msgid ""
-"No child users are currently set up on the system. Create one before setting "
-"up their parental controls."
+"Parental controls can only be applied to standard user\n"
+"accounts. These can be created in the user settings."
 msgstr ""
-"Nessun utente bambino è configurato nel sistema. Crearne uno prima di "
-"impostarne i controlli parentali."
+"I controlli parentali possono essere applicati solo agli account utenti\n"
+"standard. Questi possono essere creati nelle impostazioni utente."
 
-#: malcontent-control/main.ui:174
-msgid "Create _Child User"
-msgstr "Crea utente _bambino"
+#: malcontent-control/main.ui:212
+msgid "_User Settings"
+msgstr "Impostazioni _utente"
 
-#: malcontent-control/main.ui:202
+#: malcontent-control/main.ui:242
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: malcontent-control/main.ui:265
+#: malcontent-control/main.ui:305
 msgid "_Help"
 msgstr "A_iuto"
 
-#: malcontent-control/main.ui:269
+#: malcontent-control/main.ui:309
 msgid "_About Parental Controls"
 msgstr "I_nformazioni su Controlli parentali"
 
