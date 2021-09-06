@@ -1,25 +1,25 @@
 # Indonesian translation for malcontent.
 # Copyright (C) 2020 malcontent's COPYRIGHT HOLDER
 # This file is distributed under the same license as the malcontent package.
-# Andika Triwidada <atriwidada@gnome.org>, 2020.
+# Andika Triwidada <andika@gmail.com>, 2020, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: malcontent master\n"
-"POT-Creation-Date: 2020-04-11 15:30+0000\n"
-"PO-Revision-Date: 2020-04-12 17:20+0700\n"
+"POT-Creation-Date: 2020-12-18 15:14+0000\n"
+"PO-Revision-Date: 2021-08-30 18:26+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: id\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Andika Triwidada <andika@gmail.com>, 2020"
+msgstr "Andika Triwidada <andika@gmail.com>, 2020, 2021."
 
 #. (itstool) path: info/desc
 #: C/creating-a-child-user.page:6
@@ -117,13 +117,13 @@ msgstr "Untuk membatasi akses pengguna ke internet:"
 
 #. (itstool) path: item/p
 #: C/internet.page:19 C/restricting-applications.page:20
-#: C/software-installation.page:27 C/software-installation.page:64
+#: C/software-installation.page:28 C/software-installation.page:54
 msgid "Open the <app>Parental Controls</app> application."
 msgstr "Buka aplikasi <app>Pengawasan Orang Tua</app>."
 
 #. (itstool) path: item/p
 #: C/internet.page:20 C/restricting-applications.page:21
-#: C/software-installation.page:28 C/software-installation.page:65
+#: C/software-installation.page:29 C/software-installation.page:55
 msgid "Select the user in the tabs at the top."
 msgstr "Pilih pengguna di tab di bagian atas."
 
@@ -137,18 +137,21 @@ msgstr ""
 #. (itstool) path: info/desc
 #: C/introduction.page:6
 msgid ""
-"Overview of parental controls and the <app>Parental Controls</app> "
-"application."
+"Overview of parental controls, the <app>Parental Controls</app> application "
+"and its use in other situations where access restrictions are needed on a "
+"user."
 msgstr ""
-"Ikhtisar pengawasan orang tua dan aplikasi <app>Pengawasan Orang Tua</app>."
+"Ikhtisar pengawasan orang tua, aplikasi <app>Pengawasan Orang Tua</app>, dan "
+"penggunaannya dalam situasi lain dimana pembatasan akses diperlukan pada "
+"seorang pengguna."
 
 #. (itstool) path: page/title
-#: C/introduction.page:10
+#: C/introduction.page:12
 msgid "Introduction to Parental Controls"
 msgstr "Pengenalan untuk Pengawasan Orang Tua"
 
 #. (itstool) path: page/p
-#: C/introduction.page:12
+#: C/introduction.page:14
 msgid ""
 "Parental controls are a way to restrict what non-administrator accounts can "
 "do on the computer, with the aim of allowing parents to restrict what their "
@@ -161,18 +164,18 @@ msgstr ""
 "komputer tanpa pengawasan atau di bawah supervisi yang terbatas."
 
 #. (itstool) path: page/p
-#: C/introduction.page:16
+#: C/introduction.page:18
 msgid ""
 "This functionality can be used in other situations ­– such as other carer/"
 "caree relationships – but is labelled as ‘parental controls’ so that it’s "
-"easy to find."
+"easy to find, as that’s what most people will be looking for."
 msgstr ""
 "Fungsi ini dapat digunakan dalam situasi lain – seperti hubungan perawat/"
 "terrawat lainnya – tetapi diberi label sebagai 'pengawasan orang tua' "
-"sehingga mudah ditemukan."
+"sehingga mudah ditemukan, karena itulah yang kebanyakan orang akan cari."
 
 #. (itstool) path: page/p
-#: C/introduction.page:19
+#: C/introduction.page:21
 msgid ""
 "The parental controls for any user can be queried and set using the "
 "<app>Parental Controls</app> application. This lists the non-administrator "
@@ -186,7 +189,7 @@ msgstr ""
 "orang tua akan segera berlaku."
 
 #. (itstool) path: page/p
-#: C/introduction.page:23
+#: C/introduction.page:25
 msgid ""
 "Restrictions on using the computer can only be applied to non-administrator "
 "accounts. The parental controls settings for a user can only be changed by "
@@ -294,19 +297,20 @@ msgstr "Membatasi Instalasi Perangkat Lunak"
 #. (itstool) path: page/p
 #: C/software-installation.page:11
 msgid ""
-"You can prevent a user from installing additional software, either for the "
-"entire system, or just for themselves. They will still be able to search for "
-"new software to install, but will need an administrator to authorize the "
-"installation when they try to install an application."
+"You can prevent a user from installing additional software on the system. "
+"They will still be able to search for new software to install, but will need "
+"an administrator to authorize the installation when they try to install an "
+"application. This applies whether they are trying to install the application "
+"system-wide (for all users) or just for themselves."
 msgstr ""
-"Anda dapat mencegah pengguna dari menginstal perangkat lunak tambahan, baik "
+"Anda dapat mencegah pengguna dari memasang perangkat lunak tambahan, baik "
 "untuk seluruh sistem, atau hanya untuk diri mereka sendiri. Mereka masih "
-"akan dapat mencari perangkat lunak baru untuk diinstal, tetapi akan "
+"akan dapat mencari perangkat lunak baru untuk dipasang, tetapi akan "
 "memerlukan administrator untuk mengesahkan instalasi ketika mereka mencoba "
-"untuk menginstal aplikasi."
+"untuk memasang aplikasi."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:16
+#: C/software-installation.page:17
 msgid ""
 "Additionally, you can restrict which software a user can browse or search "
 "for in the <app>Software</app> catalog by age categories."
@@ -316,7 +320,7 @@ msgstr ""
 "kategori usia."
 
 #. (itstool) path: page/p
-#: C/software-installation.page:19
+#: C/software-installation.page:20
 msgid ""
 "To prevent a user from running an application which has already been "
 "installed, see <link xref=\"restricting-applications\"/>."
@@ -325,17 +329,17 @@ msgstr ""
 "<link xref=\"restricting-applications\"/> ."
 
 #. (itstool) path: section/title
-#: C/software-installation.page:23
+#: C/software-installation.page:24
 msgid "Preventing Software Installation"
 msgstr "Mencegah Instalasi Perangkat Lunak"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:25
+#: C/software-installation.page:26
 msgid "To prevent a user from installing additional software:"
 msgstr "Untuk mencegah pengguna menginstal perangkat lunak tambahan:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:29
+#: C/software-installation.page:30
 msgid ""
 "Enable the <gui style=\"checkbox\">Restrict Application Installation</gui> "
 "checkbox."
@@ -343,45 +347,13 @@ msgstr ""
 "Fungsikan kotak centang <gui style=\"checkbox\">Batasi Pemasangan Aplikasi</"
 "gui>."
 
-#. (itstool) path: item/p
-#: C/software-installation.page:30
-msgid ""
-"Or enable the <gui style=\"checkbox\">Restrict Application Installation for "
-"Others</gui> checkbox."
-msgstr ""
-"Atau fungsikan kotak centang <gui style=\"checkbox\">Batasi Pemasangan "
-"Aplikasi untuk Orang Lain</gui>."
-
-#. (itstool) path: section/p
-#: C/software-installation.page:33
-msgid ""
-"The <gui style=\"checkbox\">Restrict Application Installation for Others</"
-"gui> checkbox allows the user to install additional software for themselves, "
-"but prevents that software from being made available to other users. It "
-"could be used, for example, if there were two child users, one of whom is "
-"mature enough to be allowed to install additional software, but the other "
-"isn’t — enabling <gui style=\"checkbox\">Restrict Application Installation "
-"for Others</gui> would prevent the more mature child from installing "
-"applications which are inappropriate for the other child and making them "
-"available to the other child."
-msgstr ""
-"Kotak centang <gui style=\"checkbox\">Batasi Pemasangan Aplikasi untuk Orang "
-"Lain</gui> memungkinkan pengguna untuk menginstal perangkat lunak tambahan "
-"untuk diri mereka sendiri, tetapi mencegah bahwa perangkat lunak yang dibuat "
-"tersedia untuk pengguna lain. Hal ini dapat digunakan, misalnya, jika ada "
-"dua pengguna anak, salah satunya cukup dewasa untuk diizinkan untuk "
-"menginstal perangkat lunak tambahan, tetapi yang lain tidak — memfungsikan "
-"<gui style=\"checkbox\">Batasi Pemasangan Aplikasi untuk Orang Lain</gui> "
-"akan mencegah anak yang lebih dewasa dari menginstal aplikasi yang tidak "
-"pantas untuk anak lain dan membuat mereka tersedia untuk anak lain."
-
 #. (itstool) path: section/title
-#: C/software-installation.page:45
+#: C/software-installation.page:35
 msgid "Restricting Software Installation by Age"
 msgstr "Membatasi Instalasi Perangkat Lunak berdasarkan Umur"
 
 #. (itstool) path: section/p
-#: C/software-installation.page:47
+#: C/software-installation.page:37
 msgid ""
 "Applications in the <app>Software</app> catalog have information about "
 "content they contain which might be inappropriate for some ages — for "
@@ -394,7 +366,7 @@ msgstr ""
 "lain di internet, atau kemungkinan membelanjakan uang."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:51
+#: C/software-installation.page:41
 msgid ""
 "For each application, this information is summarized as the minimum age "
 "child it is typically suitable to be used by — for example, “suitable for "
@@ -407,7 +379,7 @@ msgstr ""
 "dibandingkan dengan skema penilaian yang digunakan untuk film dan permainan."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:55
+#: C/software-installation.page:45
 msgid ""
 "The applications shown to a user in the <app>Software</app> catalog can be "
 "filtered by their age suitability. Applications which are not suitable for "
@@ -421,7 +393,7 @@ msgstr ""
 "kesesuaian usia mereka ditetapkan cukup tinggi)."
 
 #. (itstool) path: section/p
-#: C/software-installation.page:61
+#: C/software-installation.page:51
 msgid ""
 "To filter the applications seen by a user in the <app>Software</app> catalog "
 "to only those suitable for a certain age:"
@@ -430,7 +402,7 @@ msgstr ""
 "<app>Perangkat Lunak</app> agar hanya yang cocok untuk usia tertentu:"
 
 #. (itstool) path: item/p
-#: C/software-installation.page:66
+#: C/software-installation.page:56
 msgid ""
 "In the <gui>Application Suitability</gui> list, select the age which "
 "applications should be suitable for."
@@ -439,7 +411,7 @@ msgstr ""
 "cocok."
 
 #. (itstool) path: note/p
-#: C/software-installation.page:70
+#: C/software-installation.page:60
 msgid ""
 "The user’s actual age is not stored, so the <gui>Application Suitability</"
 "gui> is not automatically updated over time as the child grows older. You "
