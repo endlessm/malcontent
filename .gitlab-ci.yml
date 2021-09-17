@@ -60,7 +60,7 @@ debian:
 pages:
   stage: deploy
   only:
-    - master
+    - main
   script:
     - mv _coverage/ public/
   artifacts:
