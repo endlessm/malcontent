@@ -34,6 +34,7 @@
   <url type="donation">http://www.gnome.org/friends/</url>
   <url type="translate">https://wiki.gnome.org/TranslationProject/LocalisationGuide</url>
   <update_contact>philip_at_tecnocode.co.uk</update_contact>
+  <compulsory_for_desktop>GNOME</compulsory_for_desktop>
   <project_group>GNOME</project_group>
   <developer_name>The GNOME Project</developer_name>
   <kudos>
