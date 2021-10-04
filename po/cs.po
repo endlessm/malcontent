@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://gitlab.freedesktop.org/pwithnall/malcontent/"
 "issues\n"
 "POT-Creation-Date: 2021-09-18 12:41+0000\n"
-"PO-Revision-Date: 2021-10-01 00:24+0200\n"
+"PO-Revision-Date: 2021-10-02 00:36+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: none\n"
 "Language: cs\n"
@@ -21,217 +21,218 @@ msgstr ""
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:4
 msgid "Change your own app filter"
-msgstr ""
+msgstr "Měnit filtr vlastních aplikací"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:5
 msgid "Authentication is required to change your app filter."
-msgstr ""
+msgstr "Pro změnu vlastního filtru aplikací je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:14
 msgid "Read your own app filter"
-msgstr ""
+msgstr "Číst filtr vlastních aplikací"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:15
 msgid "Authentication is required to read your app filter."
-msgstr ""
+msgstr "Pro čtení vlastního filtru aplikací je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:24
 msgid "Change another user’s app filter"
-msgstr ""
+msgstr "Měnit filtr aplikací jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:25
 msgid "Authentication is required to change another user’s app filter."
-msgstr ""
+msgstr "Pro změnu filtru aplikací jiného uživatele je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:34
 msgid "Read another user’s app filter"
-msgstr ""
+msgstr "Číst filtr aplikací jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:35
 msgid "Authentication is required to read another user’s app filter."
-msgstr ""
+msgstr "Pro čtení filtru aplikací jiného uživatele je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:44
 msgid "Change your own session limits"
-msgstr ""
+msgstr "Měnit limity vlastního sezení"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:45
 msgid "Authentication is required to change your session limits."
-msgstr ""
+msgstr "Pro změnu limitů vlastního sezení je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:54
 msgid "Read your own session limits"
-msgstr ""
+msgstr "Číst limity vlastního sezení"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:55
 msgid "Authentication is required to read your session limits."
-msgstr ""
+msgstr "Pro čtení limitů vlastního sezení je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:64
 msgid "Change another user’s session limits"
-msgstr ""
+msgstr "Měnit limity sezení jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:65
 msgid "Authentication is required to change another user’s session limits."
-msgstr ""
+msgstr "Pro změnu limitů sezení jiného uživatele je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:74
 msgid "Read another user’s session limits"
-msgstr ""
+msgstr "Číst limity sezení jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:75
 msgid "Authentication is required to read another user’s session limits."
-msgstr ""
+msgstr "Pro čtení limitů sezení jiného uživatele je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:84
 msgid "Change your own account info"
-msgstr ""
+msgstr "Měnit informace o vlastním účtu"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:85
 msgid "Authentication is required to change your account info."
-msgstr ""
+msgstr "Pro změnu informací o vlastním účtu je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:94
 msgid "Read your own account info"
-msgstr ""
+msgstr "Číst informace o vlastním účtu"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:95
 msgid "Authentication is required to read your account info."
-msgstr ""
+msgstr "Pro čtení informací o vlastním účtu je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:104
 msgid "Change another user’s account info"
-msgstr ""
+msgstr "Měnit informace o účtu jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:105
 msgid "Authentication is required to change another user’s account info."
-msgstr ""
+msgstr "Pro změnu informací o účtu jiného uživatele je vyžadováno ověření."
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:114
 msgid "Read another user’s account info"
-msgstr ""
+msgstr "Číst informace o účtu jiného uživatele"
 
 #: accounts-service/com.endlessm.ParentalControls.policy.in:115
 msgid "Authentication is required to read another user’s account info."
-msgstr ""
+msgstr "Pro čtení informací o účtu jiného uživatele je vyžadováno ověření."
 
 #: libmalcontent/app-filter.c:694
 #, c-format
 msgid "App filter for user %u was in an unrecognized format"
-msgstr ""
+msgstr "Filtr aplikací pro uživatele %u byl v nerozpoznaném formátu"
 
 #: libmalcontent/app-filter.c:725
 #, c-format
 msgid "OARS filter for user %u has an unrecognized kind ‘%s’"
-msgstr ""
+msgstr "OARS filtr pro uživatele %u má nerozpoznaný typ ‘%s’"
 
 #: libmalcontent/manager.c:283 libmalcontent/manager.c:420
 #: libmalcontent/manager.c:803
 #, c-format
 msgid "Not allowed to query parental controls data for user %u"
 msgstr ""
+"Není povoleno dotazovat se na data rodičovské kontroly pro uživatele %u"
 
 #: libmalcontent/manager.c:288
 #, c-format
 msgid "User %u does not exist"
-msgstr ""
+msgstr "Uživatel %u neexistuje"
 
 #: libmalcontent/manager.c:296
 msgid "System accounts service not available"
-msgstr ""
+msgstr "Služba systémových účtů není dostupná"
 
 #: libmalcontent/manager.c:402
 msgid "App filtering is globally disabled"
-msgstr ""
+msgstr "Filtrování aplikací je globálně zakázáno"
 
 #: libmalcontent/manager.c:785
 msgid "Session limits are globally disabled"
-msgstr ""
+msgstr "Limity sezení jsou globálně zakázány"
 
 #: libmalcontent/session-limits.c:306
 #, c-format
 msgid "Session limit for user %u was in an unrecognized format"
-msgstr ""
+msgstr "Limit sezení pro uživatele %u byl v nerozpoznaném formátu"
 
 #: libmalcontent/session-limits.c:328
 #, c-format
 msgid "Session limit for user %u has an unrecognized type ‘%u’"
-msgstr ""
+msgstr "Limit sezení pro uživatele %u má nerozpoznaný typ ‘%u’"
 
 #: libmalcontent/session-limits.c:346
 #, c-format
 msgid "Session limit for user %u has invalid daily schedule %u–%u"
-msgstr ""
+msgstr "Limit sezení pro uživatele %u má neplatný denní rozvrh %u–%u"
 
 #. TRANSLATORS: This is the formatting of English and localized name
 #. of the rating e.g. "Adults Only (solo adultos)"
 #: libmalcontent-ui/gs-content-rating.c:75
 #, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%s (%s)"
 
 #: libmalcontent-ui/gs-content-rating.c:209
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 #: libmalcontent-ui/gs-content-rating.c:218
 msgid "ALL"
-msgstr ""
+msgstr "VŠECHNY"
 
 #: libmalcontent-ui/gs-content-rating.c:222
 #: libmalcontent-ui/gs-content-rating.c:485
 msgid "Adults Only"
-msgstr ""
+msgstr "pouze dospělé"
 
 #: libmalcontent-ui/gs-content-rating.c:224
 #: libmalcontent-ui/gs-content-rating.c:484
 msgid "Mature"
-msgstr ""
+msgstr "plnoleté"
 
 #: libmalcontent-ui/gs-content-rating.c:226
 #: libmalcontent-ui/gs-content-rating.c:483
 msgid "Teen"
-msgstr ""
+msgstr "mládež"
 
 #: libmalcontent-ui/gs-content-rating.c:228
 #: libmalcontent-ui/gs-content-rating.c:482
 msgid "Everyone 10+"
-msgstr ""
+msgstr "všechny 10+"
 
 #: libmalcontent-ui/gs-content-rating.c:230
 #: libmalcontent-ui/gs-content-rating.c:481
 msgid "Everyone"
-msgstr ""
+msgstr "všechny"
 
 #: libmalcontent-ui/gs-content-rating.c:232
 #: libmalcontent-ui/gs-content-rating.c:480
 msgid "Early Childhood"
-msgstr ""
+msgstr "malé děti"
 
 #. Translators: the placeholder is a user’s full name
 #: libmalcontent-ui/restrict-applications-dialog.c:222
 #, c-format
 msgid "Restrict %s from using the following installed applications."
-msgstr ""
+msgstr "Omezit uživateli %s použití následujících nainstalovaných aplikací."
 
 #: libmalcontent-ui/restrict-applications-dialog.ui:6
 #: libmalcontent-ui/restrict-applications-dialog.ui:12
 msgid "Restrict Applications"
-msgstr ""
+msgstr "Omezit aplikace"
 
 #: libmalcontent-ui/restrict-applications-selector.ui:24
 msgid "No applications found to restrict."
-msgstr ""
+msgstr "Nenalezeny žádné aplikace k omezení."
 
 #. Translators: this is the full name for an unknown user account.
 #: libmalcontent-ui/user-controls.c:207 libmalcontent-ui/user-controls.c:218
 msgid "unknown"
-msgstr ""
+msgstr "neznámé"
 
 #: libmalcontent-ui/user-controls.c:312 libmalcontent-ui/user-controls.c:397
 #: libmalcontent-ui/user-controls.c:669
 msgid "All Ages"
-msgstr ""
+msgstr "libovolný věk"
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:477
@@ -240,62 +241,66 @@ msgid ""
 "Prevents %s from running web browsers. Limited web content may still be "
 "available in other applications."
 msgstr ""
+"Zabraňuje uživateli %s ve spouštění webových prohlížečů. Omezený webový "
+"obsah může být stále dostupný v jiných aplikacích."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:482
 #, c-format
 msgid "Prevents specified applications from being used by %s."
-msgstr ""
+msgstr "Zabraňuje v používání určených aplikací uživatelem %s."
 
 #. Translators: The placeholder is a user’s display name.
 #: libmalcontent-ui/user-controls.c:487
 #, c-format
 msgid "Prevents %s from installing applications."
-msgstr ""
+msgstr "Zabraňuje uživateli %s v instalaci aplikací."
 
 #: libmalcontent-ui/user-controls.ui:16
 msgid "Application Usage Restrictions"
-msgstr ""
+msgstr "Omezení použití aplikací"
 
 #: libmalcontent-ui/user-controls.ui:67
 msgid "Restrict _Web Browsers"
-msgstr ""
+msgstr "Omezit _webové prohlížeče"
 
 #: libmalcontent-ui/user-controls.ui:151
 msgid "_Restrict Applications"
-msgstr ""
+msgstr "Omezit _aplikace"
 
 #: libmalcontent-ui/user-controls.ui:230
 msgid "Software Installation Restrictions"
-msgstr ""
+msgstr "Omezení instalace softwaru"
 
 #: libmalcontent-ui/user-controls.ui:280
 msgid "Restrict Application _Installation"
-msgstr ""
+msgstr "Omezit _instalaci aplikací"
 
 #: libmalcontent-ui/user-controls.ui:365
 msgid "Application _Suitability"
-msgstr ""
+msgstr "Vhodno_st aplikací"
 
 #: libmalcontent-ui/user-controls.ui:387
 msgid ""
 "Restricts browsing or installation of applications to applications suitable "
 "for certain ages or above."
 msgstr ""
+"Omezí prohlížení nebo instalaci aplikací na aplikace vhodné pro určitý věk "
+"nebo výše."
 
 #. Translators: This documents the --user command line option to malcontent-control:
 #: malcontent-control/application.c:102
 msgid "User to select in the UI"
-msgstr ""
+msgstr "Uživatel ke zvolení v UI"
 
 #. Translators: This is a placeholder for a command line argument value:
 #: malcontent-control/application.c:104
 msgid "USERNAME"
-msgstr ""
+msgstr "UŽIVATEL"
 
 #: malcontent-control/application.c:115
 msgid "— view and edit parental controls"
-msgstr ""
+msgstr "— zobrazit a upravit rodičovskou kontrolu"
 
 #. Translators: This is the title of the main window
 #. Translators: the name of the application as it appears in a software center
@@ -307,32 +312,32 @@ msgstr "Rodičovská kontrola"
 
 #: malcontent-control/application.c:308
 msgid "Copyright © 2019, 2020 Endless Mobile, Inc."
-msgstr ""
+msgstr "Copyright © 2019, 2020 Endless Mobile, Inc."
 
 #. Translators: this should be "translated" to the
 #. names of people who have translated Malcontent into
 #. this language, one per line.
 #: malcontent-control/application.c:313
 msgid "translator-credits"
-msgstr ""
+msgstr "Daniel Rusek <mail@asciiwolf.com>"
 
 #. Translators: "Malcontent" is the brand name of this
 #. project, so should not be translated.
 #: malcontent-control/application.c:319
 msgid "Malcontent Website"
-msgstr ""
+msgstr "Webové stránky"
 
 #: malcontent-control/application.c:337
 msgid "The help contents could not be displayed"
-msgstr ""
+msgstr "Obsah nápovědy nemohl být zobrazen"
 
 #: malcontent-control/application.c:374
 msgid "Failed to load user data from the system"
-msgstr ""
+msgstr "Selhalo načtení uživatelských dat ze systému"
 
 #: malcontent-control/application.c:376
 msgid "Please make sure that the AccountsService is installed and enabled."
-msgstr ""
+msgstr "Ověřte prosím, že je AccountsService nainstalováno a povoleno."
 
 #. Translators: Replace the link to commonsensemedia.org with some
 #. * localised guidance for parents/carers on how to set restrictions on
@@ -350,41 +355,47 @@ msgid ""
 "conversation with %s. <a href='https://www.commonsensemedia.org/privacy-and-"
 "internet-safety'>Read guidance</a> on what to consider."
 msgstr ""
+"Je doporučeno, aby byla omezení nastavena jako součást probíhající "
+"konverzace s %s. <a href='https://www.jaknainternet.cz/page/1201/ochrana-"
+"deti-na-internetu/'>Přečtěte si návod</a> na to, co je třeba vzít v úvahu."
 
 #: malcontent-control/carousel.ui:48
 msgid "Previous Page"
-msgstr ""
+msgstr "Předchozí stránka"
 
 #: malcontent-control/carousel.ui:74
 msgid "Next Page"
-msgstr ""
+msgstr "Následující stránka"
 
 #: malcontent-control/main.ui:115
 msgid "Permission Required"
-msgstr ""
+msgstr "Vyžadováno oprávnění"
 
 #: malcontent-control/main.ui:129
 msgid ""
 "Permission is required to view and change user parental controls settings."
 msgstr ""
+"Pro zobrazení a změnu rodičovské kontroly uživatele je nutné oprávnění."
 
 #: malcontent-control/main.ui:184
 msgid "No Standard User Accounts"
-msgstr ""
+msgstr "Žádný běžný uživatelský účet"
 
 #: malcontent-control/main.ui:199
 msgid ""
 "Parental controls can only be applied to standard user\n"
 "accounts. These can be created in the user settings."
 msgstr ""
+"Rodičovská kontrola může být aplikována pouze na standardní uživatelské\n"
+"účty. Ty mohou být vytvořeny v nastavení uživatelů."
 
 #: malcontent-control/main.ui:212
 msgid "_User Settings"
-msgstr ""
+msgstr "Nastavení _uživatelů"
 
 #: malcontent-control/main.ui:242
 msgid "Loading…"
-msgstr ""
+msgstr "Načítá se…"
 
 #: malcontent-control/main.ui:305
 msgid "_Help"
@@ -398,7 +409,7 @@ msgstr "O _aplikaci Rodičovská kontrola"
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:12
 #: malcontent-control/org.freedesktop.MalcontentControl.desktop.in:4
 msgid "Set parental controls and monitor usage by users"
-msgstr ""
+msgstr "Nastavte rodičovskou kontrolu a monitorujte používání uživateli"
 
 #. Translators: These are the application description paragraphs in the AppData file.
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:16
@@ -407,10 +418,13 @@ msgid ""
 "use the computer for, what software they can install, and what installed "
 "software they can run."
 msgstr ""
+"Spravujte omezení rodičovské kontroly uživatelů, určující jak dlouho mohou "
+"používat počítač, jaký software mohou instalovat a jaký software mohou "
+"spouštět."
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:25
 msgid "Main window"
-msgstr ""
+msgstr "Hlavní okno"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.appdata.xml.in:38
 msgid "The GNOME Project"
@@ -422,14 +436,17 @@ msgid ""
 "parental controls;screen time;app restrictions;web browser restrictions;oars;"
 "usage;usage limit;kid;child;"
 msgstr ""
+"rodičovská kontrola;čas u obrazovky;omezení aplikací;omezení webového "
+"prohlížeče;oars;použití;omezení použití;dítě;děti;"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:9
 msgid "Manage parental controls"
-msgstr ""
+msgstr "Spravovat rodičovskou kontrolu"
 
 #: malcontent-control/org.freedesktop.MalcontentControl.policy.in:10
 msgid "Authentication is required to read and change user parental controls"
 msgstr ""
+"Pro zobrazení a změnu rodičovské kontroly uživatele je vyžadováno ověření"
 
 #: malcontent-control/user-selector.c:426
 msgid "Your account"
@@ -440,22 +457,22 @@ msgstr "Váš účet"
 #: pam/pam_malcontent.c:142 pam/pam_malcontent.c:188
 #, c-format
 msgid "User ‘%s’ has no time limits enabled"
-msgstr ""
+msgstr "Uživatel ‘%s’ nemá nastaveny časové limity"
 
 #: pam/pam_malcontent.c:151 pam/pam_malcontent.c:172
 #, c-format
 msgid "Error getting session limits for user ‘%s’: %s"
-msgstr ""
+msgstr "Chyba při získávání limitů sezení pro uživatele ‘%s’: %s"
 
 #: pam/pam_malcontent.c:182
 #, c-format
 msgid "User ‘%s’ has no time remaining"
-msgstr ""
+msgstr "Uživatel ‘%s’ nemá žádný zbývající čas"
 
 #: pam/pam_malcontent.c:200
 #, c-format
 msgid "Error setting time limit on login session: %s"
-msgstr ""
+msgstr "Chyba při nastavení časového limitu na přihlašovací sezení: %s"
 
 #~ msgid "No cartoon violence"
 #~ msgstr "Žádné kreslené násilí"
