@@ -102,6 +102,7 @@ mct_application_constructed (GObject *object)
         N_("User to select in the UI"),
         /* Translators: This is a placeholder for a command line argument value: */
         N_("USERNAME") },
+      { NULL, },
     };
 
   g_application_set_application_id (application, "org.freedesktop.MalcontentControl");
