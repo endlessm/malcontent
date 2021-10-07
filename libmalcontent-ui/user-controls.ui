@@ -39,6 +39,7 @@
             <property name="selection_mode">none</property>
             <property name="activate-on-single-click">True</property>
             <signal name="row-activated" handler="on_application_usage_permissions_listbox_activated_cb" object="MctUserControls" swapped="no" />
+            <signal name="keynav-failed" handler="on_keynav_failed" object="MctUserControls" swapped="no" />
             <child>
               <object class="GtkListBoxRow">
                 <property name="visible">True</property>
@@ -252,6 +253,7 @@
             <property name="hexpand">True</property>
             <property name="selection_mode">none</property>
             <property name="activate_on_single_click">False</property>
+            <signal name="keynav-failed" handler="on_keynav_failed" object="MctUserControls" swapped="no" />
             <child>
               <object class="GtkListBoxRow">
                 <property name="visible" bind-source="restrict_software_installation_switch" bind-property="visible" bind-flags="default|sync-create" />
