@@ -711,6 +711,31 @@ list_box_header_func (GtkListBoxRow *row,
     }
 }
 
+static gboolean
+on_keynav_failed (GtkWidget        *listbox,
+                  GtkDirectionType  direction,
+                  gpointer          user_data)
+{
+  MctUserControls *self = MCT_USER_CONTROLS (user_data);
+  GtkWidget *new_widget = NULL;
+
+  /* There are currently two listboxes, so don’t over-complicate this function. */
+  if (listbox == GTK_WIDGET (self->application_usage_permissions_listbox) &&
+      direction == GTK_DIR_DOWN)
+    new_widget = GTK_WIDGET (self->software_installation_permissions_listbox);
+  else if (listbox == GTK_WIDGET (self->software_installation_permissions_listbox) &&
+           direction == GTK_DIR_UP)
+    new_widget = GTK_WIDGET (self->application_usage_permissions_listbox);
+
+  if (new_widget != NULL)
+    {
+      gtk_widget_child_focus (new_widget, direction);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 /* GObject overrides */
 
 static void
@@ -1031,6 +1056,7 @@ mct_user_controls_class_init (MctUserControlsClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_delete_event_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_restrict_applications_dialog_response_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_application_usage_permissions_listbox_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_keynav_failed);
 }
 
 static void

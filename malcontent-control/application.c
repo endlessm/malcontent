@@ -415,7 +415,7 @@ update_main_stack (MctApplication *self)
       mct_user_controls_set_user (self->user_controls, selected_user);
 
       new_page_name = "controls";
-      new_focus_widget = GTK_WIDGET (self->user_selector);
+      new_focus_widget = GTK_WIDGET (self->user_controls);
     }
   else
     {
@@ -427,7 +427,12 @@ update_main_stack (MctApplication *self)
   gtk_stack_set_visible_child_name (self->main_stack, new_page_name);
 
   if (new_focus_widget != NULL && !g_str_equal (old_page_name, new_page_name))
-    gtk_widget_grab_focus (new_focus_widget);
+    {
+      if (gtk_widget_get_can_focus (new_focus_widget))
+        gtk_widget_grab_focus (new_focus_widget);
+      else
+        gtk_widget_child_focus (new_focus_widget, GTK_DIR_TAB_FORWARD);
+    }
 }
 
 static void
