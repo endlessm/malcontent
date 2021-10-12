@@ -1,3 +1,11 @@
+malcontent (0.10.2-1) master; urgency=medium
+
+  * Upstream 0.10.2 release
+   - Revert upstream change to hide malcontent-control from gnome-shell search
+  * Pull in subsequent upstream patches to fix focus chains (T32618)
+
+ -- Philip Withnall <pwithnall@endlessos.org>  Tue, 12 Oct 2021 15:31:00 +0100
+
 malcontent (0.10.0-1) master; urgency=medium
 
   * Upstream 0.10.0 release (T31065)
